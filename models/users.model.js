@@ -1,5 +1,10 @@
+const { ObjectId } = require('mongodb');
 const DB = require('../utils/DB');
 const bcrypt = require('bcrypt');
+
+function isValidObjectId(id) {
+    return id === null || (/^[0-9a-fA-F]{24}$/).test(id);
+}
 
 class UserModel {
     _id;
@@ -15,12 +20,15 @@ class UserModel {
 
 
     constructor(username, firstName, lastName, email, password, addressId = null, photo = null) {
+        if (!isValidObjectId(addressId)) {
+            throw new Error('Invalid ObjectId');
+        }
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.addressId = addressId;
+        this.addressId = ObjectId(addressId);
         this.photo = photo;
         this.registrationDate = new Date();
         this.activationStatus = true;
@@ -51,7 +59,30 @@ class UserModel {
         };
     }
 
-    // methods to edit, delete, retrieve users:
+    static async read(id) {
+        if (!isValidObjectId(id)) {
+            throw new Error('Invalid ObjectId');
+        }
+        return await new DB().findOne('users', { _id: id });
+    }
+
+    static async update(id, updateData) {
+        if (!isValidObjectId(id)) {
+            throw new Error('Invalid ObjectId');
+        }
+        return await new DB().updateOne('users', { _id: id }, updateData);
+    }
+
+    static async delete(id) {
+        if (!isValidObjectId(id)) {
+            throw new Error('Invalid ObjectId');
+        }
+        return await new DB().deleteOne('users', { _id: id });
+    }
+
+
+
+    //other methods to to be added:
 }
 
 
