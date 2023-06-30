@@ -16,11 +16,12 @@ class DB {
 
     //example:
 
-    async FindAll(collection, query = {}, project = {}) {
+    async findAll(collection, query = {}, project = {}) {
         try {
             await this.client.connect();
             return await this.client.db(this.db_name).collection(collection).find(query, project).toArray();
         } catch (error) {
+            console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.
             throw error;
         }
         finally {
@@ -37,6 +38,7 @@ class DB {
             await this.client.connect();
             return await this.client.db(this.db_name).collection(collection).findOne(query, project);
         } catch (error) {
+            console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.
             throw error;
         }
         finally {
@@ -49,6 +51,7 @@ class DB {
             await this.client.connect();
             return await this.client.db(this.db_name).collection(collection).insertOne(doc);
         } catch (error) {
+            console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.
             throw error;
         }
         finally {
@@ -61,16 +64,53 @@ class DB {
             await this.client.connect();
             console.log({ ...doc });
             return await this.client.db(this.db_name).collection(collection).updateOne(
-                { _id: new ObjectId(id) },
+                { _id: id },
                 { $set: { ...doc } });
         } catch (error) {
+            console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.
             throw error;
         }
         finally {
             await this.client.close();
         }
     }
+    async deleteOne(collection, id) {
+        try {
+            await this.client.connect();
+            return await this.client.db(this.db_name).collection(collection).deleteOne({ _id: id });
+        } catch (error) {
+            console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.
+            throw error;
+        } finally {
 
+        }
+    }
+
+
+    async aggregate(collection, pipeline) {
+        try {
+            await this.client.connect();
+            return await this.client.db(this.db_name).collection(collection).aggregate(pipeline).toArray();
+        } catch (error) {
+            console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.
+            throw error;
+
+        } finally {
+            await this.client.close();
+        }
+    }
+
+    async sort(collection, sortby, order) {
+        try {
+            await this.client.connect();
+            return await this.client.db(this.db_name).collection(collection).find().sort({ [sortby]: order }).toArray();
+        } catch (error) {
+            console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.
+            throw error;
+        } finally {
+            await this.client.close();
+        }
+    }
 
 
 }

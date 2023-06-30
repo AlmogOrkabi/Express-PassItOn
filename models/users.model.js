@@ -2,9 +2,7 @@ const { ObjectId } = require('mongodb');
 const DB = require('../utils/DB');
 const bcrypt = require('bcrypt');
 
-function isValidObjectId(id) {
-    return id === null || (/^[0-9a-fA-F]{24}$/).test(id);
-}
+const { isValidObjectId } = require('../utils/validations');
 
 class UserModel {
     _id;

@@ -1,8 +1,5 @@
 const DB = require('../utils/DB');
-
-function isValidObjectId(id) {
-    return id === null || (/^[0-9a-fA-F]{24}$/).test(id);
-}
+const { isValidObjectId } = require('../utils/validations');
 
 class AddressModel {
     region;
