@@ -63,8 +63,9 @@ class DB {
         try {
             await this.client.connect();
             console.log({ ...doc });
+            const objectId = new ObjectId(id); //to be absolutely sure the id being passed is indeeed an objectId.
             return await this.client.db(this.db_name).collection(collection).updateOne(
-                { _id: id },
+                { _id: objectId },
                 { $set: { ...doc } });
         } catch (error) {
             console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.
@@ -74,10 +75,12 @@ class DB {
             await this.client.close();
         }
     }
+
     async deleteOne(collection, id) {
         try {
             await this.client.connect();
-            return await this.client.db(this.db_name).collection(collection).deleteOne({ _id: id });
+            const objectId = new ObjectId(id);
+            return await this.client.db(this.db_name).collection(collection).deleteOne({ _id: objectId });
         } catch (error) {
             console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.
             throw error;

@@ -64,11 +64,17 @@ class UserModel {
         return await new DB().findOne('users', { _id: id });
     }
 
+    //get all users
+    static async read() {
+        return await new DB().findAll('users');
+    }
+
+
     static async update(id, updateData) {
         if (!isValidObjectId(id)) {
             throw new Error('Invalid ObjectId');
         }
-        return await new DB().updateOne('users', { _id: id }, updateData);
+        return await new DB().updateById('users', { _id: id }, updateData);
     }
 
     static async delete(id) {
@@ -78,6 +84,9 @@ class UserModel {
         return await new DB().deleteOne('users', { _id: id });
     }
 
+    static async sort(sortBy, order) {
+        return await new DB().sort('users', sortBy, order);
+    }
 
 
     //other methods to to be added:

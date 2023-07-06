@@ -27,4 +27,4 @@ function validateUserData(username, firstName, lastName, email, password, photo)
 }
 
 
-module.exports = { isValidObjectId }
+module.exports = { isValidObjectId, validateUserData }
