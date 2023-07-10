@@ -1,5 +1,6 @@
 const DB = require('../utils/DB');
 const { isValidObjectId } = require('../utils/validations');
+const collection = 'addresses';
 
 class AddressModel {
     region;
@@ -25,28 +26,28 @@ class AddressModel {
 
     static async create(region, city, street, house, apartment, notes, longitude, latitude) {
         let newAddress = new AddressModel(region, city, street, house, apartment, notes, longitude, latitude);
-        return await new DB().insert('addresses', { ...newAddress });
+        return await new DB().insert(collection, { ...newAddress });
     }
 
     static async read(id) {
         if (!isValidObjectId(id)) {
             throw new Error('Invalid ObjectId');
         }
-        return await new DB().findOne('addresses', { _id: id });
+        return await new DB().findOne(collection, { _id: id });
     }
 
     static async update(id, updateData) {
         if (!isValidObjectId(id)) {
             throw new Error('Invalid ObjectId');
         }
-        return await new DB().updateOne('addresses', { _id: id }, updateData);
+        return await new DB().updateOne(collection, { _id: id }, updateData);
     }
 
     static async delete(id) {
         if (!isValidObjectId(id)) {
             throw new Error('Invalid ObjectId');
         }
-        return await new DB().deleteOne('addresses', { _id: id });
+        return await new DB().deleteOne(collection, { _id: id });
     }
 
 }

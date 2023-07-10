@@ -1,6 +1,7 @@
 const { ObjectId } = require('mongodb');
 const DB = require('../utils/DB');
 const bcrypt = require('bcrypt');
+const collection = 'users';
 
 const { isValidObjectId } = require('../utils/validations');
 
@@ -41,12 +42,12 @@ class UserModel {
 
         let newUser = new UserModel(username, firstName, lastName, email, password, addressId, photo);
         newUser.password = await bcrypt.hash(newUser.password, 10);
-        return await new DB().Insert('users', { ...newUser }); //returns the response from the database (successful or failed)
+        return await new DB().Insert(collection, { ...newUser }); //returns the response from the database (successful or failed)
     }
 
     static async login(email, password) {
         let query = { email: email }
-        let user = await new DB().findOne("Users", query);
+        let user = await new DB().findOne(collection, query);
         if (!user || !(await bcrypt.compare(password, user.password)))
             return null;
 
@@ -61,12 +62,12 @@ class UserModel {
         if (!isValidObjectId(id)) {
             throw new Error('Invalid ObjectId');
         }
-        return await new DB().findOne('users', { _id: id });
+        return await new DB().findOne(collection, { _id: id });
     }
 
     //get all users
     static async read() {
-        return await new DB().findAll('users');
+        return await new DB().findAll(collection);
     }
 
 
@@ -74,18 +75,18 @@ class UserModel {
         if (!isValidObjectId(id)) {
             throw new Error('Invalid ObjectId');
         }
-        return await new DB().updateById('users', { _id: id }, updateData);
+        return await new DB().updateById(collection, { _id: id }, updateData);
     }
 
     static async delete(id) {
         if (!isValidObjectId(id)) {
             throw new Error('Invalid ObjectId');
         }
-        return await new DB().deleteOne('users', { _id: id });
+        return await new DB().deleteOne(collection, { _id: id });
     }
 
     static async sort(sortBy, order) {
-        return await new DB().sort('users', sortBy, order);
+        return await new DB().sort(collection, sortBy, order);
     }
 
 

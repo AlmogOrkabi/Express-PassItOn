@@ -33,6 +33,10 @@ UsersRoutes.post('/login', async (req, res) => {
 UsersRoutes.get('/users', async (req, res) => {
     try {
         let users = await UserModel.read();
+        if (!users)
+            res.status(401).json({ msg: "שגיאה בייבוא נתונים" });
+        else
+            res.status(200).json(users);
     } catch (error) {
         console.warn('usersroute error: get /users')
         res.status(500).json({ error, msg: 'שגיאה' });
@@ -72,7 +76,7 @@ UsersRoutes.delete('/delete/:_id', async (req, res) => {
     try {
         let { _id } = req.params;
         await UserModel.delete(_id);
-        res.status(200).json({ msg: 'success' }); // **check if the user is found or not? ** */
+        res.status(200).json({ msg: 'user deleted successfully' }); // **check if the user is found or not? **
     } catch (error) {
         console.warn('usersroute error: put :username/:_id')
         res.status(500).json({ error, msg: 'שגיאה' });

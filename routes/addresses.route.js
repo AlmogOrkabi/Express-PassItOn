@@ -48,3 +48,5 @@ AddressRoutes.delete('/:_id', async (req, res) => {
         res.status(500).json({ error, msg: 'שגיאה' });
     }
 });
+
+module.exports = AddressRoutes;
