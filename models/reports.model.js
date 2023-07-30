@@ -7,71 +7,86 @@ const { isValidObjectId } = require('../utils/validations');
 class ReportModel {
     owner_id;
     reportType;
-    userReported;
-    postReported;
+    userReported_id;
+    postReported_id;
+    description;
     status;
     verdict;
     photos;
     creationDate;
+    updateDate; // for the stages of handling the report // initialized to the creation date
 
 
-    constructor(owner_id, reportType, userReported, postReported, photos = []) {
+    constructor(owner_id, reportType, userReported, postReported, photos = [], description) {
         this.owner_id = ObjectId(owner_id);
         this.reportType = reportType;
-        this.userReported = ObjectId(userReported);
-        this.postReported = postReported ? ObjectId(postReported) : null;
+        this.userReported_id = ObjectId(userReported);
+        this.postReported_id = postReported ? ObjectId(postReported) : null;
         this.status = "Submitted";
         this.photos = photos;
         this.creationDate = new Date();
         this.verdict = null;
+        this.description = description;
+        this.updateDate = new Date();
     }
 
 
-    static async create(owner_id, reportType, userReported, postReported, photos) {
-        if (!isValidObjectId(owner_id) || !isValidObjectId(userReported) || !isValidObjectId(postReported)) {
+    static async create(owner_id, reportType, userReported, postReported, photos, description) {
+        if (!isValidObjectId(owner_id) || owner_id == null || !isValidObjectId(userReported) || userReported == null || !isValidObjectId(postReported)) {
             throw new Error('Invalid ObjectId');
         }
         let newReport = new ReportModel(owner_id, reportType, userReported, postReported, photos);
         return await new DB().insert(collection, { ...newReport });
     }
 
-    static async read(id) {
-        if (!isValidObjectId(id)) {
-            throw new Error('Invalid ObjectId');
+    static async read(query) {
+        for (let key in query) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]) || query[key] == null)) {
+                throw new Error(`Invalid ObjectId for ${key}`);
+            }
         }
-        return await new DB().findOne(collection, { _id: id });
+        return await new DB().findAll(collection, query);
     }
+
+
+
+    // static async read(id) {
+    //     if (!isValidObjectId(id) || id == null) {
+    //         throw new Error('Invalid ObjectId');
+    //     }
+    //     return await new DB().findOne(collection, { _id: id });
+    // }
 
     static async read() {
         return await new DB().findAll(collection);
     }
 
-    static async readByOwner(owner_id) {
-        if (!isValidObjectId(owner_id)) {
-            throw new Error('Invalid ObjectId');
-        }
-        return await new DB().findAll(collection, { owner_id: owner_id });
-    }
+    // static async readByOwner(owner_id) {
+    //     if (!isValidObjectId(owner_id) || owner_id == null) {
+    //         throw new Error('Invalid ObjectId');
+    //     }
+    //     return await new DB().findAll(collection, { owner_id: owner_id });
+    // }
 
-    static async readByUserReported(userReported) {
-        if (!isValidObjectId(userReported)) {
-            throw new Error('Invalid ObjectId');
-        }
-        return await new DB().findAll(collection, { userReported: userReported });
-    }
+    // static async readByUserReported(userReported) {
+    //     if (!isValidObjectId(userReported) || userReported == null) {
+    //         throw new Error('Invalid ObjectId');
+    //     }
+    //     return await new DB().findAll(collection, { userReported_id: userReported });
+    // }
 
-    static async readByPostReported(postReported) {
-        if (!isValidObjectId(postReported)) {
-            throw new Error('Invalid ObjectId');
-        }
-        return await new DB().findAll(collection, { postReported: postReported });
-    }
+    // static async readByPostReported(postReported) {
+    //     if (!isValidObjectId(postReported) || postReported == null) {
+    //         throw new Error('Invalid ObjectId');
+    //     }
+    //     return await new DB().findAll(collection, { postReported_id: postReported });
+    // }
 
 
-    static async readByStatus(status) {
-        //validate status (switch case?)
-        return await new DB().findAll(collection, { status: status });
-    }
+    // static async readByStatus(status) {
+    //     //validate status (switch case?) -V => validation on the route
+    //     return await new DB().findAll(collection, { status: status });
+    // }
 
     //find all V
     //find by owner V
@@ -83,14 +98,14 @@ class ReportModel {
 
 
     static async update(id, updateData) {
-        if (!isValidObjectId(id)) {
+        if (!isValidObjectId(id) || id == null) {
             throw new Error('Invalid ObjectId');
         }
         return await new DB().updateOne(collection, { _id: id }, updateData);
     }
 
     static async delete(id) {
-        if (!isValidObjectId(id)) {
+        if (!isValidObjectId(id) || id == null) {
             throw new Error('Invalid ObjectId');
         }
         return await new DB().deleteOne(collection, { _id: id });

@@ -29,6 +29,11 @@ class DB {
         }
     }
 
+    //????????????????????????//
+    // asyncFindAllFromArray(collection, array, query = {}, project = {}) {
+
+    // }
+
     //query = {}, project = {} = if there's no parameter, initialize it to an empty object
     //we open the acces to the database in the try and close it immidately after use inside the finally (never keep the connection more than necessary for security reasons)
     //all methods MUST be asynchronous - we cannnot know how long it'll take the database to respond to the request
@@ -114,6 +119,8 @@ class DB {
             await this.client.close();
         }
     }
+
+
 
 
 }

@@ -1,118 +1,171 @@
 const ReportsModel = require('../models/reports.model');
 const ReportsRoutes = require('express').Router();
 
-ReportsRoutes.post('/create', async (req, res) => {
+const { uploadImages } = require('../functions');
+const { validateNewReportData, validateReportData, validateObjectId, isValidReportStatus } = require('../utils/validations');
+const { authenticateToken, checkAdmin } = require('../utils/authenticateToken');
+
+//V
+ReportsRoutes.post('/create', authenticateToken, async (req, res) => {
     try {
-        let { owner_id, reportType, userReported, postReported, photos } = req.body;
-        //add types validation here
-        let newReport = await ReportsModel.create(owner_id, reportType, userReported, postReported, photos);
-        res.status(201).json(newReport);
+        let { owner_id, reportType, userReported, postReported, photos, description } = req.body;
+        let photoUrls = await uploadImages(photos);
+        let validationRes = validateNewReportData(owner_id, reportType, userReported, postReported, photoUrls, description);
+        if (!validationRes.valid)
+            return res.status(400).json({ msg: validationRes.msg });
+        let newReport = await ReportsModel.create(owner_id, reportType, userReported, postReported, photoUrls, description);
+        return res.status(201).json(newReport);
     } catch (error) {
-        res.status(500).json({ error: 'יצירת דיווח נכשלה' });
+        return res.status(500).json({ error: 'יצירת דיווח נכשלה' });
     }
 });
 
-ReportsRoutes.get('/:_id', async (req, res) => {
+
+//V
+ReportsRoutes.get('/searchById/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
     try {
         let { _id } = req.params;
-        let report = await ReportsModel.read(_id)
+        // if (!isValidObjectId(_id) || _id == null)
+        //     return res.status(400).json({ msg: 'פרטים לא נכונים' });
+        let report = await ReportsModel.read({ _id: _id })
         if (!report)
-            res.status(404).json({ error: 'דיווח לא נמצא' });
+            return res.status(404).json({ error: 'דיווח לא נמצא' });
         else
-            res.status(200).json(report);
+            return res.status(200).json(report);
     } catch (error) {
         console.warn('reportsroute error: get /:_id')
-        res.status(500).json({ error, msg: 'שגיאה' });
+        return res.status(500).json({ error, msg: 'שגיאה' });
     }
 });
 
-ReportsRoutes.get('/allReports', async (req, res) => {
+
+//V
+ReportsRoutes.get('/allReports', authenticateToken, async (req, res) => {
     try {
         let reports = await ReportsModel.read();
-        if (!reports)
-            res.status(401).json({ error: 'שגיאה בייבוא הנתונים' });
+        if (!Array.isArray(reports) || reports.length === 0)
+            return res.status(404).json({ error: 'לא נמצאו דיווחים מתאימים' });
         else
-            res.status(200).json(reports);
+            return res.status(200).json(reports);
     } catch (error) {
         console.warn('reportsroute error: get /allReports')
-        res.status(500).json({ error, msg: 'שגיאה' });
+        return res.status(500).json({ error, msg: 'שגיאה' });
     }
 });
 
-ReportsRoutes.get('/:owner_id', async (req, res) => {
+
+
+ReportsRoutes.get('/searchByOwnerId/:owner_id', authenticateToken, validateObjectId('owner_id'), async (req, res) => {
     try {
         let { owner_id } = req.params;
-        let reports = await ReportsModel.readByOwner(owner_id);
-        if (!reports)
-            res.status(401).json({ error: 'שגיאה בייבוא הנתונים' });
+        // if (!isValidObjectId(owner_id) || owner_id == null)
+        //     return res.status(400).json({ msg: 'פרטים לא נכונים' });
+        let reports = await ReportsModel.read({ owner_id: owner_id });
+        if (!Array.isArray(reports) || reports.length === 0)
+            return res.status(404).json({ error: 'לא נמצאו דיווחים' });
         else
-            res.status(200).json(reports);
+            return res.status(200).json(reports);
     } catch (error) {
         console.warn('reportsroute error: get /:owner_id')
         res.status(500).json({ error, msg: 'שגיאה' });
     }
 });
 
-ReportsRoutes.get('/:userReported', async (req, res) => {
+
+//V
+ReportsRoutes.get('/searchByUserReported/:userReported', authenticateToken, validateObjectId('userReported'), async (req, res) => {
     try {
         let { userReported } = req.params;
-        let reports = await ReportsModel.readByUserReported(userReported);
-        if (!reports)
-            res.status(401).json({ error: 'שגיאה בייבוא הנתונים' });
+        // if (!isValidObjectId(userReported) || userReported == null)
+        //     return res.status(400).json({ msg: 'פרטים לא נכונים' });
+        let reports = await ReportsModel.read({ userReported_id: userReported });
+        if (!Array.isArray(reports) || reports.length === 0)
+            return res.status(404).json({ error: 'משתמש לא קיים' });
         else
-            res.status(200).json(reports);
+            return res.status(200).json(reports);
     } catch (error) {
         console.warn('reportsroute error: get /:userReported')
-        res.status(500).json({ error, msg: 'שגיאה' });
+        return res.status(500).json({ error, msg: 'שגיאה' });
     }
 });
 
-ReportsRoutes.get('/:postReported', async (req, res) => {
+// can be sent to the same dynamic method??? 
+
+//V
+ReportsRoutes.get('/searchByPost/:postReported', authenticateToken, validateObjectId('postReported'), async (req, res) => {
     try {
         let { postReported } = req.params;
-        let reports = await ReportsModel.readByPostReported(postReported);
-        if (!reports)
-            res.status(401).json({ error: 'שגיאה בייבוא הנתונים' });
+        // if (!isValidObjectId(postReported) || postReported == null)
+        //     return res.status(400).json({ msg: 'פרטים לא נכונים' });
+        let reports = await ReportsModel.read({ postReported_id: postReported });
+        if (!Array.isArray(reports) || reports.length === 0)
+            return res.status(404).json({ error: 'פוסט לא נמצא' });
         else
-            res.status(200).json(reports);
+            return res.status(200).json(reports);
     } catch (error) {
-        console.warn('reportsroute error: get /:postReported')
-        res.status(500).json({ error, msg: 'שגיאה' });
+        console.warn('reportsroute error: get /searchByPost/:postReported')
+        return res.status(500).json({ error, msg: 'שגיאה' });
     }
 });
 
-ReportsRoutes.get('/:status', async (req, res) => {
+
+//V
+ReportsRoutes.get('/searchByStatus/:status', authenticateToken, async (req, res) => {
     try {
         let { status } = req.params;
-        let reports = await ReportsModel.readByStatus(status);
-        if (!reports)
-            res.status(401).json({ error: 'שגיאה בייבוא הנתונים' });
+        let validationRes = validateReportData({ status: status });
+        if (!validationRes.valid)
+            return res.status(400).json({ msg: validationRes.msg });
+        let reports = await ReportsModel.read({ status: status });
+        if (!Array.isArray(reports) || reports.length === 0)
+            return res.status(404).json({ error: 'לא נמצאו דיווחים מתאימים' });
         else
-            res.status(200).json(reports);
+            return res.status(200).json(reports);
     } catch (error) {
-        console.warn('reportsroute error: get /:status')
-        res.status(500).json({ error, msg: 'שגיאה' });
+        console.warn('reportsroute error: get /searchByStatus/:status')
+        return res.status(500).json({ error, msg: 'שגיאה' });
     }
 });
 
-//can also update status???
-ReportsRoutes.put('/edit/:_id', async (req, res) => {
+//V
+ReportsRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
     try {
         let { _id } = req.params;
         let { updateData } = req.body;
+        let validationRes = validateReportData(updateData);
+        if (!validationRes.valid)
+            return res.status(400).json({ msg: validationRes.msg });
         let data = await ReportsModel.update(_id, updateData);
-        res.status(200).json(data);
+        return res.status(200).json(data);
     } catch (error) {
         console.warn('reportsroute error: put /edit/:_id')
-        res.status(500).json({ error, msg: 'שגיאה' });
+        return res.status(500).json({ error, msg: 'שגיאה' });
     }
 });
 
-ReportsRoutes.delete('/delete/:_id', async (req, res) => {
+ReportsRoutes.put('/edit/status/:_id', authenticateToken, checkAdmin, validateObjectId('_id'), async (req, res) => {
     try {
         let { _id } = req.params;
+        let { updatedStatus } = req.body;
+        let validationRes = isValidReportStatus(updatedStatus);
+        if (!validationRes.valid)
+            return res.status(400).json({ msg: validationRes.msg });
+        let data = await ReportsModel.update(_id, { status: updatedStatus });
+        return res.status(200).json(data);
+    } catch (error) {
+        console.warn('reportsroute error: put /edit/status/:_id')
+        return res.status(500).json({ error, msg: 'שגיאה' });
+    }
+});
+
+//V
+ReportsRoutes.delete('/delete/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
+    try {
+        let { _id } = req.params;
+        // if (!isValidObjectId(_id) || _id == null)
+        //     return res.status(400).json({ msg: 'שגיאה' }); // change this
         await ReportsModel.delete(_id);
-        res.status(200).json({ msg: 'report deleted successfully' });
+        res.status(200).json({ msg: 'דיווח נמחק בהצלחה' });
     } catch (error) {
         console.warn('reportsroute error: delete /delete/:_id')
         res.status(500).json({ error, msg: 'שגיאה' });
