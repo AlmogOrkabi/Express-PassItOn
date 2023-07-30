@@ -2,7 +2,7 @@ const PostsModel = require('../models/posts.model');
 const PostsRoutes = require('express').Router();
 
 const { uploadImages } = require('../functions');
-const { validateNewPostData, validatePostData, isString, validatePostSearchData } = require('../utils/validations');
+const { validateNewPostData, validatePostData, isString, validatePostSearchData, validateObjectId } = require('../utils/validations');
 
 const { authenticateToken, checkAdmin } = require('../utils/authenticateToken');
 
