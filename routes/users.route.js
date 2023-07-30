@@ -1,4 +1,4 @@
-const UserModel = require('../models/UserModel');
+const UserModel = require('../models/users.model')
 const UsersRoutes = require('express').Router();
 const { validateNewUserData, validateObjectId, validateUserData, isValidPhoto, isValidUserStatus, validateSort } = require('../utils/validations');
 const { uploadImage, removeImage } = require('../functions');
