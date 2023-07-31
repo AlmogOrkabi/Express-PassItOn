@@ -10,7 +10,8 @@ function isValidEmail(email) {
 }
 
 function isString(str) {
-    return str != null && typeof str === 'string';
+    console.log(str != null, typeof str == 'string');
+    return str != null && typeof str == 'string';
 }
 
 function isValidPassword(password) {
@@ -23,15 +24,15 @@ function isValidPassword(password) {
     //5. must have at least one digit.
     //6. can include special characters, but it is not a requirement.
 
-    if (isString(password) || password.length < 8 || password.length > 16) {
+    if (!isString(password) || password.length < 8 && password.length > 16) {
         return false;
     }
     const uppercaseRegex = /[A-Z]/;
     const lowercaseRegex = /[a-z]/;
     const digitRegex = /[0-9]/;
-    const englishLettersRegex = /^[a-zA-Z]*$/; // this regex is specifically targeting characters classified as letters, and checks for  letters that are not part of the english language.
+    //const englishLettersRegex = /^[a-zA-Z]*$/; // this regex is specifically targeting characters classified as letters, and checks for  letters that are not part of the english language.
     //.testt() is js function that checks for a pattern, works with regular expressions objects.
-    if (!uppercaseRegex.test(password) || !lowercaseRegex.test(password) || !digitRegex.test(password) || !englishLettersRegex.test(password)) {
+    if (!uppercaseRegex.test(password) || !lowercaseRegex.test(password) || !digitRegex.test(password)) {
         //throw new Error('סיסמה לא תקינה');
         return false;
     }
@@ -41,7 +42,7 @@ function isValidPassword(password) {
 
 function isValidPhoto(photo) {
     if (typeof photo.url !== 'string' || photo.url.length === 0 || typeof photo.public_id !== 'string' || photo.public_id.length === 0) {
-        false; // maybe should not be a requirement????
+        return false; // maybe should not be a requirement????
         //handle a situation where a user might not want to add a profile picture???
     }
     else
@@ -55,7 +56,8 @@ function isValidPhotosArray(photoUrls) {
 }
 
 function isValidName(name) {
-    const hebOReng = /^[A-Za-z\u0590-\u05FF ]+$/; // checks for letters in hebrew and english only
+    //const hebOReng = /^[A-Za-z\u0590-\u05FF ]+$/; // checks for letters in hebrew and english only
+    const hebOReng = /^[A-Za-z\u0590-\u05FF \'']+$/; //also checks for the char '
     return (isValidUserName(name) && hebOReng.test(name))
 }
 
@@ -73,6 +75,7 @@ function isValidUserName(name) {
 // }
 
 function validateNewUserData(username, firstName, lastName, email, password, address, photo) {
+    console.log(username, firstName, lastName, email, password, address, photo, '11');
     if (!isValidUserName(username)) {
         return { valid: false, msg: 'שם המשתמש אינו תקין' };
     }
@@ -88,9 +91,9 @@ function validateNewUserData(username, firstName, lastName, email, password, add
     if (!isValidPassword(password)) {
         return { valid: false, msg: 'הסיסמה אינה תקינה' };
     }
-    if (photo != null && !isValidPhoto(photo)) {
-        return { valid: false, msg: 'תמונת הפרופיל אינה תקינה' };
-    }
+    // if (photo != null && !isValidPhoto(photo)) {
+    //     return { valid: false, msg: 'תמונת הפרופיל אינה תקינה' };
+    // }
     if (!isValidObjectId(address)) {
         return { valid: false, msg: 'הכתובת אינה תקינה' };
     }
@@ -142,6 +145,7 @@ function validateUserData(updatedData) {
 }
 
 function isValidUserStatus(userStatus) {
+    console.log(userStatus)
     let validStatuses = ['פעיל', 'לא פעיל', 'חסום']
     if (!isString(userStatus) || !validStatuses.includes(userStatus))
         return { valid: false, msg: 'סטטוס לא תקין' }
@@ -278,6 +282,15 @@ function isValidReportType(reportType) {
     // Illegal Content: This would be for any posts that involve illegal activities or promote such activities.
 
     // Hate Speech / Discrimination: This category is for posts that promote violence or hatred against individuals or groups based on attributes such as race, religion, disability, age, nationality, sexual orientation, gender, etc.
+
+    let validReportTypes = ["מידע שגוי/מוטעה", "שימוש לרעה במערכת", "הטרדה/התנהגות לא הולמת", "ספאם", "הונאה", "מעבר על חוקי הפורמט", "פגיעה בפרטיות", "פרסום חוזר של פריטים שנמסרו בעבר", "אחר"];
+
+    if (!isString(reportType) || !validReportTypes.includes(reportType))
+        return { valid: false, msg: "סיבת הדיווח אינה תקינה" };
+    else
+        return { valid: true };
+
+
 }
 
 function isValidReportStatus(reportStatus) {
@@ -433,7 +446,7 @@ function validateNewAddressDetails(region, city, street, house, apartment, notes
 //----------------------------------------------------------
 
 function validateSort(sortBy, order) {
-    if (!isString(sortBy) || !isNumber(order) || order != -1 && order != 1)
+    if (!isString(sortBy) || order != -1 && order != 1)
         return { valid: false, msg: 'קלט לא תקין' };
     else
         return { valid: true };

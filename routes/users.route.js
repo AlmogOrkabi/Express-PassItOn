@@ -5,33 +5,36 @@ const { uploadImage, removeImage } = require('../functions');
 
 const jwt = require('jsonwebtoken');
 const { authenticateToken, checkAdmin } = require('../utils/authenticateToken');
+const { ObjectId } = require('mongodb');
 
 
 //NOT DONE, NEED TO HANDLE ADDRESS -- handle on client side
 
-//V
+//V  --- V
 UsersRoutes.post('/register', async (req, res) => {
     try {
         let { username, firstName, lastName, email, password, address, photo } = req.body;
         let img = null;
+        if (!address)
+            address = null;
+        let validationRes = validateNewUserData(username, firstName, lastName, email, password, address)
+        if (!validationRes.valid)
+            return res.status(400).json({ msg: validationRes.msg || 'פרטים לא תקינים' })
         if (photo) {
             let imgStr = `data:image/jpg;base64,${photo}` // sent as base64 string from the client
             img = await uploadImage(imgStr);
-            if (!img)
-                return res.status(400).json({ msg: 'העלאת התמונה נכשלה' });
+            if (!img || !isValidPhoto(img))
+                return res.status(400).json({ msg: 'התמונה שהועלתה אינה תקינה' });
         }
-        let validationRes = validateNewUserData(username, firstName, lastName, email, password, address, img)
-        if (!validationRes.valid)
-            return res.status(400).json({ msg: validationRes.msg || 'פרטים לא תקינים' })
         let newUser = await UserModel.create(username, firstName, lastName, email, password, address, img);
         return res.status(201).json(newUser);
     } catch (error) {
-        return res.status(500).json({ error, msg: 'הרשמה נכשלה' });
+        return res.status(500).json({ error: error.toString(), msg: 'הרשמה נכשלה' });
     }
 });
 
 
-//V
+//V --- V
 UsersRoutes.post('/login', async (req, res) => {
     try {
         let { email, password } = req.body;
@@ -77,7 +80,7 @@ UsersRoutes.post('/login', async (req, res) => {
 
 
 
-//V
+//V --- V 
 UsersRoutes.get('/allUsers', authenticateToken, async (req, res) => {
     try {
         let users = await UserModel.read();
@@ -91,20 +94,21 @@ UsersRoutes.get('/allUsers', authenticateToken, async (req, res) => {
     }
 });
 
-//V
-UsersRoutes.get('/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
+//V -- V 
+UsersRoutes.get('/search/byId/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
     try {
         let { _id } = req.params;
+        console.log("ID =>", _id)
         // if (!isValidObjectId(_id) || _id == null)
         //     return res.status(400).json({ msg: 'פרטים לא נכונים' });
-        let user = await UserModel.read({ _id: _id });
+        let user = await UserModel.readOne({ _id: new ObjectId(_id) });
         if (!user) // if(user == null || user == undefined)
             return res.status(404).json({ msg: "משתמש לא קיים" });
         else
             return res.status(200).json(user); // returns the document of the user as a json object.
     } catch (error) {
         console.warn('usersroute error: get /:_id')
-        return res.status(500).json({ error, msg: 'שגיאה' });
+        return res.status(500).json({ error: error.toString(), msg: 'שגיאה' });
     }
 });
 
@@ -113,13 +117,15 @@ UsersRoutes.get('/:_id', authenticateToken, validateObjectId('_id'), async (req,
 //search by name (first/last/both)
 //search by location (city, county, etc)
 
+
+//V --- V
 UsersRoutes.get('/search/:username', authenticateToken, async (req, res) => {
     try {
         let { username } = req.params;
         let validationRes = validateUserData({ username: username });
         if (!validationRes.valid)
             return res.status(400).json({ msg: validationRes.msg });
-        let user = UserModel.read({ username: username });
+        let user = await UserModel.readOne({ username: username });
         if (!user)
             return res.status(404).json({ msg: 'משתמש לא נמצא' });
         else
@@ -132,7 +138,7 @@ UsersRoutes.get('/search/:username', authenticateToken, async (req, res) => {
 
 
 
-//V
+//V ---- v 
 UsersRoutes.put('/editUser/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
     try {
         let { _id } = req.params;
@@ -148,11 +154,11 @@ UsersRoutes.put('/editUser/:_id', authenticateToken, validateObjectId('_id'), as
 
     } catch (error) {
         console.warn('usersroute error: put /editUser/:_id')
-        return res.status(500).json({ error, msg: 'שגיאה' });
+        return res.status(500).json({ error: error.toString(), msg: 'שגיאה' });
     }
 });
 
-
+//V --- V
 UsersRoutes.put('/:_id/updateStatus', authenticateToken, checkAdmin, validateObjectId('_id'), async (req, res) => {
     try {
         let { _id } = req.params;
@@ -168,14 +174,14 @@ UsersRoutes.put('/:_id/updateStatus', authenticateToken, checkAdmin, validateObj
     }
 })
 
-//V 
+//V --- V also deletes the former profile picture
 UsersRoutes.put('/:_id/changePicture', authenticateToken, validateObjectId('_id'), async (req, res) => {
     try {
         let { _id } = req.params;
-        let { photo } = req.body;
+        let { newPhoto, photo } = req.body;
         // if (!isValidObjectId(_id) || _id == null)
         //     return res.status(400).json({ msg: 'פרטים לא נכונים' });
-        let imgStr = `data:image/jpg;base64,${photo}` // sent as base64 string from the client
+        let imgStr = `data:image/jpg;base64,${newPhoto}` // sent as base64 string from the client
         let img = await uploadImage(imgStr);
         if (!isValidPhoto(img))
             return res.status(400).json({ msg: 'העלאת התמונה נכשלה' });
@@ -190,24 +196,30 @@ UsersRoutes.put('/:_id/changePicture', authenticateToken, validateObjectId('_id'
 });
 
 
-//V - make sure the user being deleted exists?
+//V ---- V also deletes the user's profile picture
 UsersRoutes.delete('/delete/:_id', authenticateToken, checkAdmin, validateObjectId('_id'), async (req, res) => {
     try {
         let { _id } = req.params;
+        let userId = new ObjectId(_id)
         // if (!isValidObjectId(_id) || _id == null)
         //     return res.status(400).json({ msg: 'פרטים לא נכונים' });
-        await UserModel.delete(_id);
-        return res.status(200).json({ msg: 'user deleted successfully' }); // **check if the user is found or not? **
+        const user = await UserModel.readOne({ _id: userId });
+        if (!user) {
+            return res.status(404).json({ msg: 'משתמש לא קיים במערכת' });
+        }
+        await removeImage(user.photo);
+        UserModel.delete(userId);
+        return res.status(200).json({ msg: 'user deleted successfully' });
     } catch (error) {
         console.warn('usersroute error: delete /delete/:_id')
-        return res.status(500).json({ error, msg: 'שגיאה' });
+        return res.status(500).json({ error: error.toString(), msg: 'שגיאה' });
     }
 });
 
 
 //Necessary???
 //V
-UsersRoutes.get('/users/:sortBy/:order', authenticateToken, async (req, res) => {
+UsersRoutes.get('/allUsers/:sortBy/:order', authenticateToken, async (req, res) => {
     try {
         let { sortBy, order } = req.params
         let validationRes = validateSort(sortBy, order);

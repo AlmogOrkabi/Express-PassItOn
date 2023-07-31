@@ -24,7 +24,7 @@ class PostModel {
         this.description = description;
         this.photos = photos;
         this.status = "available";
-        this.itemLocation_id = ObjectId(itemLocation);
+        this.itemLocation_id = new ObjectId(itemLocation);
         this.creationDate = new Date();
         this.reports = []; //new post, no reports yet.
     }

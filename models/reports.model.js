@@ -18,10 +18,10 @@ class ReportModel {
 
 
     constructor(owner_id, reportType, userReported, postReported, photos = [], description) {
-        this.owner_id = ObjectId(owner_id);
+        this.owner_id = new ObjectId(owner_id);
         this.reportType = reportType;
-        this.userReported_id = ObjectId(userReported);
-        this.postReported_id = postReported ? ObjectId(postReported) : null;
+        this.userReported_id = new ObjectId(userReported);
+        this.postReported_id = postReported ? new ObjectId(postReported) : null;
         this.status = "Submitted";
         this.photos = photos;
         this.creationDate = new Date();

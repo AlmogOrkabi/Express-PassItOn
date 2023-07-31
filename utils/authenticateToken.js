@@ -8,7 +8,7 @@ function authenticateToken(req, res, next) {
     if (token == null) return res.status(401).json({ msg: 'התנתקת מהמערכת, נא התחבר מחדש' }); // if there isn't any token
 
     jwt.verify(token, process.env.ACCESS_TOKEN, (err, user) => {
-        if (err) return res.sendStatus(403);
+        if (err) return res.status(403).json({ msg: 'גישה נדחתה' });
         req.user = user;
         next();
     })

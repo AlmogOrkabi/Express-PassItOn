@@ -28,7 +28,7 @@ const uploadImage = async (img) => {
 
     try {
         // Upload the image
-        const result = await cloudinary.uploader.upload(img, options);
+        const result = await cloudinary.uploader.upload_large(img, options);
         console.log(result);
         //return result.secure_url;
         return {
@@ -48,12 +48,12 @@ const uploadImage = async (img) => {
 //     console.log(result, error);
 // });
 
-//might not work, NEEDS TESTING
+//WORKS
 const removeImage = async (img) => {
 
     try {
         const result = await cloudinary.uploader.destroy(img.public_id);
-        console.log(result);
+        console.log("Result =>>>>", result);
         return result;
 
     } catch (error) {

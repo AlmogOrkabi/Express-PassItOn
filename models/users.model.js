@@ -28,7 +28,7 @@ class UserModel {
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.address_id = ObjectId(addressId);
+        this.address_id = addressId == null ? null : new ObjectId(addressId);
         this.photo = photo;
         this.registrationDate = new Date();
         this.activationStatus = 'פעיל';
@@ -44,7 +44,7 @@ class UserModel {
 
         let newUser = new UserModel(username, firstName, lastName, email, password, addressId, photo);
         newUser.password = await bcrypt.hash(newUser.password, 10);
-        return await new DB().Insert(collection, { ...newUser }); //returns the response from the database (successful or failed)
+        return await new DB().insert(collection, { ...newUser }); //returns the response from the database (successful or failed)
     }
 
     static async login(email, password) {
@@ -71,6 +71,16 @@ class UserModel {
         return await new DB().findAll(collection, query, { password: 0 }); // returns the entire user data excluding the password.
     }
 
+
+    static async readOne(query = {}) {
+        for (let key in query) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]) || query[key] == null)) {
+                throw new Error(`Invalid ObjectId for ${key}`);
+            }
+        }
+        return await new DB().findOne(collection, query, { password: 0 }); // returns the entire user data excluding the password.
+    }
+
     //get all users
     // static async read() {
     //     return await new DB().findAll(collection);
@@ -78,17 +88,17 @@ class UserModel {
 
 
     static async update(id, updateData) {
-        if (!isValidObjectId(id) || id == null) {
-            throw new Error('Invalid ObjectId');
-        }
-        return await new DB().updateById(collection, { _id: id }, updateData);
+        // if (!isValidObjectId(id) || id == null) {
+        //     throw new Error('Invalid ObjectId');
+        // }
+        return await new DB().updateById(collection, id, updateData);
     }
 
     static async delete(id) {
-        if (!isValidObjectId(id) || id == null) {
-            throw new Error('Invalid ObjectId');
-        }
-        return await new DB().deleteOne(collection, { _id: id });
+        // if (!isValidObjectId(id) || id == null) {
+        //     throw new Error('Invalid ObjectId');
+        // }
+        return await new DB().deleteOne(collection, id);
     }
 
     static async sort(sortBy, order) {

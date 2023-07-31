@@ -19,7 +19,7 @@ class DB {
     async findAll(collection, query = {}, project = {}) {
         try {
             await this.client.connect();
-            return await this.client.db(this.db_name).collection(collection).find(query, project).toArray();
+            return await this.client.db(this.db_name).collection(collection).find(query).project(project).toArray();
         } catch (error) {
             console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.
             throw error;
@@ -41,7 +41,9 @@ class DB {
     async findOne(collection, query = {}, project = {}) {
         try {
             await this.client.connect();
-            return await this.client.db(this.db_name).collection(collection).findOne(query, project);
+            console.log("QUERY ===>>>", query)
+            console.log("typeOfQuery ===>>>", typeof query._id)
+            return await this.client.db(this.db_name).collection(collection).findOne(query, { projection: project });
         } catch (error) {
             console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.
             throw error;
@@ -54,6 +56,7 @@ class DB {
     async insert(collection, doc) {
         try {
             await this.client.connect();
+            console.log("DB CONNECTED")
             return await this.client.db(this.db_name).collection(collection).insertOne(doc);
         } catch (error) {
             console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.
@@ -67,13 +70,13 @@ class DB {
     async updateById(collection, id, doc) {
         try {
             await this.client.connect();
-            console.log({ ...doc });
             const objectId = new ObjectId(id); //to be absolutely sure the id being passed is indeeed an objectId.
             return await this.client.db(this.db_name).collection(collection).updateOne(
                 { _id: objectId },
                 { $set: { ...doc } });
         } catch (error) {
             console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.
+            console.error(error.stack);
             throw error;
         }
         finally {
@@ -84,7 +87,8 @@ class DB {
     async deleteOne(collection, id) {
         try {
             await this.client.connect();
-            const objectId = new ObjectId(id);
+            const objectId = new ObjectId(id); //here
+            console.log("OBJECTID ==>>>", objectId)
             return await this.client.db(this.db_name).collection(collection).deleteOne({ _id: objectId });
         } catch (error) {
             console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.
@@ -119,8 +123,6 @@ class DB {
             await this.client.close();
         }
     }
-
-
-
-
 }
+
+module.exports = DB;
