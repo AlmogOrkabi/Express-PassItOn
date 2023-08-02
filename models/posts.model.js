@@ -8,6 +8,7 @@ class PostModel {
     owner_id;
     itemName;
     description;
+    category;
     photos;
     status;
     creationDate;
@@ -15,23 +16,24 @@ class PostModel {
     reports;
 
 
-    constructor(owner_id, itemName, description, itemLocation, photos = [],) {
+    constructor(owner_id, itemName, description, category, photos, itemLocation) {
         if (!isValidObjectId(owner_id) || !isValidObjectId(itemLocation)) {
             throw new Error('Invalid ObjectId');
         }
         this.owner_id = owner_id;
         this.itemName = itemName;
         this.description = description;
+        this.category = category;
         this.photos = photos;
-        this.status = "available";
+        this.status = "זמין";
         this.itemLocation_id = new ObjectId(itemLocation);
         this.creationDate = new Date();
         this.reports = []; //new post, no reports yet.
     }
 
 
-    static async create(owner_id, itemName, description, itemLocation, photos = []) {
-        let newPost = new PostModel(owner_id, itemName, description, itemLocation, photos);
+    static async create(owner_id, itemName, description, category, photos, itemLocation) {
+        let newPost = new PostModel(owner_id, itemName, description, category, photos, itemLocation);
         return await new DB().insert(collection, { ...newPost });
     }
 
@@ -57,6 +59,14 @@ class PostModel {
         return await new DB().findAll(collection, query);
     }
 
+    static async readOne(query = {}) {
+        for (let key in query) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]) || query[key] == null)) {
+                throw new Error(`Invalid ObjectId for ${key}`);
+            }
+        }
+        return await new DB().findOne(collection, query);
+    }
 
     //find all posts by a specific user
     // static async readAll(id) {
@@ -85,23 +95,25 @@ class PostModel {
 
 
     static async readByDistance(maxDistance, userCoordinates, itemName = null) {
+        console.log("posts model ==>> coordinates:",)
         let query = {
             location: {
                 $near: {
                     $geometry: {
                         type: "Point",
-                        coordinates: userCoordinates
+                        coordinates: [Number(userCoordinates[0]), Number(userCoordinates[1])]
                     },
-                    $maxDistance: maxDistance
+                    $maxDistance: Number(maxDistance) * 1000 //kilometers to meters
                 }
             }
         }
 
         let results = await new DB().findAll('addresses', query, { _id: 1 })
+        console.log('results:', results);
         let locations = results.map(location => location._id); //an array of objectIds , $in cannot work with the original results.
-
+        console.log('locations:', locations);
         let query2 = {
-            itemLocation: { $in: locations }
+            itemLocation_id: { $in: locations }
         }
         if (itemName) query2.$text = { $search: itemName };
 
@@ -113,7 +125,7 @@ class PostModel {
         let results = await new DB().findAll('addresses', { city: city }, { _id: 1 });
         let locations = results.map(location => location._id); //an array of objectIds , $in cannot work with the original results.
         let query2 = {
-            itemLocation: { $in: locations }, //searches for the location id saved inside the posts
+            itemLocation_id: { $in: locations }, //searches for the location id saved inside the posts
         }
         return await new DB().findAll(collection, query2);
     }
@@ -133,18 +145,28 @@ class PostModel {
 
 
 
-    static async update(id, updateData) {
-        if (!isValidObjectId(id)) {
-            throw new Error('Invalid ObjectId');
+    static async update(_id, updatedData) {
+        // if (!isValidObjectId(_id)) {
+        //     throw new Error('Invalid ObjectId');
+        // }
+        for (let key in updatedData) {
+            if (key.endsWith('_id')) {
+                console.log(`key: ${key}, value: ${updatedData[key]}`);
+                if ((!isValidObjectId(updatedData[key]) || updatedData[key] == null))
+                    throw new Error(`Invalid ObjectId for ${key}`);
+                else
+                    updatedData[key] = new ObjectId(updatedData[key]);
+            }
         }
-        return await new DB().updateOne(collection, { _id: id }, updateData);
+
+        return await new DB().updateById(collection, new ObjectId(_id), updatedData);
     }
 
-    static async delete(id) {
-        if (!isValidObjectId(id)) {
+    static async delete(_id) {
+        if (!isValidObjectId(_id)) {
             throw new Error('Invalid ObjectId');
         }
-        return await new DB().deleteOne(collection, { _id: id });
+        return await new DB().deleteOne(collection, _id);
     }
 
 }

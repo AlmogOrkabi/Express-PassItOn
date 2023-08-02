@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongodb');
 const DB = require('../utils/DB');
 const { isValidObjectId } = require('../utils/validations');
 const collection = 'addresses';
@@ -20,7 +21,7 @@ class AddressModel {
         this.notes = notes;
         this.location = {
             type: "Point", // a data type of mongodb 
-            coordinates: [longitude, latitude]
+            coordinates: [Number(longitude), Number(latitude)]
         }
     }
 
@@ -29,25 +30,40 @@ class AddressModel {
         return await new DB().insert(collection, { ...newAddress });
     }
 
-    static async read(id) {
-        if (!isValidObjectId(id) || id == null) {
-            throw new Error('Invalid ObjectId');
+    // static async readOne(id) {
+    //     if (!isValidObjectId(id) || id == null) {
+    //         throw new Error('Invalid ObjectId');
+    //     }
+    //     return await new DB().findOne(collection, { _id: id });
+    // }
+
+    static async readOne(query = {}) {
+        for (let key in query) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]) || query[key] == null)) {
+                throw new Error(`Invalid ObjectId for ${key}`);
+            }
         }
-        return await new DB().findOne(collection, { _id: id });
+        return await new DB().findOne(collection, query); // returns the entire user data excluding the password.
+    }
+
+    static async read(query = {}) {
+        for (let key in query) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]) || query[key] == null)) {
+                throw new Error(`Invalid ObjectId for ${key}`);
+            }
+        }
+        return await new DB().findAll(collection, query); // returns the entire user data excluding the password.
     }
 
     static async update(id, updateData) {
         if (!isValidObjectId(id) || id == null) {
             throw new Error('Invalid ObjectId');
         }
-        return await new DB().updateOne(collection, { _id: id }, updateData);
+        return await new DB().updateById(collection, new ObjectId(id), updateData);
     }
 
     static async delete(id) {
-        if (!isValidObjectId(id) || id == null) {
-            throw new Error('Invalid ObjectId');
-        }
-        return await new DB().deleteOne(collection, { _id: id });
+        return await new DB().deleteOne(collection, id);
     }
 
 }

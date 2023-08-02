@@ -143,12 +143,11 @@ UsersRoutes.put('/editUser/:_id', authenticateToken, validateObjectId('_id'), as
     try {
         let { _id } = req.params;
         let { updatedData } = req.body;
-        //if (!isValidObjectId(_id) || id == null || validateUserData(...updatedData)) // assuming that the data will be the whole object with updated details
         let validationRes = validateUserData(updatedData);
         // if (!isValidObjectId(_id) || _id == null || !validationRes.valid)
         //     return res.status(400).json({ msg: validationRes.msg || 'פרטים לא תקינים' });
-        if (!validationRes.valid)
-            return res.status(400).json({ msg: validationRes.msg });
+        if (!updatedData || !validationRes.valid)
+            return res.status(400).json({ msg: validationRes.msg || "לא התקבלו פרטים לעדכון" });
         let data = await UserModel.update(_id, updatedData);
         return res.status(200).json(data);
 
@@ -207,9 +206,10 @@ UsersRoutes.delete('/delete/:_id', authenticateToken, checkAdmin, validateObject
         if (!user) {
             return res.status(404).json({ msg: 'משתמש לא קיים במערכת' });
         }
-        await removeImage(user.photo);
+        if (user.photo)
+            await removeImage(user.photo);
         UserModel.delete(userId);
-        return res.status(200).json({ msg: 'user deleted successfully' });
+        return res.status(200).json({ msg: 'משתמש נמחק בהצלחה' });
     } catch (error) {
         console.warn('usersroute error: delete /delete/:_id')
         return res.status(500).json({ error: error.toString(), msg: 'שגיאה' });

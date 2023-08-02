@@ -22,7 +22,7 @@ class ReportModel {
         this.reportType = reportType;
         this.userReported_id = new ObjectId(userReported);
         this.postReported_id = postReported ? new ObjectId(postReported) : null;
-        this.status = "Submitted";
+        this.status = "פתוח";
         this.photos = photos;
         this.creationDate = new Date();
         this.verdict = null;

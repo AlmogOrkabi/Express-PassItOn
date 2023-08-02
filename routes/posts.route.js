@@ -1,23 +1,24 @@
 const PostsModel = require('../models/posts.model');
 const PostsRoutes = require('express').Router();
 
-const { uploadImages } = require('../functions');
-const { validateNewPostData, validatePostData, isString, validatePostSearchData, validateObjectId } = require('../utils/validations');
+const { uploadImages, removeImages, editImagesArray } = require('../functions');
+const { validateNewPostData, validatePostData, isString, validatePostSearchData, validateObjectId, isValidPostStatus } = require('../utils/validations');
 
 const { authenticateToken, checkAdmin } = require('../utils/authenticateToken');
+const { ObjectId } = require('mongodb');
 
 
 
-//V
+//V --- V also format check is working!
 PostsRoutes.post('/create', authenticateToken, async (req, res) => {
     try {
-        let { owner_id, itemName, description, photos, itemLocation } = req.body;
+        let { owner_id, itemName, description, category, photos, itemLocation_id } = req.body;
 
-        let photoUrls = await uploadImages(photos);
-        let validationRes = validateNewPostData(owner_id, itemName, description, photoUrls, itemLocation);
+        let photoUrls = await uploadImages(photos); //required
+        let validationRes = validateNewPostData(owner_id, itemName, description, category, photoUrls, itemLocation_id);
         if (!validationRes.valid)
             return res.status(400).json({ msg: validationRes.msg || 'פרטים לא תקינים' })
-        let newPost = await PostsModel.create(owner_id, itemName, description, photoUrls, itemLocation);
+        let newPost = await PostsModel.create(owner_id, itemName, description, category, photoUrls, itemLocation_id);
         return res.status(201).json(newPost);
     } catch (error) {
         return res.status(500).json({
@@ -25,14 +26,28 @@ PostsRoutes.post('/create', authenticateToken, async (req, res) => {
         });
     }
 });
+//request pattern:
 
-//V
-PostsRoutes.get('/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
+// {
+//      "owner_id": "",
+//      "itemName": "",
+//      "description": "",
+//      "category": "",
+//      "photos": [],
+//      "itemLocation_id": ""
+// }
+
+
+
+
+
+//V --- V
+PostsRoutes.get('/search/byId/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
     try {
         let { _id } = req.params;
         // if (!isValidObjectId(_id) || _id == null)
         //     res.status(400).json({ msg: 'פרטים לא נכונים' });
-        let post = await PostsModel.read({ _id: _id });
+        let post = await PostsModel.readOne(new ObjectId(_id));
         if (!post)
             return res.status(404).json({ msg: "פוסט לא נמצא" });
         else
@@ -43,7 +58,7 @@ PostsRoutes.get('/:_id', authenticateToken, validateObjectId('_id'), async (req,
     }
 });
 
-//V
+//V --- V
 PostsRoutes.get('/allPosts', authenticateToken, async (req, res) => {
     try {
         let posts = await PostsModel.read();
@@ -57,8 +72,8 @@ PostsRoutes.get('/allPosts', authenticateToken, async (req, res) => {
     }
 });
 
-//V
-PostsRoutes.get('/userPosts/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
+//V --- V 
+PostsRoutes.get('/search/byUserId/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
     try {
         let { _id } = req.params;
         // if (!isValidObjectId(_id) || _id == null)
@@ -75,8 +90,8 @@ PostsRoutes.get('/userPosts/:_id', authenticateToken, validateObjectId('_id'), a
 });
 
 
-//V
-PostsRoutes.get('/allPosts/searchByStatus/:status', authenticateToken, async (req, res) => {
+//V --- V
+PostsRoutes.get('/allPosts/searchByStatus/:postStatus', authenticateToken, async (req, res) => {
     try {
         let { postStatus } = req.params;
         let validationRes = isValidPostStatus(postStatus);
@@ -89,11 +104,12 @@ PostsRoutes.get('/allPosts/searchByStatus/:status', authenticateToken, async (re
             return res.status(200).json(posts);
     } catch (error) {
         console.warn('postsroute error: get /posts/allPosts/:status')
-        return res.status(500).json({ error, msg: 'שגיאה' });
+        return res.status(500).json({ error, msg: error.toString() });
     }
 });
 
-// V - ?maybe make the keywords an array of strings? - better for results?
+// V --- V
+// - ?maybe make the keywords an array of strings? - better for results?
 PostsRoutes.get('/allPosts/searchByKeywords/:keywords', authenticateToken, async (req, res) => {
     try {
         let { keywords } = req.params; //an array of key words maybe?
@@ -112,7 +128,8 @@ PostsRoutes.get('/allPosts/searchByKeywords/:keywords', authenticateToken, async
 
 //**************************************************************// 
 
-//V
+//we used post to keep the user's address a little more secure
+//V --- V 
 PostsRoutes.post('/search/byDistance/:maxDistance', authenticateToken, async (req, res) => {
     try {
         let { maxDistance } = req.params;
@@ -132,8 +149,8 @@ PostsRoutes.post('/search/byDistance/:maxDistance', authenticateToken, async (re
 
 });
 
-//V
-PostsRoutes.post('/search/:maxDistance/itemName', authenticateToken, async (req, res) => {
+//V --- V
+PostsRoutes.post('/search/byDistance/:maxDistance/:itemName', authenticateToken, async (req, res) => {
     try {
         let { maxDistance, itemName } = req.params;
         let { userCoordinates } = req.body;
@@ -152,7 +169,7 @@ PostsRoutes.post('/search/:maxDistance/itemName', authenticateToken, async (req,
 
 });
 
-//V
+//V --- V
 PostsRoutes.get('/search/byLocation/:city', authenticateToken, async (req, res) => {
     try {
         let { city } = req.params;
@@ -179,36 +196,57 @@ PostsRoutes.get('/search/byLocation/:city', authenticateToken, async (req, res) 
 
 
 
-//V --handle deleting or adding picures to the array!!!
+//V --- V also modifies the photos array accordingly
 PostsRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
     try {
         let { _id } = req.params;
-        // if (!isValidObjectId(_id) || _id == null)
-        //     return res.status(400).json({ msg: 'פרטים לא נכונים' });
-        let { updateData } = req.body;
-        let validationRes = validatePostData(updateData);
+        let post = await PostsModel.readOne(new ObjectId(_id));
+        if (!post)
+            return res.status(404).json({ msg: 'פוסט לא קיים במערכת' });
+        let { updatedData, toRemove, toAdd } = req.body;
+        if (Array.isArray(toRemove) && Array.isArray(toAdd)) {
+            let newPhotosArray = await editImagesArray(post.photos, toRemove, toAdd);
+            updatedData.photos = newPhotosArray;
+        }
+        let validationRes = validatePostData(updatedData);
         if (!validationRes.valid)
             return res.status(400).json({ msg: validationRes.msg || 'פרטים לא תקינים' })
-        let data = await PostsModel.update(_id, updateData);
+        let data = await PostsModel.update(_id, updatedData);
         return res.status(200).json(data);
     } catch (error) {
         console.warn('postsroute error: put /posts/edit/:_id')
-        return res.status(500).json({ error, msg: 'שגיאה' });
+        return res.status(500).json({ error, msg: error.toString() });
     }
 });
+//request format:
+// {
+//     "toRemove": []
 
-//V
+//         ,
+//         "toAdd": [],
+//             "updatedData": { }
+// }
+
+
+
+
+
+//V --- V also removes the photos from the cloud
 PostsRoutes.delete('/delete/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
     try {
         let { _id } = req.params;
-        // if (!isValidObjectId(_id) || _id == null)
-        //     return res.status(400).json({ msg: 'פרטים לא נכונים' });
-        await PostsModel.delete(_id);
+        let post = await PostsModel.readOne(new ObjectId(_id));
+        console.log(post)
+        if (!post)
+            return res.status(404).json({ msg: 'פוסט לא קיים במערכת' });
+        if (Array.isArray(post.photos) && post.photos.length > 0)
+            await removeImages(post.photos);
+        await PostsModel.delete(new ObjectId(_id));
         return res.status(200).json({ msg: 'post deleted successfully' });
         //** check if the post is found or not??? **
     } catch (error) {
         console.warn('postsroute error: delete /delete/:id')
-        return res.status(500).json({ error, msg: 'שגיאה' });
+        return res.status(500).json({ error, msg: error.toString() });
     }
 });
 

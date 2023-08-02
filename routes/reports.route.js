@@ -19,7 +19,15 @@ ReportsRoutes.post('/create', authenticateToken, async (req, res) => {
         return res.status(500).json({ error: 'יצירת דיווח נכשלה' });
     }
 });
-
+//request:
+// {
+//     "owner_id": "",
+//      "reportType": "",
+//      "userReported": "",
+//      "postReported": "",
+//      "photos": [],
+//      "description": ""
+// }
 
 //V
 ReportsRoutes.get('/searchById/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
@@ -131,11 +139,18 @@ ReportsRoutes.get('/searchByStatus/:status', authenticateToken, async (req, res)
 ReportsRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
     try {
         let { _id } = req.params;
-        let { updateData } = req.body;
-        let validationRes = validateReportData(updateData);
+        let { updatedData, toRemove, toAdd } = req.body;
+        let report = await ReportsModel.readOne(new ObjectId(_id));
+        if (!report)
+            return res.status(404).json({ msg: 'דיווח לא קיים במערכת' });
+        if (Array.isArray(toRemove) && Array.isArray(toAdd)) {
+            let newPhotosArray = await editImagesArray(report.photos, toRemove, toAdd);
+            updatedData.photos = newPhotosArray;
+        }
+        let validationRes = validateReportData(updatedData);
         if (!validationRes.valid)
             return res.status(400).json({ msg: validationRes.msg });
-        let data = await ReportsModel.update(_id, updateData);
+        let data = await ReportsModel.update(_id, updatedData);
         return res.status(200).json(data);
     } catch (error) {
         console.warn('reportsroute error: put /edit/:_id')

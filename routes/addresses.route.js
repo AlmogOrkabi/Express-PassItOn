@@ -2,13 +2,14 @@ const AddressModel = require('../models/address.model');
 const AddressRoutes = require('express').Router();
 
 
-const { validateNewAddressDetails, validateObjectId } = require('../utils/validations');
+const { validateNewAddressDetails, validateAddressData, validateObjectId } = require('../utils/validations');
 
 
 const { authenticateToken, checkAdmin } = require('../utils/authenticateToken');
+const { ObjectId } = require('mongodb');
 
 
-//V
+//V --- V
 AddressRoutes.post('/create', authenticateToken, async (req, res) => {
     try {
         let { region, city, street, house, apartment, notes, lon, lat } = req.body;
@@ -23,14 +24,14 @@ AddressRoutes.post('/create', authenticateToken, async (req, res) => {
 });
 
 
-//V
-AddressRoutes.get('/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
+//V --- V
+AddressRoutes.get('/search/byId/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
     try {
         let { _id } = req.params;
-        // if (!isValidObjectId(_id) || _id == null)
-        //     return res.status(400).json({ msg: 'פרטים לא נכונים' });
-        let address = await AddressModel.read(_id);
-        if (!Array.isArray(address) || address.length === 0)
+        let address = await AddressModel.readOne(new ObjectId(_id));
+        // if (!Array.isArray(address) || address.length === 0)
+        //     return res.status(404).json({ msg: 'כתובת לא נמצאה' })
+        if (!address)
             return res.status(404).json({ msg: 'כתובת לא נמצאה' })
         return res.status(200).json(address);
     } catch (error) {
@@ -39,7 +40,18 @@ AddressRoutes.get('/:_id', authenticateToken, validateObjectId('_id'), async (re
     }
 });
 
-
+AddressRoutes.get('/allAddresses', authenticateToken, async (req, res) => {
+    try {
+        let addresses = await AddressModel.read();
+        if (!Array.isArray(addresses) || addresses.length === 0)
+            return res.status(404).json({ msg: 'לא נמצאו כתובות מתאימות' });
+        else
+            return res.status(200).json(addresses);
+    } catch (error) {
+        console.warn('addressRoute error: get /allAddresses')
+        return res.status(500).json({ error, msg: 'שגיאה' })
+    }
+});
 
 //Methods to add:
 //search by city
@@ -48,29 +60,30 @@ AddressRoutes.get('/:_id', authenticateToken, validateObjectId('_id'), async (re
 //ADD MORE SEARCH METHODS!!!!!!!
 
 
-// Necessary? or deleter and create new
-// AddressRoutes.put('/editAddress/:_id', async (req, res) => {
-//     try {
-//         let { _id } = req.params;
-//         if (!isValidObjectId(_id) || _id == null)
-//             res.status(400).json({ msg: 'פרטים לא נכונים' });
-//         let { updatedAddress } = req.body;
-//         let data = await AddressModel.update(_id, updatedAddress);
-//         res.status(200).json(data);
-//     } catch (error) {
-//         console.warn('addressRoute error: put /editAddress/:_id')
-//         res.status(500).json({ error, msg: 'שגיאה' });
-//     }
-// });
-
-
-//V
-AddressRoutes.delete('/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
+//V --- V
+// only for house / apartment / notes update. everything else can cause mistakes (create a new address instead)
+AddressRoutes.put('/editAddress/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
     try {
         let { _id } = req.params;
-        // if (!isValidObjectId(_id) || _id == null)
-        //     res.status(400).json({ msg: 'פרטים לא נכונים' });
-        await AddressModel.delete(_id);
+        let { updatedData } = req.body;
+        let validationRes = validateAddressData(updatedData)
+        if (!updatedData || !validationRes.valid)
+            return res.status(400).json({ msg: validationRes.msg || 'לא התקבלו פרטים לעדכון' });
+        let data = await AddressModel.update(_id, updatedData);
+        console.log("DATA ===>>>   ", data);
+        res.status(200).json(data);
+    } catch (error) {
+        console.warn('addressRoute error: put /editAddress/:_id')
+        res.status(500).json({ error, msg: error.toString() });
+    }
+});
+
+
+//V --- V
+AddressRoutes.delete('/delete/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
+    try {
+        let { _id } = req.params;
+        await AddressModel.delete(new ObjectId(_id));
         return res.status(200).json({ msg: 'Success' });
     } catch (error) {
         console.warn('addressRoute error: delete')

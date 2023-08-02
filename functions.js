@@ -53,7 +53,7 @@ const removeImage = async (img) => {
 
     try {
         const result = await cloudinary.uploader.destroy(img.public_id);
-        console.log("Result =>>>>", result);
+        console.log("removeImage Result =>>>>", result);
         return result;
 
     } catch (error) {
@@ -63,4 +63,38 @@ const removeImage = async (img) => {
 
 }
 
-module.exports = { uploadImage, uploadImages, removeImage };
+// const removeImages = async (imgs) => {
+//     await Promise.all(imgs.map(async (img) => {
+//         await removeImage(img);
+//     }));
+// }
+
+
+const removeImages = async (images) => {
+    await Promise.all(images.map(async (img) => {
+        try {
+            await removeImage(img);
+        } catch (error) {
+            console.error(`Failed to remove image: ${img.public_id}`, error);
+        }
+    }));
+}
+
+
+//works
+const editImagesArray = async (photos, toRemove, toAdd) => {
+    for (let imageUrl of toRemove) {
+        // Find the photo object in the post's photos array
+        let photoToRemove = photos.find(photo => photo.url === imageUrl);
+        if (photoToRemove) {
+            let removed = await removeImage(photoToRemove);
+            if (removed) {
+                // Remove the image URL from post's photos
+                photos = photos.filter(photo => photo.url !== imageUrl);
+            }
+        }
+    }
+    let newPhotos = await uploadImages(toAdd);
+    return photos = [...photos, ...newPhotos] // when assigning like this, it is no longer by ref, it creates a new array.
+}
+module.exports = { uploadImage, uploadImages, removeImage, removeImages, editImagesArray };

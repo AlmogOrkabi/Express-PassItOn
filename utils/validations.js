@@ -10,8 +10,7 @@ function isValidEmail(email) {
 }
 
 function isString(str) {
-    console.log(str != null, typeof str == 'string');
-    return str != null && typeof str == 'string';
+    return str != null && typeof str == 'string' && str.trim().length > 0; // checks the string is not empty and is not composed only of white spaces
 }
 
 function isValidPassword(password) {
@@ -57,7 +56,8 @@ function isValidPhotosArray(photoUrls) {
 
 function isValidName(name) {
     //const hebOReng = /^[A-Za-z\u0590-\u05FF ]+$/; // checks for letters in hebrew and english only
-    const hebOReng = /^[A-Za-z\u0590-\u05FF \'']+$/; //also checks for the char '
+    //const hebOReng = /^[A-Za-z\u0590-\u05FF \'']+$/; //also checks for the char '
+    const hebOReng = /^[A-Za-z\u0590-\u05FF '-]+$/; //also checks for the char -
     return (isValidUserName(name) && hebOReng.test(name))
 }
 
@@ -132,8 +132,8 @@ function validateUserData(updatedData) {
                     return { valid: false, msg: 'הסיסמה אינה תקינה' };
                 }
                 break;
-            case 'address':
-                if (!isValidObjectId(updatedData.address)) {
+            case 'address_id':
+                if (!isValidObjectId(updatedData.address_id)) {
                     return { valid: false, msg: 'הכתובת אינה תקינה' };
                 }
                 break;
@@ -164,6 +164,16 @@ function isValidUserStatus(userStatus) {
 //         return true;
 // }
 
+function isValidPostCategory(category) {
+    const validPostCategories = ['ריהוט', 'מכשור חשמלי', 'כלי מטבח', 'כלי בית', 'צעצועים/משחקים', 'ספרים', 'ביגוד', 'כלי עבודה', 'ציוד ספורט וקמפינג', 'ציוד משרדי', 'פרטי תינוקות', 'יצירה', 'עיצוב הבית', 'ציוד לחיות מחמד', 'כלי נגינה', 'ציוד רפואי', 'טיפוח', 'תיקים', 'ציוד לבית הספר']
+
+    if (!isString(category) || !validPostCategories.includes(category)) {
+        return false;
+    }
+    else
+        return true;
+}
+
 function isValidItemName(itemName) {
     if (!isString(itemName) || itemName.length > 50)
         return false;
@@ -171,7 +181,7 @@ function isValidItemName(itemName) {
         return true;
 }
 
-function validateNewPostData(owner_id, itemName, description, photoUrls, itemLocation) {
+function validateNewPostData(owner_id, itemName, description, category, photoUrls, itemLocation_id) {
     if (!isValidObjectId(owner_id) || owner_id == null) {
         return { valid: false, msg: 'שגיאה בהעלעת הפוסט' };
     }
@@ -181,10 +191,13 @@ function validateNewPostData(owner_id, itemName, description, photoUrls, itemLoc
     if (!isString(description) || description.length > 300) {
         return { valid: false, msg: 'תיאור פריט אינו תקין' };
     }
+    if (!isValidPostCategory(category)) {
+        return { valid: false, msg: 'קטגורית הפריט אינה תקינה' };
+    }
     if (!isValidPhotosArray(photoUrls)) {
         return { valid: false, msg: 'תמונת הפריט אינה תקינה' };
     }
-    if (!isValidObjectId(itemLocation)) {
+    if (!isValidObjectId(itemLocation_id)) {
         return { valid: false, msg: 'הכתובת אינה תקינה' };
     }
 
@@ -198,33 +211,43 @@ function validatePostData(updatedData) {
     for (let field of fieldsToUpdate) {
         switch (field) {
             case 'owner_id':
-                if (!isValidObjectId(owner_id) || owner_id == null) {
+                if (!isValidObjectId(updatedData.owner_id) || updatedData.owner_id == null) {
                     return { valid: false, msg: 'שגיאה בהעלעת הפוסט' };
                 }
                 break;
             case 'itemName':
-                if (!isValidItemName(itemName)) {
+                if (!isValidItemName(updatedData.itemName)) {
                     return { valid: false, msg: 'שם פריט אינו תקין' };
                 }
                 break;
             case 'description':
-                if (!isString(description) || description.length > 300) {
+                if (!isString(updatedData.description) || updatedData.description.length > 300) {
                     return { valid: false, msg: 'תיאור פריט אינו תקין' };
                 }
                 break;
+            case 'category':
+                if (!isValidPostCategory(updatedData.category)) {
+                    return { valid: false, msg: 'קטגורית הפריט אינה תקינה' };
+                }
+                break;
             case 'photoUrls':
-                if (!isValidPhotosArray(photoUrls)) {
+                if (!isValidPhotosArray(updatedData.photoUrls)) {
                     return { valid: false, msg: 'תמונת הפריט אינה תקינה' };
                 }
                 break;
-            case 'itemLocation':
-                if (!isValidObjectId(itemLocation)) {
+            case 'itemLocation_id':
+                if (!isValidObjectId(updatedData.itemLocation_id) || updatedData.itemLocation_id == null) {
                     return { valid: false, msg: 'הכתובת אינה תקינה' };
                 }
                 break;
             case 'status':
-                if (!isValidPostStatus(postStatus)) {
+                if (!isValidPostStatus(updatedData.postStatus)) {
                     return { valid: false, msg: 'סטטוס לא תקין' };
+                }
+                break;
+            case 'photos':
+                if (!isValidPhotosArray(updatedData.photos)) {
+                    return { valid: false, msg: 'תמונות לא תקינות' };
                 }
                 break;
             default:
@@ -235,7 +258,7 @@ function validatePostData(updatedData) {
 }
 
 function isValidPostStatus(postStatus) {
-    let validStatuses = ['זמין למסירה', 'לא זמין למסירה', 'בתהליך מסירה', 'נמסר', 'סגור', 'מבוטל', 'בבדיקת מנהל']
+    const validStatuses = ['זמין', 'לא זמין למסירה', 'בתהליך מסירה', 'נמסר', 'סגור', 'מבוטל', 'בבדיקת מנהל']
 
     if (!isString(postStatus) || !validStatuses.includes(postStatus)) {
         return { valid: false, msg: 'סטטוס לא תקין' }
@@ -249,10 +272,10 @@ function validatePostSearchData(maxDistance, userCoordinates, itemName = null) {
         if (!isValidItemName(itemName))
             return { valid: false, msg: 'שם פריט לא תקין' };
     }
-    if (typeof maxDistance !== 'number') {
+    if (!isNumber(maxDistance)) {
         return { valid: false, msg: 'מרחק מקסימלי לא תקין' };
     }
-    if (!isValidCoordinates(userCoordinates)) {
+    if (!isValidCoordinates(userCoordinates[0], userCoordinates[1])) {
         return { valid: false, msg: 'מיקום נוכחי לא תקין' };
     }
     return { valid: true };
@@ -341,38 +364,34 @@ function validateReportData(data) {
     for (let field of fieldsToUpdate) {
         switch (field) {
             case 'owner_id':
-                if (!isValidObjectId(owner_id) || owner_id == null) {
+                if (!isValidObjectId(data.owner_id) || data.owner_id == null) {
                     return { valid: false, msg: 'שגיאה בהעלעת הפוסט' };
                 }
                 break;
             case 'reportType':
-                if (!isValidReportType(itemName)) {
+                if (!isValidReportType(data.itemName)) {
                     return { valid: false, msg: 'סיבת דיווח לא תקינה' };
                 }
                 break;
             case 'description':
-                if (!isString(description) || description.length > 300) {
+                if (!isString(data.description) || data.description.length > 300) {
                     return { valid: false, msg: 'פירוט דיווח אינו תקין' };
                 }
                 break;
-            case 'photoUrls':
-                if (!isValidPhotosArray(photoUrls)) {
+            case 'photots':
+                if (!isValidPhotosArray(data.photots)) {
                     return { valid: false, msg: 'תמונה אינה תקינה' };
                 }
                 break;
             case 'userReported':
-                if (!isValidObjectId(userReported) || userReported == null) {
+                if (!isValidObjectId(data.userReported) || data.userReported == null) {
                     return { valid: false, msg: 'שגיאה' };  //chage this
                 }
                 break;
             case 'postReported':
-                if (!isValidObjectId(postReported)) { //can be null
+                if (!isValidObjectId(data.postReported)) { //can be null
                     return { valid: false, msg: 'שגיאה' }; //change this
                 }
-                // case 'status':
-                //     if (!isValidReportStatus(postReported)) {
-                //         return { valid: false, msg: 'סטטוס לא תקין' };
-                //     }
                 break;
             default:
                 return { valid: false, msg: `Unexpected field: ${field}` };
@@ -400,17 +419,16 @@ function isNumber(num) {
 //     return Array.isArray(coordinates) && coordinates.length == 2 && isNumber(coordinates[0]) && isNumber(coordinates[1]) && coordinates[0] >= -180 && coordinates[0] <= 180 && coordinates[1] >= -90 && coordinates[1] <= 90;
 // }
 
+function isNumber(value) {
+    return value !== 0 && isFinite(value);
+    // isFinite - a function in javascript that checks if a value is an actual valid number (accepts strings as well) - will treat empty strings and white spaces as 0!!!
+}
 
 function isValidCoordinates(lon, lat) {
     return isNumber(lon) && isNumber(lat) && lon >= -180 && lon <= 180 && lat >= -90 && lat <= 90;
 }
 
-// function validateNewAddressDetails(region, city, street, house, apartment, notes, location) {
-//     if (!isString(region) || !isString(city) || !isString(street) || !isNumber(house) || !isNumber(apartment) || !isString(notes) || notes.length < 101 || !isValidLocation(location))
-//         throw new Error("פרטים לא תקינים");
-//     else
-//         return true;
-// }
+
 
 
 function validateNewAddressDetails(region, city, street, house, apartment, notes, lon, lat) {
@@ -439,6 +457,35 @@ function validateNewAddressDetails(region, city, street, house, apartment, notes
     return { valid: true };
 }
 
+
+
+
+function validateAddressData(updatedData) {
+    let fieldsToUpdate = Object.keys(updatedData);
+
+    for (let field of fieldsToUpdate) {
+        switch (field) {
+            case 'apartment':
+                if (!isNumber(updatedData.apartment) && apartment != nul) { // can be null (private house/ not an apartment building)
+                    return { valid: false, msg: 'קלט לא תקין' };
+                }
+                break;
+            case 'house':
+                if (!isNumber(updatedData.house)) {
+                    return { valid: false, msg: 'קלט לא תקין' };
+                }
+                break;
+            case 'notes':
+                if (!isString(updatedData.notes) || updatedData.notes.length > 100) {
+                    return { valid: false, msg: 'תיאור לא תקין או ארוך מידי' };
+                }
+                break;
+            default:
+                return { valid: false, msg: `Unexpected field: ${field}` };
+        }
+    }
+    return { valid: true };
+}
 
 //NO EDITS YET - NOT SURE IF NECESSARY
 
@@ -504,4 +551,4 @@ function validateObjectId(paramNames) {
 
 
 
-module.exports = { isValidObjectId, isString, validateSort, validateNewUserData, validateUserData, isValidUserStatus, validateNewPostData, validatePostData, validatePostSearchData, validateNewReportData, validateReportData, isValidReportStatus, validateNewAddressDetails, isValidPhoto, validateObjectId }
+module.exports = { isValidObjectId, isString, validateSort, validateNewUserData, validateUserData, isValidUserStatus, validateNewPostData, validatePostData, validatePostSearchData, isValidPostStatus, validateNewReportData, validateReportData, isValidReportStatus, validateNewAddressDetails, validateAddressData, isValidPhoto, validateObjectId }

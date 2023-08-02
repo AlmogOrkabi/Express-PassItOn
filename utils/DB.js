@@ -18,6 +18,7 @@ class DB {
 
     async findAll(collection, query = {}, project = {}) {
         try {
+            console.log("QUERY =>", query)
             await this.client.connect();
             return await this.client.db(this.db_name).collection(collection).find(query).project(project).toArray();
         } catch (error) {
@@ -41,8 +42,8 @@ class DB {
     async findOne(collection, query = {}, project = {}) {
         try {
             await this.client.connect();
-            console.log("QUERY ===>>>", query)
-            console.log("typeOfQuery ===>>>", typeof query._id)
+            // console.log("QUERY ===>>>", query)
+            // console.log("typeOfQuery ===>>>", typeof query._id)
             return await this.client.db(this.db_name).collection(collection).findOne(query, { projection: project });
         } catch (error) {
             console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.
@@ -88,7 +89,6 @@ class DB {
         try {
             await this.client.connect();
             const objectId = new ObjectId(id); //here
-            console.log("OBJECTID ==>>>", objectId)
             return await this.client.db(this.db_name).collection(collection).deleteOne({ _id: objectId });
         } catch (error) {
             console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.

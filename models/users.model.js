@@ -87,11 +87,20 @@ class UserModel {
     // }
 
 
-    static async update(id, updateData) {
-        // if (!isValidObjectId(id) || id == null) {
-        //     throw new Error('Invalid ObjectId');
-        // }
-        return await new DB().updateById(collection, id, updateData);
+    static async update(_id, updatedData) {
+        for (let key in updatedData) {
+            if (key.endsWith('_id')) {
+                console.log(`key: ${key}, value: ${updatedData[key]}`);
+                if ((!isValidObjectId(updatedData[key]) || updatedData[key] == null))
+                    throw new Error(`Invalid ObjectId for ${key}`);
+                else
+                    updatedData[key] = new ObjectId(updatedData[key]);
+            }
+        }
+        if (updatedData.password) {
+            updatedData.password = await bcrypt.hash(updatedData.password, 10)
+        }
+        return await new DB().updateById(collection, _id, updatedData);
     }
 
     static async delete(id) {
