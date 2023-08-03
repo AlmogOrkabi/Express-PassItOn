@@ -35,11 +35,11 @@ class ReportModel {
         if (!isValidObjectId(owner_id) || owner_id == null || !isValidObjectId(userReported) || userReported == null || !isValidObjectId(postReported)) {
             throw new Error('Invalid ObjectId');
         }
-        let newReport = new ReportModel(owner_id, reportType, userReported, postReported, photos);
+        let newReport = new ReportModel(owner_id, reportType, userReported, postReported, photos, description);
         return await new DB().insert(collection, { ...newReport });
     }
 
-    static async read(query) {
+    static async read(query = {}) {
         for (let key in query) {
             if (key.endsWith('_id') && (!isValidObjectId(query[key]) || query[key] == null)) {
                 throw new Error(`Invalid ObjectId for ${key}`);
@@ -57,8 +57,13 @@ class ReportModel {
     //     return await new DB().findOne(collection, { _id: id });
     // }
 
-    static async read() {
-        return await new DB().findAll(collection);
+    static async readOne(query = {}) {
+        for (let key in query) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]) || query[key] == null)) {
+                throw new Error(`Invalid ObjectId for ${key}`);
+            }
+        }
+        return await new DB().findOne(collection, query);
     }
 
     // static async readByOwner(owner_id) {
@@ -97,18 +102,19 @@ class ReportModel {
     //find by verdict *??????*
 
 
-    static async update(id, updateData) {
-        if (!isValidObjectId(id) || id == null) {
+    static async update(_id, updateData) {
+        if (!isValidObjectId(_id) || _id == null) {
             throw new Error('Invalid ObjectId');
         }
-        return await new DB().updateOne(collection, { _id: id }, updateData);
+        updateData.updateDate = new Date();
+        return await new DB().updateById(collection, new ObjectId(_id), updateData);
     }
 
-    static async delete(id) {
-        if (!isValidObjectId(id) || id == null) {
+    static async delete(_id) {
+        if (!isValidObjectId(_id) || _id == null) {
             throw new Error('Invalid ObjectId');
         }
-        return await new DB().deleteOne(collection, { _id: id });
+        return await new DB().deleteOne(collection, _id);
     }
 
 }

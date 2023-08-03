@@ -49,7 +49,8 @@ function isValidPhoto(photo) {
 }
 
 function isValidPhotosArray(photoUrls) {
-
+    console.log("PHOTOS:")
+    console.log(photoUrls)
     //checks if the input is correctly formatted (array) first
     return Array.isArray(photoUrls) && photoUrls.every(isValidPhoto); // true if all urls are valid, false if even one is not.
 }
@@ -74,8 +75,12 @@ function isValidUserName(name) {
 //         return true;
 // }
 
-function validateNewUserData(username, firstName, lastName, email, password, address, photo) {
-    console.log(username, firstName, lastName, email, password, address, photo, '11');
+function isValidPhoneNumber(phoneNumber) {
+    //return /^05\d*$/.test(phoneNumber) && phoneNumber.length == 10;
+    return /^05\d{8}$/.test(phoneNumber); // starts with 05, and has exactly 10 characters (8 after 05). ^ - start of a line. & - end of a line.
+}
+
+function validateNewUserData(username, firstName, lastName, phoneNumber, email, password, address, photo) {
     if (!isValidUserName(username)) {
         return { valid: false, msg: 'שם המשתמש אינו תקין' };
     }
@@ -91,9 +96,9 @@ function validateNewUserData(username, firstName, lastName, email, password, add
     if (!isValidPassword(password)) {
         return { valid: false, msg: 'הסיסמה אינה תקינה' };
     }
-    // if (photo != null && !isValidPhoto(photo)) {
-    //     return { valid: false, msg: 'תמונת הפרופיל אינה תקינה' };
-    // }
+    if (!isValidPhoneNumber(phoneNumber)) {
+        return { valid: false, msg: 'מספר הטלפון שהוכנס אינו תקין' };
+    }
     if (!isValidObjectId(address)) {
         return { valid: false, msg: 'הכתובת אינה תקינה' };
     }
@@ -120,6 +125,11 @@ function validateUserData(updatedData) {
             case 'lastName':
                 if (!isValidName(updatedData.lastName)) {
                     return { valid: false, msg: 'שם משפחה אינו תקין' };
+                }
+                break;
+            case 'phoneNumber':
+                if (!isValidPhoneNumber(updatedData.phoneNumber)) {
+                    return { valid: false, msg: 'מספר הטלפון שהוכנס אינו תקין' };
                 }
                 break;
             case 'email':
@@ -317,7 +327,7 @@ function isValidReportType(reportType) {
 }
 
 function isValidReportStatus(reportStatus) {
-    let validStatuses = ['פתוח', 'בטיפול מנהל', 'בבירור', 'סגור'];
+    const validStatuses = ['פתוח', 'בטיפול מנהל', 'בבירור', 'סגור'];
 
     if (!isString(reportStatus) || !validStatuses.includes(reportStatus)) {
         return { valid: false, msg: 'סטטוס לא תקין' }
@@ -393,6 +403,11 @@ function validateReportData(data) {
                     return { valid: false, msg: 'שגיאה' }; //change this
                 }
                 break;
+            case 'photos':
+                if (!isValidPhotosArray(data.photos)) {
+                    return { valid: false, msg: 'תמונה לא תקינה' };
+                }
+                break;
             default:
                 return { valid: false, msg: `Unexpected field: ${field}` };
         }
@@ -402,9 +417,6 @@ function validateReportData(data) {
 
 //_____________________ADDRESSES________________________________//
 
-function isNumber(num) {
-    return typeof num === 'number';
-}
 
 // function isValidLocation(location) {
 //     return typeof location === 'object' && location.type === 'Point' && Array.isArray(location.coordinates) && location.coordinates.length == 2 && isNumber(location.coordinates[0]) && isNumber(location.coordinates[1]) && location.coordinates[0] >= -180 && location.coordinates[0] <= 180 && location.coordinates[1] >= -90 && location.coordinates[1] <= 90;

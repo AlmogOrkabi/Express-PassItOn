@@ -63,12 +63,6 @@ const removeImage = async (img) => {
 
 }
 
-// const removeImages = async (imgs) => {
-//     await Promise.all(imgs.map(async (img) => {
-//         await removeImage(img);
-//     }));
-// }
-
 
 const removeImages = async (images) => {
     await Promise.all(images.map(async (img) => {

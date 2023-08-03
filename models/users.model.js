@@ -10,6 +10,7 @@ class UserModel {
     username;
     firstName;
     lastName;
+    phoneNumber;
     email;
     password;
     address_id;
@@ -19,13 +20,14 @@ class UserModel {
     role; //user / admin
 
 
-    constructor(username, firstName, lastName, email, password, addressId = null, photo = null) {
+    constructor(username, firstName, lastName, phoneNumber, email, password, addressId = null, photo = null) {
         if (!isValidObjectId(addressId)) {
             throw new Error('Invalid ObjectId');
         }
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
         this.email = email;
         this.password = password;
         this.address_id = addressId == null ? null : new ObjectId(addressId);

@@ -13,11 +13,11 @@ const { ObjectId } = require('mongodb');
 //V  --- V
 UsersRoutes.post('/register', async (req, res) => {
     try {
-        let { username, firstName, lastName, email, password, address, photo } = req.body;
+        let { username, firstName, lastName, phoneNumber, email, password, address, photo } = req.body;
         let img = null;
         if (!address)
             address = null;
-        let validationRes = validateNewUserData(username, firstName, lastName, email, password, address)
+        let validationRes = validateNewUserData(username, firstName, lastName, phoneNumber, email, password, address)
         if (!validationRes.valid)
             return res.status(400).json({ msg: validationRes.msg || 'פרטים לא תקינים' })
         if (photo) {
