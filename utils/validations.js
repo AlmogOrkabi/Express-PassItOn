@@ -62,8 +62,8 @@ function isValidPhotosArray(photoUrls) {
 //     return (isValidUserName(name) && hebOReng.test(name))
 // }
 export function isValidName(name) {
-    //const hebOReng = /^[A-Za-z\u0590-\u05FF '-]+$/; //checks for letters in hebrew and english only.also checks for the chars ' and -
-    const hebOReng = /^[\u0590-\u05FFa-zA-Z '-]+$/;
+    const hebOReng = /^[A-Za-z\u0590-\u05FF '-]+$/; //checks for letters in hebrew and english only.also checks for the chars ' and -
+    //const hebOReng = /^[\u0590-\u05FFa-zA-Z '-]+$/;
 
     return (isValidUserName(name) && hebOReng.test(name))
 }
