@@ -462,9 +462,9 @@ function validateNewAddressDetails(region, city, street, house, apartment, notes
     if (!isValidCoordinates(lon, lat)) {
         return { valid: false, msg: 'קלט לא תקין' };
     }
-    if (typeof notes !== 'string' || notes.length > 100) {
-        return { valid: false, msg: 'תיאור לא תקין או ארוך מידי' };
-    }
+    // if (typeof notes != 'string' || notes.length > 100) {
+    //     return { valid: false, msg: 'תיאור לא תקין או ארוך מידי' };
+    // }
     if (!isString(simplifiedAddress) || simplifiedAddress.length > 51) {
         return { valid: false, msg: 'קלט לא תקין' };
     }
