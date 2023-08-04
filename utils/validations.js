@@ -63,7 +63,7 @@ function isValidName(name) {
 }
 
 function isValidUserName(name) {
-    return (isString(name) && name.length > 0 && name.length < 31);
+    return (isString(name) && name.length < 31);
 }
 
 // function validateUserData(username, firstName, lastName, email, password, address, photo) {
