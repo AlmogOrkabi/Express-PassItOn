@@ -29,7 +29,7 @@ UsersRoutes.post('/register', async (req, res) => {
         let newUser = await UserModel.create(username, firstName, lastName, email, password, address, img);
         return res.status(201).json(newUser);
     } catch (error) {
-        return res.status(500).json({ error: error.toString(), msg: 'הרשמה נכשלה' });
+        return res.status(500).json({ error: error.toString(), msg: 'הרשמה נכשלה' + error.toString() });
     }
 });
 
