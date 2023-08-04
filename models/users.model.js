@@ -42,9 +42,9 @@ class UserModel {
 
     //add a new user to the DB:
 
-    static async create(username, firstName, lastName, email, password, addressId = null, photo = null) {
+    static async create(username, firstName, lastName, phoneNumber, email, password, addressId = null, photo = null) {
 
-        let newUser = new UserModel(username, firstName, lastName, email, password, addressId, photo);
+        let newUser = new UserModel(username, firstName, lastName, phoneNumber, email, password, addressId, photo);
         newUser.password = await bcrypt.hash(newUser.password, 10);
         return await new DB().insert(collection, { ...newUser }); //returns the response from the database (successful or failed)
     }

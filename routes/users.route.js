@@ -27,7 +27,7 @@ UsersRoutes.post('/register', async (req, res) => {
             if (!img || !isValidPhoto(img))
                 return res.status(400).json({ msg: 'התמונה שהועלתה אינה תקינה' });
         }
-        let newUser = await UserModel.create(username, firstName, lastName, email, password, address, img);
+        let newUser = await UserModel.create(username, firstName, lastName, phoneNumber, email, password, address, img);
         return res.status(201).json(newUser);
     } catch (error) {
         return res.status(500).json({ error: error.toString(), msg: 'הרשמה נכשלה' + error.toString() });
