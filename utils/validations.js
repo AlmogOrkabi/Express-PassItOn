@@ -55,12 +55,19 @@ function isValidPhotosArray(photoUrls) {
     return Array.isArray(photoUrls) && photoUrls.every(isValidPhoto); // true if all urls are valid, false if even one is not.
 }
 
-function isValidName(name) {
-    //const hebOReng = /^[A-Za-z\u0590-\u05FF ]+$/; // checks for letters in hebrew and english only
-    //const hebOReng = /^[A-Za-z\u0590-\u05FF \'']+$/; //also checks for the char '
-    const hebOReng = /^[A-Za-z\u0590-\u05FF '-]+$/; //also checks for the char -
+// function isValidName(name) {
+//     //const hebOReng = /^[A-Za-z\u0590-\u05FF ]+$/; // checks for letters in hebrew and english only
+//     //const hebOReng = /^[A-Za-z\u0590-\u05FF \'']+$/; //also checks for the char '
+//     const hebOReng = /^[A-Za-z\u0590-\u05FF '-]+$/; //also checks for the char -
+//     return (isValidUserName(name) && hebOReng.test(name))
+// }
+export function isValidName(name) {
+    const hebOReng = /^[A-Za-z\u0590-\u05FF '-]+$/; //checks for letters in hebrew and english only.also checks for the chars ' and -
+    //const hebOReng = /^[\u0590-\u05FFa-zA-Z '-]+$/;
+
     return (isValidUserName(name) && hebOReng.test(name))
 }
+
 
 function isValidUserName(name) {
     return (isString(name) && name.length < 31);
