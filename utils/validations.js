@@ -23,7 +23,7 @@ function isValidPassword(password) {
     //5. must have at least one digit.
     //6. can include special characters, but it is not a requirement.
 
-    if (!isString(password) || password.length < 8 && password.length > 16) {
+    if (!isString(password) || password.length < 8 || password.length > 16) {
         return false;
     }
     const uppercaseRegex = /[A-Z]/;
@@ -443,7 +443,7 @@ function isValidCoordinates(lon, lat) {
 
 
 
-function validateNewAddressDetails(region, city, street, house, apartment, notes, lon, lat) {
+function validateNewAddressDetails(region, city, street, house, apartment, notes, simplifiedAddress, lon, lat) {
     if (!isString(region)) {
         return { valid: false, msg: 'קלט לא תקין' };
     }
@@ -464,6 +464,9 @@ function validateNewAddressDetails(region, city, street, house, apartment, notes
     }
     if (!isString(notes) || notes.length > 100) {
         return { valid: false, msg: 'תיאור לא תקין או ארוך מידי' };
+    }
+    if (!isString(simplifiedAddress) || simplifiedAddress.length > 51) {
+        return { valid: false, msg: 'קלט לא תקין' };
     }
 
     return { valid: true };

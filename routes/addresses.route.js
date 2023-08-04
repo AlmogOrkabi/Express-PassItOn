@@ -10,13 +10,13 @@ const { ObjectId } = require('mongodb');
 
 
 //V --- V
-AddressRoutes.post('/create', authenticateToken, async (req, res) => {
+AddressRoutes.post('/create', async (req, res) => {
     try {
-        let { region, city, street, house, apartment, notes, lon, lat } = req.body;
-        let validationRes = validateNewAddressDetails(region, city, street, house, apartment, notes, lon, lat);
+        let { region, city, street, house, apartment, notes, simplifiedAddress, lon, lat } = req.body;
+        let validationRes = validateNewAddressDetails(region, city, street, house, apartment, notes, simplifiedAddress, lon, lat);
         if (!validationRes.valid)
             return res.status(400).json({ msg: validationRes.msg });
-        let newAddress = await AddressModel.create(region, city, street, house, apartment, notes, lon, lat);
+        let newAddress = await AddressModel.create(region, city, street, house, apartment, notes, simplifiedAddress, lon, lat);
         return res.status(201).json(newAddress);
     } catch (error) {
         return res.status(500).json({ error, msg: 'שגיאה' })

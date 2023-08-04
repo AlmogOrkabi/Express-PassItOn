@@ -11,22 +11,24 @@ class AddressModel {
     apartment;
     notes;
     location;
+    simplifiedAddress;
 
-    constructor(region, city, street, house, apartment, notes, longitude, latitude) {
+    constructor(region, city, street, house, apartment, notes, simplifiedAddress, longitude, latitude) {
         this.region = region;
         this.city = city;
         this.street = street;
         this.house = house;
         this.apartment = apartment;
         this.notes = notes;
+        this.simplifiedAddress = simplifiedAddress;
         this.location = {
             type: "Point", // a data type of mongodb 
             coordinates: [Number(longitude), Number(latitude)]
         }
     }
 
-    static async create(region, city, street, house, apartment, notes, longitude, latitude) {
-        let newAddress = new AddressModel(region, city, street, house, apartment, notes, longitude, latitude);
+    static async create(region, city, street, house, apartment, notes, simplifiedAddress, longitude, latitude) {
+        let newAddress = new AddressModel(region, city, street, house, apartment, notes, simplifiedAddress, longitude, latitude);
         return await new DB().insert(collection, { ...newAddress });
     }
 
