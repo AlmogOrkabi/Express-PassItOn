@@ -21,8 +21,8 @@ UsersRoutes.post('/register', async (req, res) => {
         if (!validationRes.valid)
             return res.status(400).json({ msg: validationRes.msg || 'פרטים לא תקינים' })
         if (photo) {
-            let imgStr = `data:image/jpg;base64,${photo}` // sent as base64 string from the client
-            img = await uploadImage(imgStr);
+            // let imgStr = `data:image/jpg;base64,${photo}` // sent as base64 string from the client
+            img = await uploadImage(photo);
             if (!img || !isValidPhoto(img))
                 return res.status(400).json({ msg: 'התמונה שהועלתה אינה תקינה' });
         }
