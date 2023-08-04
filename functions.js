@@ -4,8 +4,8 @@ const cloudinary = require('cloudinary').v2;
 const uploadImages = async (photos) => {
 
     let photoUrls = await Promise.all(photos.map(async (photo) => {
-        let imgStr = `data:image/jpg;base64,${photo}`; // assuming each photo is sent as base64 string from the client
-        let img = await uploadImage(imgStr);
+        //let imgStr = `data:image/jpg;base64,${photo}`; // assuming each photo is sent as base64 string from the client
+        let img = await uploadImage(photo);
         return img;
     }));
     return photoUrls;
