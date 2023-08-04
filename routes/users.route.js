@@ -14,6 +14,7 @@ const { ObjectId } = require('mongodb');
 UsersRoutes.post('/register', async (req, res) => {
     try {
         let { username, firstName, lastName, phoneNumber, email, password, address, photo } = req.body;
+        console.log("username: " + username, "firstName: " + firstName, "lastName: " + lastName, "phoneNumber: " + phoneNumber, "email: " + email, "password: " + password, "address:" + address)
         let img = null;
         if (!address)
             address = null;
