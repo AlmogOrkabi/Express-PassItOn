@@ -170,6 +170,24 @@ PostsRoutes.post('/search/byDistance/:maxDistance/:itemName', authenticateToken,
 });
 
 //V --- V
+PostsRoutes.get('/search/byLocation/:city', authenticateToken, async (req, res) => {
+    try {
+        let { city } = req.params;
+        if (!isString(city) || city.length < 1)
+            return res.status(400).json({ msg: 'קלט לא תקין' })
+        let posts = await PostsModel.readByCity(city);
+        if (!Array.isArray(posts) || posts.length === 0)
+            return res.status(404).json({ msg: "לא נמצאו פריטים מתאימים לחיפוש" });
+        else
+            return res.status(200).json(posts);
+    } catch (error) {
+        console.warn('postsroute error: get/search/:city');
+        return res.status(500).json({ error, msg: 'שגיאה' });
+    }
+});
+
+
+
 //ADDED ITEMNAME - NEED TO ADD VALIDATIONS!!
 PostsRoutes.get('/search/byLocation/:city/:itemName', authenticateToken, async (req, res) => {
     try {
