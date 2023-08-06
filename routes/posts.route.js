@@ -170,12 +170,13 @@ PostsRoutes.post('/search/byDistance/:maxDistance/:itemName', authenticateToken,
 });
 
 //V --- V
+//ADDED ITEMNAME - NEED TO ADD VALIDATIONS!!
 PostsRoutes.get('/search/byLocation/:city/:itemName', authenticateToken, async (req, res) => {
     try {
         let { city, itemName } = req.params;
         if (!isString(city) || city.length < 1)
             return res.status(400).json({ msg: 'קלט לא תקין' })
-        let posts = await PostsModel.readByCity(city);
+        let posts = await PostsModel.readByCity(city, itemName);
         if (!Array.isArray(posts) || posts.length === 0)
             return res.status(404).json({ msg: "לא נמצאו פריטים מתאימים לחיפוש" });
         else
