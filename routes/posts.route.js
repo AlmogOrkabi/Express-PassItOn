@@ -233,8 +233,8 @@ PostsRoutes.get('/search/byCategory/:category/:itenName', authenticateToken, asy
         let { category, itemName } = req.params;
         if (!isValidPostCategory(category))
             return res.status(400).json({ msg: 'קלט לא תקין' })
-        //let query = { category: category, $text :{ $search: itemName } }
-        let posts = await PostsModel.read({ category: category, $text: { $search: itemName } })
+        let query = { category: category, $text: { $search: itemName } }
+        let posts = await PostsModel.read(query);
         if (!Array.isArray(posts) || posts.length === 0)
             return res.status(404).json({ msg: "לא נמצאו פריטים מתאימים לחיפוש" });
         else
