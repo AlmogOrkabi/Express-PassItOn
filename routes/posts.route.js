@@ -228,7 +228,7 @@ PostsRoutes.get('/search/byCategory/:category', authenticateToken, async (req, r
 //$text = { $search: itemName }
 
 //ADDED ITEMNAME - NEED ADD VALIDATIONS!!!
-PostsRoutes.get('/search/byCategory/:category/:itenName', authenticateToken, async (req, res) => {
+PostsRoutes.get('/search/byCategory/:category/:itemName', authenticateToken, async (req, res) => {
     try {
         let { category, itemName } = req.params;
         if (!isValidPostCategory(category))
