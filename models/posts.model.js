@@ -121,12 +121,14 @@ class PostModel {
     }
 
 
-    static async readByCity(city) {
+    static async readByCity(city, itemName) {
         let results = await new DB().findAll('addresses', { city: city }, { _id: 1 });
         let locations = results.map(location => location._id); //an array of objectIds , $in cannot work with the original results.
         let query2 = {
             itemLocation_id: { $in: locations }, //searches for the location id saved inside the posts
         }
+        if (itemName) query2.$text = { $search: itemName };
+
         return await new DB().findAll(collection, query2);
     }
 

@@ -170,9 +170,9 @@ PostsRoutes.post('/search/byDistance/:maxDistance/:itemName', authenticateToken,
 });
 
 //V --- V
-PostsRoutes.get('/search/byLocation/:city', authenticateToken, async (req, res) => {
+PostsRoutes.get('/search/byLocation/:city/:itemName', authenticateToken, async (req, res) => {
     try {
-        let { city } = req.params;
+        let { city, itemName } = req.params;
         if (!isString(city) || city.length < 1)
             return res.status(400).json({ msg: 'קלט לא תקין' })
         let posts = await PostsModel.readByCity(city);
