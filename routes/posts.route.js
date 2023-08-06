@@ -2,7 +2,7 @@ const PostsModel = require('../models/posts.model');
 const PostsRoutes = require('express').Router();
 
 const { uploadImages, removeImages, editImagesArray } = require('../functions');
-const { validateNewPostData, validatePostData, isString, validatePostSearchData, validateObjectId, isValidPostStatus } = require('../utils/validations');
+const { validateNewPostData, validatePostData, isString, validatePostSearchData, validateObjectId, isValidPostStatus, isValidPostCategory } = require('../utils/validations');
 
 const { authenticateToken, checkAdmin } = require('../utils/authenticateToken');
 const { ObjectId } = require('mongodb');
@@ -200,7 +200,26 @@ PostsRoutes.get('/search/byLocation/:city/:itemName', authenticateToken, async (
         else
             return res.status(200).json(posts);
     } catch (error) {
-        console.warn('postsroute error: get/search/:city');
+        console.warn('postsroute error: get/search/:city/:itemName');
+        return res.status(500).json({ error, msg: 'שגיאה' });
+    }
+});
+
+
+
+
+PostsRoutes.get('/search/byCategory/:category', authenticateToken, async (req, res) => {
+    try {
+        let { category } = req.params;
+        if (!isValidPostCategory(category))
+            return res.status(400).json({ msg: 'קלט לא תקין' })
+        let posts = await PostsModel.read({ category: category })
+        if (!Array.isArray(posts) || posts.length === 0)
+            return res.status(404).json({ msg: "לא נמצאו פריטים מתאימים לחיפוש" });
+        else
+            return res.status(200).json(posts);
+    } catch (error) {
+        console.warn('postsroute error: get /search/byCategory/:category');
         return res.status(500).json({ error, msg: 'שגיאה' });
     }
 });
