@@ -93,6 +93,11 @@ class PostModel {
         return await new DB().findAll(collection, { $text: { $search: keywords } });
     }
 
+    static async readByCategoryAndKeywords(category, keywords) {
+        //add some form of validation --- ???
+        return await new DB().findAll(collection, { category: category, $text: { $search: keywords } });
+    }
+
 
     static async readByDistance(maxDistance, userCoordinates, itemName = null) {
         console.log("posts model ==>> coordinates:",)
