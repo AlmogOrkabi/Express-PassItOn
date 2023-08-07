@@ -9,12 +9,11 @@ const { ObjectId } = require('mongodb');
 
 
 //NOT DONE, NEED TO HANDLE ADDRESS -- handle on client side
-
 //V  --- V
 UsersRoutes.post('/register', async (req, res) => {
     try {
         let { username, firstName, lastName, phoneNumber, email, password, address, photo } = req.body;
-        console.log("username: " + username, "firstName: " + firstName, "lastName: " + lastName, "phoneNumber: " + phoneNumber, "email: " + email, "password: " + password, "address:" + address)
+        // console.log("username: " + username, "firstName: " + firstName, "lastName: " + lastName, "phoneNumber: " + phoneNumber, "email: " + email, "password: " + password, "address:" + address)
         let img = null;
         if (!address)
             address = null;
@@ -45,11 +44,10 @@ UsersRoutes.post('/login', async (req, res) => {
         else if (user.activationStatus === 'not active')
             return res.status(403).json({ user: null, msg: "משתמש לא פעיל / חסום" }); // user is not active or has been banned by an administrator
         else {
-            delete user.password;
+            delete user.password; // removes the password from the response to the client 
             let payload = {
                 id: user._id,
                 role: user.role
-                // Add other user data you want to include in the token
             }
             let token = jwt.sign(payload, process.env.ACCESS_TOKEN, { expiresIn: '30m' }); // Token expires 30 minuets
             return res.status(200).json({ token, user }); // Send the token and user data

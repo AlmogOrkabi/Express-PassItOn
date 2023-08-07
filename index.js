@@ -1,9 +1,12 @@
 // step 1: import and initialize the packages:
 require('dotenv').config({ path: './utils/.env' });
 const express = require('express');
-const cors = require('cors');
+const cors = require('cors'); // cross origin resource 
 const PORT = process.env.PORT || 5500;
 
+
+
+//Images:
 
 // Require the cloudinary library
 const cloudinary = require('cloudinary').v2;
@@ -20,14 +23,9 @@ cloudinary.config({
 
 // Step 2: creation of the server:
 let server = express();
-server.use(express.json({ limit: '100mb' }));
+server.use(express.json({ limit: '100mb' })); //size limit for the request body
 server.use(cors());
 
-
-
-// const bodyParser = require('body-parser');
-// server.use(bodyParser.json({ limit: '50mb' }));
-// server.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 //step 3: routes:
 
