@@ -30,9 +30,18 @@ class ReportModel {
         this.updateDate = new Date();
     }
 
+    // static async create(owner_id, reportType, userReported, postReported, photos, description) {
+    //     if (!isValidObjectId(owner_id) || !isValidObjectId(userReported) || userReported == null || !isValidObjectId(postReported)) {
+    //         throw new Error('Invalid ObjectId');
+    //     }
+    //     let newReport = new ReportModel(owner_id, reportType, userReported, postReported, photos, description);
+    //     return await new DB().insert(collection, { ...newReport });
+    // }
+
+
 
     static async create(owner_id, reportType, userReported, postReported, photos, description) {
-        if (!isValidObjectId(owner_id) || owner_id == null || !isValidObjectId(userReported) || userReported == null || !isValidObjectId(postReported)) {
+        if (!isValidObjectId(owner_id) || !isValidObjectId(userReported) || postReported !== null && !isValidObjectId(postReported)) { //the postReported can be null because the report could be specifically about a user without a post being involved
             throw new Error('Invalid ObjectId');
         }
         let newReport = new ReportModel(owner_id, reportType, userReported, postReported, photos, description);
@@ -41,7 +50,7 @@ class ReportModel {
 
     static async read(query = {}) {
         for (let key in query) {
-            if (key.endsWith('_id') && (!isValidObjectId(query[key]) || query[key] == null)) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
                 throw new Error(`Invalid ObjectId for ${key}`);
             }
         }
@@ -59,7 +68,7 @@ class ReportModel {
 
     static async readOne(query = {}) {
         for (let key in query) {
-            if (key.endsWith('_id') && (!isValidObjectId(query[key]) || query[key] == null)) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
                 throw new Error(`Invalid ObjectId for ${key}`);
             }
         }
@@ -103,7 +112,7 @@ class ReportModel {
 
 
     static async update(_id, updateData) {
-        if (!isValidObjectId(_id) || _id == null) {
+        if (!isValidObjectId(_id)) {
             throw new Error('Invalid ObjectId');
         }
         updateData.updateDate = new Date();
@@ -111,7 +120,7 @@ class ReportModel {
     }
 
     static async delete(_id) {
-        if (!isValidObjectId(_id) || _id == null) {
+        if (!isValidObjectId(_id)) {
             throw new Error('Invalid ObjectId');
         }
         return await new DB().deleteOne(collection, _id);

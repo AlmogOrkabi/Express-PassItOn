@@ -9,6 +9,8 @@ class AddressModel {
     street;
     house;
     apartment;
+    //ADD:
+    //floor
     notes;
     location;
     simplifiedAddress;
@@ -41,7 +43,7 @@ class AddressModel {
 
     static async readOne(query = {}) {
         for (let key in query) {
-            if (key.endsWith('_id') && (!isValidObjectId(query[key]) || query[key] == null)) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
                 throw new Error(`Invalid ObjectId for ${key}`);
             }
         }
@@ -50,7 +52,7 @@ class AddressModel {
 
     static async read(query = {}) {
         for (let key in query) {
-            if (key.endsWith('_id') && (!isValidObjectId(query[key]) || query[key] == null)) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
                 throw new Error(`Invalid ObjectId for ${key}`);
             }
         }
@@ -58,7 +60,7 @@ class AddressModel {
     }
 
     static async update(id, updateData) {
-        if (!isValidObjectId(id) || id == null) {
+        if (!isValidObjectId(id)) {
             throw new Error('Invalid ObjectId');
         }
         return await new DB().updateById(collection, new ObjectId(id), updateData);

@@ -20,7 +20,7 @@ class UserModel {
     role; //user / admin
 
 
-    constructor(username, firstName, lastName, phoneNumber, email, password, addressId = null, photo = null) {
+    constructor(username, firstName, lastName, phoneNumber, email, password, addressId, photo = null) {
         if (!isValidObjectId(addressId)) {
             throw new Error('Invalid ObjectId');
         }
@@ -30,7 +30,7 @@ class UserModel {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.password = password;
-        this.address_id = addressId == null ? null : new ObjectId(addressId);
+        this.address_id = new ObjectId(addressId);
         this.photo = photo;
         this.registrationDate = new Date();
         this.activationStatus = 'פעיל';
@@ -42,7 +42,7 @@ class UserModel {
 
     //add a new user to the DB:
 
-    static async create(username, firstName, lastName, phoneNumber, email, password, addressId = null, photo = null) {
+    static async create(username, firstName, lastName, phoneNumber, email, password, addressId, photo = null) {
 
         let newUser = new UserModel(username, firstName, lastName, phoneNumber, email, password, addressId, photo);
         newUser.password = await bcrypt.hash(newUser.password, 10);
@@ -66,7 +66,7 @@ class UserModel {
 
     static async read(query = {}) {
         for (let key in query) {
-            if (key.endsWith('_id') && (!isValidObjectId(query[key]) || query[key] == null)) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
                 throw new Error(`Invalid ObjectId for ${key}`);
             }
         }
@@ -76,7 +76,7 @@ class UserModel {
 
     static async readOne(query = {}) {
         for (let key in query) {
-            if (key.endsWith('_id') && (!isValidObjectId(query[key]) || query[key] == null)) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
                 throw new Error(`Invalid ObjectId for ${key}`);
             }
         }
@@ -93,7 +93,7 @@ class UserModel {
         for (let key in updatedData) {
             if (key.endsWith('_id')) {
                 console.log(`key: ${key}, value: ${updatedData[key]}`);
-                if ((!isValidObjectId(updatedData[key]) || updatedData[key] == null))
+                if ((!isValidObjectId(updatedData[key])))
                     throw new Error(`Invalid ObjectId for ${key}`);
                 else
                     updatedData[key] = new ObjectId(updatedData[key]);
@@ -106,9 +106,9 @@ class UserModel {
     }
 
     static async delete(id) {
-        // if (!isValidObjectId(id) || id == null) {
-        //     throw new Error('Invalid ObjectId');
-        // }
+        if (!isValidObjectId(id)) {
+            throw new Error('Invalid ObjectId');
+        }
         return await new DB().deleteOne(collection, id);
     }
 

@@ -35,12 +35,14 @@ server.use('/api/users', require('./routes/users.route'));
 //#2:addresses:
 server.use('/api/addresses', require('./routes/addresses.route'));
 
-//#2:posts:
+//#3:posts:
 server.use('/api/posts', require('./routes/posts.route'));
 
-//#2:reports:
+//#4:reports:
 server.use('/api/reports', require('./routes/reports.route'));
 
+//#5:requests:
+server.use('/api/requests', require('./routes/requests.route'));
 
 //step 4: activate the server:
 server.listen(PORT, () => console.log(`http://localhost:${PORT}`));  

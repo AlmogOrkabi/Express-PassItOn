@@ -1,8 +1,19 @@
+const { userStatuses, postCategories, postStatuses, reportTypes, reportStatuses, requestStatuses } = require('../Data/constants')
+
+
+//validates that the parameter received is an objectid
+// function isValidObjectId(id) {
+//     return id === null || (/^[0-9a-fA-F]{24}$/).test(id); // if valid or null (also valid, no need for an error message)
+// }
+
 
 //validates that the parameter received is an objectid
 function isValidObjectId(id) {
-    return id === null || (/^[0-9a-fA-F]{24}$/).test(id); // if valid or null (also valid, no need for an error message)
+    return (/^[0-9a-fA-F]{24}$/).test(id);
 }
+
+
+
 
 function isValidEmail(email) {
     const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -163,8 +174,8 @@ function validateUserData(updatedData) {
 
 function isValidUserStatus(userStatus) {
     console.log(userStatus)
-    let validStatuses = ['פעיל', 'לא פעיל', 'חסום']
-    if (!isString(userStatus) || !validStatuses.includes(userStatus))
+    // let validStatuses = ['פעיל', 'לא פעיל', 'חסום']
+    if (!isString(userStatus) || !userStatuses.includes(userStatus))
         return { valid: false, msg: 'סטטוס לא תקין' }
     else
         return { valid: true }
@@ -173,18 +184,10 @@ function isValidUserStatus(userStatus) {
 //_____________________POSTS________________________________//
 
 
-//***CHANGE DESCRIPTION TO AN OBJECT AND CHANGE THE VALIDATION IN THS FUNCTION!!!***//
-// function validateNewPostData(owner_id, itemName, description, photoUrls, itemLocation) {
-//     if (!isValidObjectId(owner_id) || owner_id == null || !isString(itemName) || itemName.length < 31 || !isString(description) || !isValidPhotosArray(photoUrls) || !isValidObjectId(itemLocation) || itemLocation == null)
-//         throw new Error("פרטים לא תקינים");
-//     else
-//         return true;
-// }
-
 function isValidPostCategory(category) {
-    const validPostCategories = ['ריהוט', 'מכשור חשמלי', 'כלי מטבח', 'כלי בית', 'צעצועים/משחקים', 'ספרים', 'ביגוד', 'כלי עבודה', 'ציוד ספורט וקמפינג', 'ציוד משרדי', 'פרטי תינוקות', 'יצירה', 'עיצוב הבית', 'ציוד לחיות מחמד', 'כלי נגינה', 'ציוד רפואי', 'טיפוח', 'תיקים', 'ציוד לבית הספר']
+    // const validPostCategories = ['ריהוט', 'מכשור חשמלי', 'כלי מטבח', 'כלי בית', 'צעצועים/משחקים', 'ספרים', 'ביגוד', 'כלי עבודה', 'ציוד ספורט וקמפינג', 'ציוד משרדי', 'פרטי תינוקות', 'יצירה', 'עיצוב הבית', 'ציוד לחיות מחמד', 'כלי נגינה', 'ציוד רפואי', 'טיפוח', 'תיקים', 'ציוד לבית הספר']
 
-    if (!isString(category) || !validPostCategories.includes(category)) {
+    if (!isString(category) || !postCategories.includes(category)) {
         return false;
     }
     else
@@ -199,7 +202,7 @@ function isValidItemName(itemName) {
 }
 
 function validateNewPostData(owner_id, itemName, description, category, photoUrls, itemLocation_id) {
-    if (!isValidObjectId(owner_id) || owner_id == null) {
+    if (!isValidObjectId(owner_id)) {
         return { valid: false, msg: 'שגיאה בהעלעת הפוסט' };
     }
     if (!isValidItemName(itemName)) {
@@ -228,7 +231,7 @@ function validatePostData(updatedData) {
     for (let field of fieldsToUpdate) {
         switch (field) {
             case 'owner_id':
-                if (!isValidObjectId(updatedData.owner_id) || updatedData.owner_id == null) {
+                if (!isValidObjectId(updatedData.owner_id)) {
                     return { valid: false, msg: 'שגיאה בהעלעת הפוסט' };
                 }
                 break;
@@ -253,7 +256,7 @@ function validatePostData(updatedData) {
                 }
                 break;
             case 'itemLocation_id':
-                if (!isValidObjectId(updatedData.itemLocation_id) || updatedData.itemLocation_id == null) {
+                if (!isValidObjectId(updatedData.itemLocation_id)) {
                     return { valid: false, msg: 'הכתובת אינה תקינה' };
                 }
                 break;
@@ -275,9 +278,9 @@ function validatePostData(updatedData) {
 }
 
 function isValidPostStatus(postStatus) {
-    const validStatuses = ['זמין', 'לא זמין למסירה', 'בתהליך מסירה', 'נמסר', 'סגור', 'מבוטל', 'בבדיקת מנהל']
+    //const validStatuses = ['זמין', 'לא זמין למסירה', 'בתהליך מסירה', 'נמסר', 'סגור', 'מבוטל', 'בבדיקת מנהל']
 
-    if (!isString(postStatus) || !validStatuses.includes(postStatus)) {
+    if (!isString(postStatus) || !postStatuses.includes(postStatus)) {
         return { valid: false, msg: 'סטטוס לא תקין' }
     }
     else
@@ -323,9 +326,9 @@ function isValidReportType(reportType) {
 
     // Hate Speech / Discrimination: This category is for posts that promote violence or hatred against individuals or groups based on attributes such as race, religion, disability, age, nationality, sexual orientation, gender, etc.
 
-    let validReportTypes = ["מידע שגוי/מוטעה", "שימוש לרעה במערכת", "הטרדה/התנהגות לא הולמת", "ספאם", "הונאה", "מעבר על חוקי הפורמט", "פגיעה בפרטיות", "פרסום חוזר של פריטים שנמסרו בעבר", "אחר"];
+    // let validReportTypes = ["מידע שגוי/מוטעה", "שימוש לרעה במערכת", "הטרדה/התנהגות לא הולמת", "ספאם", "הונאה", "מעבר על חוקי הפורמט", "פגיעה בפרטיות", "פרסום חוזר של פריטים שנמסרו בעבר", "אחר"];
 
-    if (!isString(reportType) || !validReportTypes.includes(reportType))
+    if (!isString(reportType) || !reportTypes.includes(reportType))
         return { valid: false, msg: "סיבת הדיווח אינה תקינה" };
     else
         return { valid: true };
@@ -334,9 +337,9 @@ function isValidReportType(reportType) {
 }
 
 function isValidReportStatus(reportStatus) {
-    const validStatuses = ['פתוח', 'בטיפול מנהל', 'בבירור', 'סגור'];
+    // const validStatuses = ['פתוח', 'בטיפול מנהל', 'בבירור', 'סגור'];
 
-    if (!isString(reportStatus) || !validStatuses.includes(reportStatus)) {
+    if (!isString(reportStatus) || !reportStatuses.includes(reportStatus)) {
         return { valid: false, msg: 'סטטוס לא תקין' }
     }
     else
@@ -351,16 +354,16 @@ function isValidReportStatus(reportStatus) {
 // }
 
 function validateNewReportData(owner_id, reportType, userReported, postReported, photoUrls, description) {
-    if (!isValidObjectId(owner_id) || owner_id == null) {
+    if (!isValidObjectId(owner_id)) {
         return { valid: false, msg: 'שגיאה בהעלעת הפוסט' };
     }
     if (!isValidReportType(reportType)) {
         return { valid: false, msg: 'סוג דיווח לא תקין' };
     }
-    if (!isValidObjectId(userReported) || owner_id == null) { // the owner of the post in case a post was reported
+    if (!isValidObjectId(userReported)) { // the owner of the post in case a post was reported
         return { valid: false, msg: 'שגיאה בהעלעת הפוסט' };
     }
-    if (!isValidObjectId(postReported)) { // can be null, the report can be only regarding a user and not a specific post
+    if (postReported !== null && !isValidObjectId(postReported)) { // can be null, the report can be only regarding a user and not a specific post
         return { valid: false, msg: 'שגיאה בהעלעת הפוסט' };
     }
     if (!isValidPhotosArray(photoUrls)) {
@@ -381,7 +384,7 @@ function validateReportData(data) {
     for (let field of fieldsToUpdate) {
         switch (field) {
             case 'owner_id':
-                if (!isValidObjectId(data.owner_id) || data.owner_id == null) {
+                if (!isValidObjectId(data.owner_id)) {
                     return { valid: false, msg: 'שגיאה בהעלעת הפוסט' };
                 }
                 break;
@@ -401,12 +404,12 @@ function validateReportData(data) {
                 }
                 break;
             case 'userReported':
-                if (!isValidObjectId(data.userReported) || data.userReported == null) {
+                if (!isValidObjectId(data.userReported)) {
                     return { valid: false, msg: 'שגיאה' };  //chage this
                 }
                 break;
             case 'postReported':
-                if (!isValidObjectId(data.postReported)) { //can be null
+                if (data.postReported !== null && !isValidObjectId(data.postReported)) { //can be null
                     return { valid: false, msg: 'שגיאה' }; //change this
                 }
                 break;
@@ -512,6 +515,68 @@ function validateAddressData(updatedData) {
 //NO EDITS YET - NOT SURE IF NECESSARY
 
 
+
+//_____________________REQUESTS________________________________//
+
+function isValidRequestStatus(requestStatus) {
+    if (!isString(requestStatus) || !requestStatuses.includes(requestStatus)) {
+        return false;
+    }
+    return true;
+}
+
+function isValidRequestString(requestString) {
+    return isString(requestString) && requestString.length > 301;
+}
+
+function validateNewRequestData(sender_id, recipient_id, requestMessage, post_id) {
+
+    if (!isValidObjectId(sender_id)) {
+        return { valid: false, msg: 'קלט לא תקין' };
+    }
+    if (!isValidObjectId(recipient_id)) {
+        return { valid: false, msg: 'קלט לא תקין' };
+    }
+    if (!isValidObjectId(post_id)) {
+        return { valid: false, msg: 'קלט לא תקין' };
+    }
+    if (!isValidRequestString(requestMessage)) {
+        return { valid: false, msg: 'מלל הבקשה אינו תקין או ארוך מידי' };
+    }
+
+    return { valid: true };
+}
+
+function validateRequestData(updatedData) { //assuming the sender, the recipient and the post should NOT be changed.
+    let fieldsToUpdate = Object.keys(updatedData);
+
+    for (let field of fieldsToUpdate) {
+        switch (field) {
+            case 'requestMessage':
+                if (!isValidRequestString(updatedData.requestMessage)) {
+                    return { valid: false, msg: 'מלל הבקשה אינו תקין או ארוך מידי' };
+                }
+                break;
+            case 'responseMessage':
+                if (!isValidRequestString(updatedData.responseMessage)) {
+                    return { valid: false, msg: 'מלל התשובה אינו תקין או ארוך מידי' };
+                }
+                break;
+            case 'status':
+                if (!isValidRequestStatus(updatedData.status)) {
+                    return { valid: false, msg: 'סטטוס הבקשה אינו תקין' };
+                }
+                break;
+            default:
+                return { valid: false, msg: `Unexpected field: ${field}` };
+        }
+    }
+    return { valid: true };
+}
+
+
+
+
 //----------------------------------------------------------
 
 function validateSort(sortBy, order) {
@@ -521,15 +586,8 @@ function validateSort(sortBy, order) {
         return { valid: true };
 }
 
-// function validateObjectId(req, res, next) {
-//     let { _id } = req.params;
-//     if (!isValidObjectId(_id) || _id == null) {
-//         return res.status(400).json({ msg: 'פרטים לא נכונים' });
-//     }
-//     next();
-// }
 
-
+//a middleware to validate objectIds in the route layer:
 function validateObjectId(paramNames) {
     return function (req, res, next) {
         if (!Array.isArray(paramNames)) {
@@ -537,14 +595,13 @@ function validateObjectId(paramNames) {
         }
         for (let paramName of paramNames) {
             let objectId = req.params[paramName];
-            if (!isValidObjectId(objectId) || objectId == null) {
+            if (!isValidObjectId(objectId)) {
                 return res.status(400).json({ msg: 'פרטים לא נכונים' });
             }
         }
         next();
     };
 }
-
 
 
 
@@ -573,4 +630,5 @@ function validateObjectId(paramNames) {
 
 
 
-module.exports = { isValidObjectId, isString, validateSort, validateNewUserData, validateUserData, isValidUserStatus, validateNewPostData, validatePostData, validatePostSearchData, isValidPostStatus, isValidPostCategory, validateNewReportData, validateReportData, isValidReportStatus, validateNewAddressDetails, validateAddressData, isValidPhoto, validateObjectId }
+
+module.exports = { isValidObjectId, isString, validateSort, validateNewUserData, validateUserData, isValidUserStatus, validateNewPostData, validatePostData, validatePostSearchData, isValidPostStatus, isValidPostCategory, validateNewReportData, validateReportData, isValidReportStatus, validateNewAddressDetails, validateAddressData, isValidPhoto, validateObjectId, validateNewRequestData, validateRequestData }

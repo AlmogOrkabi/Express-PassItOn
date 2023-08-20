@@ -12,6 +12,8 @@ class PostModel {
     photos;
     status;
     creationDate;
+    //ADD:
+    //updateDate
     itemLocation_id; //address ID
     reports;
 
@@ -20,7 +22,7 @@ class PostModel {
         if (!isValidObjectId(owner_id) || !isValidObjectId(itemLocation)) {
             throw new Error('Invalid ObjectId');
         }
-        this.owner_id = owner_id;
+        this.owner_id = new ObjectId(owner_id);
         this.itemName = itemName;
         this.description = description;
         this.category = category;
@@ -52,7 +54,7 @@ class PostModel {
 
     static async read(query = {}) {
         for (let key in query) {
-            if (key.endsWith('_id') && (!isValidObjectId(query[key]) || query[key] == null)) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
                 throw new Error(`Invalid ObjectId for ${key}`);
             }
         }
@@ -61,7 +63,7 @@ class PostModel {
 
     static async readOne(query = {}) {
         for (let key in query) {
-            if (key.endsWith('_id') && (!isValidObjectId(query[key]) || query[key] == null)) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
                 throw new Error(`Invalid ObjectId for ${key}`);
             }
         }
@@ -159,7 +161,7 @@ class PostModel {
         for (let key in updatedData) {
             if (key.endsWith('_id')) {
                 console.log(`key: ${key}, value: ${updatedData[key]}`);
-                if ((!isValidObjectId(updatedData[key]) || updatedData[key] == null))
+                if ((!isValidObjectId(updatedData[key])))
                     throw new Error(`Invalid ObjectId for ${key}`);
                 else
                     updatedData[key] = new ObjectId(updatedData[key]);

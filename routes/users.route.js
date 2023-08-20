@@ -8,7 +8,7 @@ const { authenticateToken, checkAdmin } = require('../utils/authenticateToken');
 const { ObjectId } = require('mongodb');
 
 
-//NOT DONE, NEED TO HANDLE ADDRESS -- handle on client side
+//NOT DONE, NEED TO HANDLE ADDRESS -- handle on client side - Handled
 //V  --- V
 UsersRoutes.post('/register', async (req, res) => {
     try {
@@ -207,7 +207,7 @@ UsersRoutes.delete('/delete/:_id', authenticateToken, checkAdmin, validateObject
         }
         if (user.photo)
             await removeImage(user.photo);
-        UserModel.delete(userId);
+        await UserModel.delete(userId);
         return res.status(200).json({ msg: 'משתמש נמחק בהצלחה' });
     } catch (error) {
         console.warn('usersroute error: delete /delete/:_id')
