@@ -14,6 +14,11 @@ UsersRoutes.post('/register', async (req, res) => {
     try {
         let { username, firstName, lastName, phoneNumber, email, password, address, photo } = req.body;
         // console.log("username: " + username, "firstName: " + firstName, "lastName: " + lastName, "phoneNumber: " + phoneNumber, "email: " + email, "password: " + password, "address:" + address)
+
+        //checks if the email address is already taken by another user in the database
+        let existingUser = await UserModel.readOne({ email: email });
+        if (existingUser)
+            return res.status(409).json({ msg: 'כתובת המייל אינה פנויה' })
         let img = null;
         if (!address)
             address = null;
