@@ -20,8 +20,8 @@ UsersRoutes.post('/register', async (req, res) => {
         if (existingUser)
             return res.status(409).json({ msg: 'כתובת המייל אינה פנויה' })
         let img = null;
-        if (!address)
-            address = null;
+        // if (!address)
+        //     address = null;
         let validationRes = validateNewUserData(username, firstName, lastName, phoneNumber, email, password, address)
         if (!validationRes.valid)
             return res.status(400).json({ msg: validationRes.msg || 'פרטים לא תקינים' })
@@ -81,6 +81,19 @@ UsersRoutes.post('/login', async (req, res) => {
 //     }
 // });
 
+UsersRoutes.get('/checkEmailAvailability/:email', async (req, res) => {
+    try {
+        let { email } = req.params;
+        let existingUser = await UserModel.readOne({ email: email });
+        if (existingUser)
+            return res.status(409).json({ msg: 'כתובת המייל אינה פנויה' })
+        else
+            return res.status(200).json({ msg: 'כתובת המייל פנויה לשימוש' })
+    } catch (error) {
+        console.warn('usersroute error: get /checkEmailAvailability/:email')
+        return res.status(500).json({ error: error.toString(), msg: 'שגיאה' });
+    }
+});
 
 
 
