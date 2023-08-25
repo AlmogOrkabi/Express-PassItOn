@@ -52,7 +52,6 @@ class DB {
     async insert(collection, doc) {
         try {
             await this.client.connect();
-            // console.log("DB CONNECTED")
             return await this.client.db(this.db_name).collection(collection).insertOne(doc);
         } catch (error) {
             console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.

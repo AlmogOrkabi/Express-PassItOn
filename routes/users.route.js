@@ -13,28 +13,30 @@ const { ObjectId } = require('mongodb');
 UsersRoutes.post('/register', async (req, res) => {
     try {
         let { username, firstName, lastName, phoneNumber, email, password, address, photo } = req.body;
-        // console.log("username: " + username, "firstName: " + firstName, "lastName: " + lastName, "phoneNumber: " + phoneNumber, "email: " + email, "password: " + password, "address:" + address)
 
-        //checks if the email address is already taken by another user in the database
+        // -checks if the email address is already taken by another user in the database
         let existingUser = await UserModel.readOne({ email: email });
         if (existingUser)
             return res.status(409).json({ msg: 'כתובת המייל אינה פנויה' })
-        let img = null;
-        // if (!address)
-        //     address = null;
+
         let validationRes = validateNewUserData(username, firstName, lastName, phoneNumber, email, password, address)
         if (!validationRes.valid)
-            return res.status(400).json({ msg: `${validationRes.msg}` || 'פרטים לא תקינים' })
+            return res.status(400).json({ msg: validationRes.msg })
+
+
+        let img = null;
+
+        // -if the user chose to upload a profile picture:
         if (photo) {
-            // let imgStr = `data:image/jpg;base64,${photo}` // sent as base64 string from the client
             img = await uploadImage(photo);
             if (!img || !isValidPhoto(img))
                 return res.status(400).json({ msg: 'התמונה שהועלתה אינה תקינה' });
         }
+
         let newUser = await UserModel.create(username, firstName, lastName, phoneNumber, email, password, address, img);
         return res.status(201).json(newUser);
     } catch (error) {
-        return res.status(500).json({ error: error.toString(), msg: 'הרשמה נכשלה' + error.toString() });
+        return res.status(500).json({ error: error.toString(), msg: 'הרשמה נכשלה' + error.toString() }); // !the error logging is for the debugging process
     }
 });
 
@@ -45,9 +47,9 @@ UsersRoutes.post('/login', async (req, res) => {
         let { email, password } = req.body;
         let user = await UserModel.login(email, password);
         if (!user) // if(user == null || user == undefined)
-            return res.status(404).json({ msg: "פרטים לא נכונים" });
-        else if (user.activationStatus === 'not active')
-            return res.status(403).json({ user: null, msg: "משתמש לא פעיל / חסום" }); // user is not active or has been banned by an administrator
+            return res.status(404).json({ msg: "משתמש לא קיים" });
+        else if (user.activationStatus !== 'פעיל')
+            return res.status(403).json({ user: null, msg: `משתמש ${user.activationStatus}` }); // user is not active or has been banned by an administrator
         else {
             delete user.password; // removes the password from the response to the client 
             let payload = {

@@ -20,7 +20,7 @@ class UserModel {
     role; //user / admin
 
 
-    constructor(username, firstName, lastName, phoneNumber, email, password, addressId, photo = null) {
+    constructor(username, firstName, lastName, phoneNumber, email, password, addressId, photo) {
         if (!isValidObjectId(addressId)) {
             throw new Error('Invalid ObjectId');
         }
@@ -42,7 +42,7 @@ class UserModel {
 
     //add a new user to the DB:
 
-    static async create(username, firstName, lastName, phoneNumber, email, password, addressId, photo = null) {
+    static async create(username, firstName, lastName, phoneNumber, email, password, addressId, photo) {
 
         let newUser = new UserModel(username, firstName, lastName, phoneNumber, email, password, addressId, photo);
         newUser.password = await bcrypt.hash(newUser.password, 10);
