@@ -9,8 +9,6 @@ class AddressModel {
     street;
     house;
     apartment;
-    //ADD:
-    //floor
     notes;
     location;
     simplifiedAddress;

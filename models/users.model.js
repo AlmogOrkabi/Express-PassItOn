@@ -54,13 +54,6 @@ class UserModel {
         let user = await new DB().findOne(collection, query);
         if (!user || !(await bcrypt.compare(password, user.password)))
             return null;
-
-        // return {
-        //     _id: user._id,
-        //     username: user.username,
-        //     email: user.email
-        // };
-
         return user;
     }
 

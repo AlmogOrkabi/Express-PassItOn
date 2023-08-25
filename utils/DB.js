@@ -37,8 +37,6 @@ class DB {
     async findOne(collection, query = {}, project = {}) {
         try {
             await this.client.connect();
-            // console.log("QUERY ===>>>", query)
-            // console.log("typeOfQuery ===>>>", typeof query._id)
             return await this.client.db(this.db_name).collection(collection).findOne(query, { projection: project });
         } catch (error) {
             console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.
