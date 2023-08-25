@@ -56,7 +56,7 @@ UsersRoutes.post('/login', async (req, res) => {
                 id: user._id,
                 role: user.role
             }
-            let token = jwt.sign(payload, process.env.ACCESS_TOKEN, { expiresIn: `${process.env.TOEKN_EXPIRATION}` }); //expires within a certain time
+            let token = jwt.sign(payload, process.env.ACCESS_TOKEN, { expiresIn: `${process.env.TOKEN_EXPIRATION}` }); //expires within a certain time
             return res.status(200).json({ token, user }); // -Send the token and user data
         }
     } catch (error) {
