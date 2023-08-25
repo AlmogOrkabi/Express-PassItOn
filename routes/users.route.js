@@ -46,18 +46,18 @@ UsersRoutes.post('/login', async (req, res) => {
     try {
         let { email, password } = req.body;
         let user = await UserModel.login(email, password);
-        if (!user) // if(user == null || user == undefined)
+        if (!user)
             return res.status(404).json({ msg: "משתמש לא קיים" });
         else if (user.activationStatus !== 'פעיל')
-            return res.status(403).json({ user: null, msg: `משתמש ${user.activationStatus}` }); // user is not active or has been banned by an administrator
+            return res.status(403).json({ user: null, msg: `משתמש ${user.activationStatus}` }); // *user is not active or has been banned by an administrator
         else {
-            delete user.password; // removes the password from the response to the client 
+            delete user.password; // -removes the password from the response to the client 
             let payload = {
                 id: user._id,
                 role: user.role
             }
-            let token = jwt.sign(payload, process.env.ACCESS_TOKEN, { expiresIn: '30m' }); // Token expires 30 minuets
-            return res.status(200).json({ token, user }); // Send the token and user data
+            let token = jwt.sign(payload, process.env.ACCESS_TOKEN, { expiresIn: process.env.TOEKN_EXPIRATION }); //expires within a certain time
+            return res.status(200).json({ token, user }); // -Send the token and user data
         }
     } catch (error) {
         return res.status(500).json({ error, msg: 'התחברות נכשלה' });
