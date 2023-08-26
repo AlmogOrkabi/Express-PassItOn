@@ -10,14 +10,15 @@ const { ObjectId } = require('mongodb');
 
 
 //V --- V also format check is working!
+
+
 PostsRoutes.post('/create', authenticateToken, async (req, res) => {
     try {
         let { owner_id, itemName, description, category, photos, itemLocation_id } = req.body;
-
         let photoUrls = await uploadImages(photos); //required
         let validationRes = validateNewPostData(owner_id, itemName, description, category, photoUrls, itemLocation_id);
         if (!validationRes.valid)
-            return res.status(400).json({ msg: validationRes.msg || 'פרטים לא תקינים' })
+            return res.status(400).json({ msg: validationRes.msg })
         let newPost = await PostsModel.create(owner_id, itemName, description, category, photoUrls, itemLocation_id);
         return res.status(201).json(newPost);
     } catch (error) {
@@ -26,6 +27,8 @@ PostsRoutes.post('/create', authenticateToken, async (req, res) => {
         });
     }
 });
+
+
 //request pattern:
 
 // {

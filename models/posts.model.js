@@ -13,7 +13,7 @@ class PostModel {
     status;
     creationDate;
     //ADD:
-    //updateDate
+    updateDate
     itemLocation_id; //address ID
     reports;
 
@@ -30,6 +30,7 @@ class PostModel {
         this.status = "זמין";
         this.itemLocation_id = new ObjectId(itemLocation);
         this.creationDate = new Date();
+        this.updatedDate = new Date();
         this.reports = []; //new post, no reports yet.
     }
 
