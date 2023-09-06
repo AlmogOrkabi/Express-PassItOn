@@ -8,6 +8,7 @@ const { ObjectId } = require('mongodb');
 RequestsRoutes.post('/create', authenticateToken, async (req, res) => {
     try {
         let { sender_id, recipient_id, requestMessage, post_id } = req.body;
+        console.log("sender_id: " + sender_id + " recipient_id: " + recipient_id + " requestMessage: " + requestMessage + " post_id: " + post_id);
         let validationsRes = validateNewRequestData(sender_id, recipient_id, requestMessage, post_id);
         if (!validationsRes.valid) {
             return res.status(400).json({ msg: validationsRes.msg || 'פרטים לא תקינים' });

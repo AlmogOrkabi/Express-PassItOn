@@ -516,7 +516,7 @@ function validateAddressData(updatedData) {
 
 
 
-//_____________________REQUESTS________________________________//
+//!_____________________REQUESTS________________________________//
 
 function isValidRequestStatus(requestStatus) {
     if (!isString(requestStatus) || !requestStatuses.includes(requestStatus)) {
