@@ -526,7 +526,7 @@ function isValidRequestStatus(requestStatus) {
 }
 
 function isValidRequestString(requestString) {
-    return isString(requestString) && requestString.length > 301;
+    return isString(requestString) && requestString.length < 301;
 }
 
 function validateNewRequestData(sender_id, recipient_id, requestMessage, post_id) {
