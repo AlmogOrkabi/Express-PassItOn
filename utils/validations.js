@@ -532,13 +532,13 @@ function isValidRequestString(requestString) {
 function validateNewRequestData(sender_id, recipient_id, requestMessage, post_id) {
 
     if (!isValidObjectId(sender_id)) {
-        return { valid: false, msg: 'קלט לא תקין' };
+        return { valid: false, msg: 'זיהוי השולח לא תקין' };
     }
     if (!isValidObjectId(recipient_id)) {
-        return { valid: false, msg: 'קלט לא תקין' };
+        return { valid: false, msg: 'זיהוי הנמען לא תקין' };
     }
     if (!isValidObjectId(post_id)) {
-        return { valid: false, msg: 'קלט לא תקין' };
+        return { valid: false, msg: 'זיהוי הפוסט לא תקין' };
     }
     if (!isValidRequestString(requestMessage)) {
         return { valid: false, msg: 'מלל הבקשה אינו תקין או ארוך מידי' };
