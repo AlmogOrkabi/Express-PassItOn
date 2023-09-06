@@ -23,7 +23,7 @@ class DB {
             return await this.client.db(this.db_name).collection(collection).find(query).project(project).toArray();
         } catch (error) {
             console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.
-            throw error;
+            throw error; s
         }
         finally {
             await this.client.close();

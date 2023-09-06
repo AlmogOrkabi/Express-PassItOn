@@ -76,7 +76,7 @@ RequestsRoutes.get('/allRequests', authenticateToken, checkAdmin, async (req, re
 RequestsRoutes.get('/find/bySenderId/:sender_id', authenticateToken, validateObjectId('sender_id'), async (req, res) => {
     try {
         let { sender_id } = req.params;
-        let requests = await RequestModel.read({ sender_id })
+        let requests = await RequestModel.read({ sender_id: new ObjectId(sender_id) })
         if (!requests || requests.length < 1) return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות במערכת' });
         return res.status(200).json(requests);
     } catch (error) {
@@ -91,7 +91,7 @@ RequestsRoutes.get('/find/bySenderId/:sender_id', authenticateToken, validateObj
 RequestsRoutes.get('/find/byRecipientId/:recipient_id', authenticateToken, validateObjectId('recipient_id'), async (req, res) => {
     try {
         let { recipient_id } = req.params;
-        let requests = await RequestModel.read({ recipient_id })
+        let requests = await RequestModel.read({ recipient_id: new ObjectId(recipient_id) })
         if (!requests || requests.length < 1) return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות במערכת' });
         return res.status(200).json(requests);
     } catch (error) {
@@ -139,7 +139,7 @@ RequestsRoutes.get('/find/byStatus/:status', authenticateToken, checkAdmin, asyn
 RequestsRoutes.get('/find/byPost/:post_id', authenticateToken, validateObjectId('post_id'), async (req, res) => {
     try {
         let { post_id } = req.params;
-        let requests = await RequestModel.read({ post_id });
+        let requests = await RequestModel.read({ post_id: new ObjectId(post_id) });
         if (!requests || requests.length < 1)
             return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות במערכת' });
         return res.status(200).json(requests);
