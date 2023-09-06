@@ -77,7 +77,7 @@ RequestsRoutes.get('/find/bySenderId/:sender_id', authenticateToken, validateObj
     try {
         let { sender_id } = req.params;
         let requests = await RequestModel.read({ sender_id })
-        if (!requests) return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות במערכת' });
+        if (!requests || requests.length < 1) return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות במערכת' });
         return res.status(200).json(requests);
     } catch (error) {
         console.warn('requestsroute error: get /find/bySenderId/:_id')
@@ -92,7 +92,7 @@ RequestsRoutes.get('/find/byRecipientId/:recipient_id', authenticateToken, valid
     try {
         let { recipient_id } = req.params;
         let requests = await RequestModel.read({ recipient_id })
-        if (!requests) return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות במערכת' });
+        if (!requests || requests.length < 1) return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות במערכת' });
         return res.status(200).json(requests);
     } catch (error) {
         console.warn('requestsroute error: get /find/byRecipientId/:recipient_id')
@@ -107,7 +107,7 @@ RequestsRoutes.get('/find/bySenderAndRecipient/:sender_id/:recipient_id', authen
     try {
         let { sender_id, recipient_id } = req.params;
         let requests = await RequestModel.read({ sender_id, recipient_id })
-        if (!requests) return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות במערכת' });
+        if (!requests || requests.length < 1) return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות במערכת' });
         return res.status(200).json(requests);
     } catch (error) {
         console.warn('requestsroute error: get /find/bySenderAndRecipient/:sender_id/:recipient_id')
@@ -125,7 +125,7 @@ RequestsRoutes.get('/find/byStatus/:status', authenticateToken, checkAdmin, asyn
         if (!validationsRes.valid)
             return res.status(400).json({ msg: validationsRes.msg });
         let requests = await RequestModel.read({ status });
-        if (!requests)
+        if (!requests || requests.length < 1)
             return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות במערכת' });
         return res.status(200).json(requests);
     } catch (error) {
@@ -140,7 +140,7 @@ RequestsRoutes.get('/find/byPost/:post_id', authenticateToken, validateObjectId(
     try {
         let { post_id } = req.params;
         let requests = await RequestModel.read({ post_id });
-        if (!requests)
+        if (!requests || requests.length < 1)
             return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות במערכת' });
         return res.status(200).json(requests);
     } catch (error) {
