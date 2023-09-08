@@ -90,7 +90,7 @@ RequestsRoutes.get('/allRequests/:full', authenticateToken, checkAdmin, async (r
 
 RequestsRoutes.get('/find/bySenderId/:sender_id/:full', authenticateToken, validateObjectId('sender_id'), async (req, res) => {
     try {
-        let { sender_id } = req.params;
+        let { sender_id, full } = req.params;
         let requests;
         if (full == 'true') {
             requests = await RequestModel.readFull({ sender_id: new ObjectId(sender_id) });
