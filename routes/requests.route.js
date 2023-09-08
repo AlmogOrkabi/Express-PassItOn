@@ -47,10 +47,17 @@ RequestsRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), asy
 
 
 
-RequestsRoutes.get('/find/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
+RequestsRoutes.get('/find/:_id/full', authenticateToken, validateObjectId('_id'), async (req, res) => {
     try {
-        let { _id } = req.params;
-        let request = await RequestModel.readOne(new ObjectId(_id));
+        let { _id, full } = req.params;
+        let request;
+        if (full == 'true') {
+            request = await RequestModel.readOneFull(new ObjectId(_id));
+        }
+        //no need to validate "full", if it is not true then this is the default behaviour:
+        else {
+            request = await RequestModel.readOne(new ObjectId(_id));
+        }
         if (!request) return res.status(404).json({ msg: 'לא נמצאה בקשה מתאימה במערכת' });
         else return res.status(200).json(request);
     } catch (error) {
@@ -59,9 +66,17 @@ RequestsRoutes.get('/find/:_id', authenticateToken, validateObjectId('_id'), asy
     }
 });
 
-RequestsRoutes.get('/allRequests', authenticateToken, checkAdmin, async (req, res) => {
+RequestsRoutes.get('/allRequests/:full', authenticateToken, checkAdmin, async (req, res) => {
     try {
-        let requests = await RequestModel.read();
+        let { full } = req.params;
+        let requests;
+        if (full == 'true') {
+            requests = await RequestModel.readFull();
+        }
+        //no need to validate "full", if it is not true then this is the default behaviour:
+        else {
+            requests = await RequestModel.read();
+        }
         if (!requests) return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות במערכת' });
         return res.status(200).json(requests);
     } catch (error) {
@@ -73,10 +88,17 @@ RequestsRoutes.get('/allRequests', authenticateToken, checkAdmin, async (req, re
 
 //find all by sender_id
 
-RequestsRoutes.get('/find/bySenderId/:sender_id', authenticateToken, validateObjectId('sender_id'), async (req, res) => {
+RequestsRoutes.get('/find/bySenderId/:sender_id/:full', authenticateToken, validateObjectId('sender_id'), async (req, res) => {
     try {
         let { sender_id } = req.params;
-        let requests = await RequestModel.read({ sender_id: new ObjectId(sender_id) })
+        let requests;
+        if (full == 'true') {
+            requests = await RequestModel.readFull({ sender_id: new ObjectId(sender_id) });
+        }
+        //no need to validate "full", if it is not true then this is the default behaviour:
+        else {
+            requests = await RequestModel.read({ sender_id: new ObjectId(sender_id) });
+        }
         if (!requests || requests.length < 1) return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות במערכת' });
         return res.status(200).json(requests);
     } catch (error) {
@@ -88,10 +110,17 @@ RequestsRoutes.get('/find/bySenderId/:sender_id', authenticateToken, validateObj
 
 //find all by recipient_id
 
-RequestsRoutes.get('/find/byRecipientId/:recipient_id', authenticateToken, validateObjectId('recipient_id'), async (req, res) => {
+RequestsRoutes.get('/find/byRecipientId/:recipient_id/:full', authenticateToken, validateObjectId('recipient_id'), async (req, res) => {
     try {
-        let { recipient_id } = req.params;
-        let requests = await RequestModel.read({ recipient_id: new ObjectId(recipient_id) })
+        let { recipient_id, full } = req.params;
+        let requests;
+        if (full == 'true') {
+            requests = await RequestModel.readFull({ recipient_id: new ObjectId(recipient_id) });
+        }
+        //no need to validate "full", if it is not true then this is the default behaviour:
+        else {
+            requests = await RequestModel.read({ recipient_id: new ObjectId(recipient_id) });
+        }
         if (!requests || requests.length < 1) return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות במערכת' });
         return res.status(200).json(requests);
     } catch (error) {
@@ -103,10 +132,17 @@ RequestsRoutes.get('/find/byRecipientId/:recipient_id', authenticateToken, valid
 
 //find all by sender_id and recipient_id
 
-RequestsRoutes.get('/find/bySenderAndRecipient/:sender_id/:recipient_id', authenticateToken, validateObjectId(['sender_id', 'recipient_id']), async (req, res) => {
+RequestsRoutes.get('/find/bySenderAndRecipient/:sender_id/:recipient_id/:full', authenticateToken, validateObjectId(['sender_id', 'recipient_id']), async (req, res) => {
     try {
-        let { sender_id, recipient_id } = req.params;
-        let requests = await RequestModel.read({ sender_id, recipient_id })
+        let { sender_id, recipient_id, full } = req.params;
+        let requests;
+        if (full == 'true') {
+            requests = await RequestModel.readFull({ sender_id: new ObjectId(sender_id), recipient_id: new ObjectId(recipient_id) });
+        }
+        //no need to validate "full", if it is not true then this is the default behaviour:
+        else {
+            requests = await RequestModel.read({ sender_id: new ObjectId(sender_id), recipient_id: new ObjectId(recipient_id) });
+        }
         if (!requests || requests.length < 1) return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות במערכת' });
         return res.status(200).json(requests);
     } catch (error) {
@@ -118,13 +154,20 @@ RequestsRoutes.get('/find/bySenderAndRecipient/:sender_id/:recipient_id', authen
 
 //find all by status
 
-RequestsRoutes.get('/find/byStatus/:status', authenticateToken, checkAdmin, async (req, res) => {
+RequestsRoutes.get('/find/byStatus/:status/:full', authenticateToken, checkAdmin, async (req, res) => {
     try {
-        let { status } = req.params;
+        let { status, full } = req.params;
         let validationsRes = validateRequestData({ status });
         if (!validationsRes.valid)
             return res.status(400).json({ msg: validationsRes.msg });
-        let requests = await RequestModel.read({ status });
+        let requests;
+        if (full == 'true') {
+            requests = await RequestModel.readFull({ status });
+        }
+        //no need to validate "full", if it is not true then this is the default behaviour:
+        else {
+            requests = await RequestModel.read({ status });
+        }
         if (!requests || requests.length < 1)
             return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות במערכת' });
         return res.status(200).json(requests);
@@ -136,10 +179,17 @@ RequestsRoutes.get('/find/byStatus/:status', authenticateToken, checkAdmin, asyn
 
 //find all by Post
 
-RequestsRoutes.get('/find/byPost/:post_id', authenticateToken, validateObjectId('post_id'), async (req, res) => {
+RequestsRoutes.get('/find/byPost/:post_id/:full', authenticateToken, validateObjectId('post_id'), async (req, res) => {
     try {
-        let { post_id } = req.params;
-        let requests = await RequestModel.read({ post_id: new ObjectId(post_id) });
+        let { post_id, full } = req.params;
+        let requests;
+        if (full == 'true') {
+            requests = await RequestModel.readFull({ post_id: new ObjectId(post_id) });
+        }
+        //no need to validate "full", if it is not true then this is the default behaviour:
+        else {
+            requests = await RequestModel.read({ post_id: new ObjectId(post_id) });
+        }
         if (!requests || requests.length < 1)
             return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות במערכת' });
         return res.status(200).json(requests);
