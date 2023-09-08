@@ -88,7 +88,7 @@ PostsRoutes.get('/search/byUserId/:_id', authenticateToken, validateObjectId('_i
             res.status(200).json(posts);
     } catch (error) {
         console.warn('postsroute error: get /posts/userPosts/:_id')
-        res.status(500).json({ error, msg: 'שגיאה' });
+        res.status(500).json({ error, msg: error.toString() });
     }
 });
 
