@@ -62,7 +62,7 @@ class PostModel {
         }
 
         //return await new DB().findAll(collection, query);
-
+        const posts = await new DB().findAll(collection, query);
         const postsWithAddress = await Promise.all(posts.map(async post => {
             if (post.address_id) {
                 post.address = await AddressModel.readOne({ _id: post.address_id });
