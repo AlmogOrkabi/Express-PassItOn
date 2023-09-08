@@ -64,8 +64,8 @@ class PostModel {
         //return await new DB().findAll(collection, query);
         const posts = await new DB().findAll(collection, query);
         const postsWithAddress = await Promise.all(posts.map(async post => {
-            if (post.address_id) {
-                post.address = await AddressModel.readOne({ _id: post.address_id });
+            if (post.itemLocation_id) {
+                post.address = await AddressModel.readOne({ _id: post.itemLocation_id });
             }
             return post;
         }));
@@ -82,8 +82,8 @@ class PostModel {
         //return await new DB().findOne(collection, query);
 
         const post = await new DB().findOne(collection, query);
-        if (post && post.address_id) {
-            post.address = await AddressModel.readOne({ _id: post.address_id });
+        if (post && post.itemLocation_id) {
+            post.address = await AddressModel.readOne({ _id: post.itemLocation_id });
         }
         return post;
     }

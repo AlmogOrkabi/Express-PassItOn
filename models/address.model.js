@@ -45,7 +45,7 @@ class AddressModel {
                 throw new Error(`Invalid ObjectId for ${key}`);
             }
         }
-        return await new DB().findOne(collection, query); // returns the entire user data excluding the password.
+        return await new DB().findOne(collection, query);
     }
 
     static async read(query = {}) {
@@ -54,7 +54,7 @@ class AddressModel {
                 throw new Error(`Invalid ObjectId for ${key}`);
             }
         }
-        return await new DB().findAll(collection, query); // returns the entire user data excluding the password.
+        return await new DB().findAll(collection, query);
     }
 
     static async update(id, updateData) {

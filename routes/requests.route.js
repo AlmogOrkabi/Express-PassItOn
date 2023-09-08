@@ -5,6 +5,8 @@ const { authenticateToken, checkAdmin } = require('../utils/authenticateToken');
 const { ObjectId } = require('mongodb');
 
 
+//! ** FULL = whether to return an object with all the relevant documents or only the document itself **//
+
 RequestsRoutes.post('/create', authenticateToken, async (req, res) => {
     try {
         let { sender_id, recipient_id, requestMessage, post_id } = req.body;
