@@ -8,6 +8,6 @@ const reportTypes = ["מידע שגוי/מוטעה", "שימוש לרעה במע
 
 const reportStatuses = ['פתוח', 'בטיפול מנהל', 'בבירור', 'סגור'];
 
-const requestStatuses = ['נשלח', 'אושר', 'נדחה', 'בוטל'];
+const requestStatuses = ['נסגר', 'נשלח', 'אושר', 'נדחה', 'בוטל'];
 
 module.exports = { userStatuses, postCategories, postStatuses, reportTypes, reportStatuses, requestStatuses };
