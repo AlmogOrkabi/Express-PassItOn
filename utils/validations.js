@@ -558,7 +558,7 @@ function validateRequestData(updatedData) { //assuming the sender, the recipient
                 }
                 break;
             case 'responseMessage':
-                if (!isValidRequestString(updatedData.responseMessage)) {
+                if (updatedData.responseMessage && !isValidRequestString(updatedData.responseMessage)) {
                     return { valid: false, msg: 'מלל התשובה אינו תקין או ארוך מידי' };
                 }
                 break;
