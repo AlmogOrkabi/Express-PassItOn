@@ -201,7 +201,25 @@ RequestsRoutes.get('/find/byPost/:post_id/:full', authenticateToken, validateObj
     }
 });
 
-
+RequestsRoutes.get('/find/byPostAndSender/:post_id/:sender_id/:full', authenticateToken, validateObjectId(['post_id', 'sender_id']), async (req, res) => {
+    try {
+        let { post_id, sender_id, full } = req.params;
+        let request;
+        if (full == 'true') {
+            request = await RequestModel.readOneFull({ post_id: new ObjectId(post_id), sender_id: new ObjectId(sender_id) });
+        }
+        //no need to validate "full", if it is not true then this is the default behaviour:
+        else {
+            request = await RequestModel.readOne({ post_id: new ObjectId(post_id), sender_id: new ObjectId(sender_id) });
+        }
+        if (!request || request.length < 1)
+            return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות במערכת' });
+        return res.status(200).json(request);
+    } catch (error) {
+        console.warn('requestsroute error: get /find/byPost/:post_id')
+        return res.status(500).json({ error, msg: error.toString() });
+    }
+});
 
 
 RequestsRoutes.delete('/delete/:_id', authenticateToken, checkAdmin, validateObjectId('_id'), async (req, res) => {
