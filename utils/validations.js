@@ -261,7 +261,7 @@ function validatePostData(updatedData) {
                 }
                 break;
             case 'status':
-                if (!isValidPostStatus(updatedData.postStatus)) {
+                if (!isValidPostStatus(updatedData.status)) {
                     return { valid: false, msg: 'סטטוס לא תקין' };
                 }
                 break;
