@@ -17,6 +17,7 @@ class PostModel {
     updateDate
     itemLocation_id; //address ID
     reports;
+    recipient_id;
 
 
     constructor(owner_id, itemName, description, category, photos, itemLocation) {
@@ -33,6 +34,7 @@ class PostModel {
         this.creationDate = new Date();
         this.updatedDate = new Date();
         this.reports = []; //new post, no reports yet.
+        this.recipient_id = null;
     }
 
 
