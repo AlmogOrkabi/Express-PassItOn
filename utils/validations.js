@@ -227,6 +227,7 @@ function validateNewPostData(owner_id, itemName, description, category, photoUrl
 
 function validatePostData(updatedData) {
     let fieldsToUpdate = Object.keys(updatedData);
+    console.log(fieldsToUpdate);
 
     for (let field of fieldsToUpdate) {
         switch (field) {
@@ -273,6 +274,11 @@ function validatePostData(updatedData) {
             case 'recipient_id':
                 if (!isValidObjectId(updatedData.recipient_id)) {
                     return { valid: false, msg: 'מזהה מקבל הפריט לא תקין' };
+                }
+                break;
+            case 'recipient_id':
+                if (!isValidObjectId(updatedData.recipient_id)) {
+                    return { valid: false, msg: 'מזהה המשתמש המקבל לא תקין' };
                 }
                 break;
             default:
