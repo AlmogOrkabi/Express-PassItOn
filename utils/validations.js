@@ -276,11 +276,6 @@ function validatePostData(updatedData) {
                     return { valid: false, msg: 'מזהה מקבל הפריט לא תקין' };
                 }
                 break;
-            case 'recipient_id':
-                if (!isValidObjectId(updatedData.recipient_id)) {
-                    return { valid: false, msg: 'מזהה המשתמש המקבל לא תקין' };
-                }
-                break;
             default:
                 return { valid: false, msg: `Unexpected field: ${field}` };
         }
