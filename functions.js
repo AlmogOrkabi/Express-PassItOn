@@ -1,5 +1,5 @@
 const { ObjectId } = require('mongodb');
-import RequestModel from './models/requests.model';
+const RequestsModel = require('./models/requests.model')
 const cloudinary = require('cloudinary').v2;
 
 
