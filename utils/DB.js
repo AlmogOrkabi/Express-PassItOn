@@ -77,6 +77,25 @@ class DB {
         }
     }
 
+
+
+    async updateMany(collection, query, updateData) {
+        try {
+            await this.client.connect();
+            return await this.client.db(this.db_name).collection(collection).updateMany(query, updateData);
+        } catch (error) {
+            console.log(`\x1b[42m%s\x1b[0m`, error);
+            console.error(error.stack);
+            throw error;
+        } finally {
+            await this.client.close();
+        }
+    }
+
+
+
+
+
     async deleteOne(collection, id) {
         try {
             await this.client.connect();

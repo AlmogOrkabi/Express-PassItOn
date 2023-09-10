@@ -123,6 +123,11 @@ class RequestModel {
         return await new DB().updateById(collection, new ObjectId(_id), updatedData);
     }
 
+    static async updateMany(query = {}, updateData) {
+
+        return await new DB().updateMany(collection, query, updateData);
+    }
+
     static async delete(_id) {
         if (!isValidObjectId(_id)) {
             throw new Error(`Invalid ObjectId`);

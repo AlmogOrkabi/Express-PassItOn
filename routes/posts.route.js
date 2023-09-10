@@ -1,7 +1,7 @@
 const PostsModel = require('../models/posts.model');
 const PostsRoutes = require('express').Router();
 
-const { uploadImages, removeImages, editImagesArray } = require('../functions');
+const { uploadImages, removeImages, editImagesArray, closeOpenRequests } = require('../functions');
 const { validateNewPostData, validatePostData, isString, validatePostSearchData, validateObjectId, isValidPostStatus, isValidPostCategory } = require('../utils/validations');
 
 const { authenticateToken, checkAdmin } = require('../utils/authenticateToken');
@@ -274,6 +274,9 @@ PostsRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), async 
         if (!validationRes.valid)
             return res.status(400).json({ msg: validationRes.msg || 'פרטים לא תקינים' })
         let data = await PostsModel.update(_id, updatedData);
+        if (updatedData.status && (updatedData.status === "נסגר" || updatedData.status === "נמסר" || updatedData.status === "מבוטל")) {
+            await closeOpenRequests(_id);
+        }
         return res.status(200).json(data);
     } catch (error) {
         console.warn('postsroute error: put /posts/edit/:_id')

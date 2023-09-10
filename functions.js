@@ -1,3 +1,5 @@
+const { ObjectId } = require('mongodb');
+
 const cloudinary = require('cloudinary').v2;
 
 
@@ -91,4 +93,15 @@ const editImagesArray = async (photos, toRemove, toAdd) => {
     let newPhotos = await uploadImages(toAdd);
     return photos = [...photos, ...newPhotos] // when assigning like this, it is no longer by ref, it creates a new array.
 }
-module.exports = { uploadImage, uploadImages, removeImage, removeImages, editImagesArray };
+
+
+const closeOpenRequests = async (_id) => {
+
+    return await RequestsModel.updateMany(
+        { post_id: new ObjectId(_id), status: "נשלח" },
+        { $set: { status: "closed" } });
+}
+
+
+
+module.exports = { uploadImage, uploadImages, removeImage, removeImages, editImagesArray, closeOpenRequests };
