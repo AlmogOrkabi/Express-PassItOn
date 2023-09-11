@@ -5,6 +5,7 @@ const { uploadImages, editImagesArray, removeImages } = require('../functions');
 const { validateNewReportData, validateReportData, validateObjectId, isValidReportStatus } = require('../utils/validations');
 const { authenticateToken, checkAdmin } = require('../utils/authenticateToken');
 const { ObjectId } = require('mongodb');
+const PostModel = require('../models/posts.model');
 
 //V --- V
 ReportsRoutes.post('/create', authenticateToken, async (req, res) => {
@@ -15,6 +16,11 @@ ReportsRoutes.post('/create', authenticateToken, async (req, res) => {
         if (!validationRes.valid)
             return res.status(400).json({ msg: validationRes.msg });
         let newReport = await ReportsModel.create(owner_id, reportType, userReported, postReported, photoUrls, description);
+        if (postReported) {
+            await PostModel.update(new ObjectId(postReported), {
+                $push: { reports: newReport.insertedId }
+            })
+        }
         return res.status(201).json(newReport);
     } catch (error) {
         return res.status(500).json({ error: 'יצירת דיווח נכשלה' });

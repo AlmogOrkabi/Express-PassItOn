@@ -400,7 +400,7 @@ function validateReportData(data) {
                 }
                 break;
             case 'description':
-                if (!isString(data.description) || data.description.length > 300) {
+                if (data.description !== '' && !isString(data.description) || data.description.length > 1000) {
                     return { valid: false, msg: 'פירוט דיווח אינו תקין' };
                 }
                 break;
@@ -424,6 +424,10 @@ function validateReportData(data) {
                     return { valid: false, msg: 'תמונה לא תקינה' };
                 }
                 break;
+            case 'verdictDescription':
+                if (data.verdictDescription !== '' && !isString(data.verdictDescription) || data.verdictDescription.length > 1000) {
+                    return { valid: false, msg: 'פירוט דיווח אינו תקין' };
+                }
             default:
                 return { valid: false, msg: `Unexpected field: ${field}` };
         }
