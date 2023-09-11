@@ -24,4 +24,8 @@ function checkAdmin(req, res, next) {
     next();
 }
 
-module.exports = { authenticateToken, checkAdmin };
+function isAdmin(user) {
+    return user && user.role === 'admin';
+}
+
+module.exports = { authenticateToken, checkAdmin, isAdmin };

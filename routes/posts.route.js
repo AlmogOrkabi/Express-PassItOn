@@ -4,7 +4,7 @@ const PostsRoutes = require('express').Router();
 const { uploadImages, removeImages, editImagesArray, closeOpenRequests } = require('../functions');
 const { validateNewPostData, validatePostData, isString, validatePostSearchData, validateObjectId, isValidPostStatus, isValidPostCategory } = require('../utils/validations');
 
-const { authenticateToken, checkAdmin } = require('../utils/authenticateToken');
+const { authenticateToken, checkAdmin, isAdmin } = require('../utils/authenticateToken');
 const { ObjectId } = require('mongodb');
 
 
@@ -265,6 +265,10 @@ PostsRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), async 
         let post = await PostsModel.readOne(new ObjectId(_id));
         if (!post)
             return res.status(404).json({ msg: 'פוסט לא קיים במערכת' });
+
+        if (post.status === 'בבדיקת מנהל' && isAdmin(req.user)) {
+            return res.status(403).json({ msg: 'לא ניתן לערוך פוסט הנמצא בבדיקת מנהל' });
+        }
         let { updatedData, toRemove, toAdd } = req.body;
         if (Array.isArray(toRemove) && Array.isArray(toAdd)) {
             let newPhotosArray = await editImagesArray(post.photos, toRemove, toAdd);
