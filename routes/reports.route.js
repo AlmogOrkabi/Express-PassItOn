@@ -17,8 +17,8 @@ ReportsRoutes.post('/create', authenticateToken, async (req, res) => {
             return res.status(400).json({ msg: validationRes.msg });
         let newReport = await ReportsModel.create(owner_id, reportType, userReported, postReported, photoUrls, description);
         if (postReported) {
-            await PostModel.update(new ObjectId(postReported), {
-                $push: { reports: newReport.insertedId }
+            await PostModel.updateMany({ _id: new ObjectId(postReported) }, {
+                $push: { reports: newReport._id }
             })
         }
         return res.status(201).json(newReport);

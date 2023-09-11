@@ -168,6 +168,22 @@ class PostModel {
 
 
 
+    static async update(query, updatedData) {
+        // if (!isValidObjectId(_id)) {
+        //     throw new Error('Invalid ObjectId');
+        // }
+        // for (let key in updatedData) {
+        //     if (key.endsWith('_id')) {
+        //         console.log(`key: ${key}, value: ${updatedData[key]}`);
+        //         if ((!isValidObjectId(updatedData[key])))
+        //             throw new Error(`Invalid ObjectId for ${key}`);
+        //         else
+        //             updatedData[key] = new ObjectId(updatedData[key]);
+        //     }
+        // }
+
+        return await new DB().updateMany(collection, query, updatedData);
+    }
 
 
 
