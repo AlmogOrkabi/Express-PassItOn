@@ -168,7 +168,7 @@ class PostModel {
 
 
 
-    static async update(query, updatedData) {
+    static async updateMany(query, updatedData) {
         // if (!isValidObjectId(_id)) {
         //     throw new Error('Invalid ObjectId');
         // }
