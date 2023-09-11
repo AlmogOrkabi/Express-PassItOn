@@ -3,6 +3,8 @@ const DB = require('../utils/DB');
 const collection = 'reports';
 
 const { isValidObjectId } = require('../utils/validations');
+const PostModel = require('./posts.model');
+const UserModel = require('./users.model');
 
 class ReportModel {
     owner_id;
@@ -58,14 +60,25 @@ class ReportModel {
         return await new DB().findAll(collection, query);
     }
 
+    static async readFull(query = {}) {
+        for (let key in query) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
+                throw new Error(`Invalid ObjectId for ${key}`);
+            }
+        }
+        const reports = await new DB().findAll(collection, query);
 
+        const fullReports = await Promise.all(reports.map(async report => {
+            if (report.postReported_id) {
+                report.post = await PostModel.readOne({ id: report.postReported_id })
+            }
+            if (report.userReported_id) {
+                report.userReported = await UserModel.readOne({ id: report.userReported_id });
+            }
+        }));
+        return fullReports;
+    }
 
-    // static async read(id) {
-    //     if (!isValidObjectId(id) || id == null) {
-    //         throw new Error('Invalid ObjectId');
-    //     }
-    //     return await new DB().findOne(collection, { _id: id });
-    // }
 
     static async readOne(query = {}) {
         for (let key in query) {
@@ -76,26 +89,22 @@ class ReportModel {
         return await new DB().findOne(collection, query);
     }
 
-    // static async readByOwner(owner_id) {
-    //     if (!isValidObjectId(owner_id) || owner_id == null) {
-    //         throw new Error('Invalid ObjectId');
-    //     }
-    //     return await new DB().findAll(collection, { owner_id: owner_id });
-    // }
+    static async readOneFull(query = {}) {
+        for (let key in query) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
+                throw new Error(`Invalid ObjectId for ${key}`);
+            }
+        }
+        const report = await new DB().findOne(collection, query);
+        if (report.postReported_id)
+            report.post = await PostModel.readOne({ id: report.postReported_id })
+        if (report.userReported_id)
+            report.userReported = await UserModel.readOne({ id: report.userReported_id });
 
-    // static async readByUserReported(userReported) {
-    //     if (!isValidObjectId(userReported) || userReported == null) {
-    //         throw new Error('Invalid ObjectId');
-    //     }
-    //     return await new DB().findAll(collection, { userReported_id: userReported });
-    // }
+        return report;
+    }
 
-    // static async readByPostReported(postReported) {
-    //     if (!isValidObjectId(postReported) || postReported == null) {
-    //         throw new Error('Invalid ObjectId');
-    //     }
-    //     return await new DB().findAll(collection, { postReported_id: postReported });
-    // }
+
 
 
     // static async readByStatus(status) {

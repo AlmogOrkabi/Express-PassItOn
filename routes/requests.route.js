@@ -49,7 +49,7 @@ RequestsRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), asy
 
 
 
-RequestsRoutes.get('/find/:_id/full', authenticateToken, validateObjectId('_id'), async (req, res) => {
+RequestsRoutes.get('/find/:_id/:full', authenticateToken, validateObjectId('_id'), async (req, res) => {
     try {
         let { _id, full } = req.params;
         let request;

@@ -37,10 +37,14 @@ ReportsRoutes.post('/create', authenticateToken, async (req, res) => {
 // }
 
 //V --- V
-ReportsRoutes.get('/search/byId/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
+ReportsRoutes.get('/search/byId/:_id/:full', authenticateToken, validateObjectId('_id'), async (req, res) => {
     try {
-        let { _id } = req.params;
-        let report = await ReportsModel.readOne(new ObjectId(_id));
+        let { _id, full } = req.params;
+        let report;
+        if (full == 'true')
+            report = await ReportsModel.readOneFull(new ObjectId(_id));
+        else
+            report = await ReportsModel.readOne(new ObjectId(_id));
         if (!report)
             return res.status(404).json({ error: 'דיווח לא נמצא' });
         else
@@ -53,9 +57,14 @@ ReportsRoutes.get('/search/byId/:_id', authenticateToken, validateObjectId('_id'
 
 
 //V --- V
-ReportsRoutes.get('/allReports', authenticateToken, async (req, res) => {
+ReportsRoutes.get('/allReports/:full', authenticateToken, async (req, res) => {
     try {
-        let reports = await ReportsModel.read();
+        let { full } = req.params;
+        let reports;
+        if (full == 'true')
+            reports = await ReportsModel.readFull();
+        else
+            reports = await ReportsModel.read();
         if (!Array.isArray(reports) || reports.length === 0)
             return res.status(404).json({ error: 'לא נמצאו דיווחים מתאימים' });
         else
@@ -68,12 +77,16 @@ ReportsRoutes.get('/allReports', authenticateToken, async (req, res) => {
 
 
 //V --- V
-ReportsRoutes.get('/search/byOwnerId/:owner_id', authenticateToken, validateObjectId('owner_id'), async (req, res) => {
+ReportsRoutes.get('/search/byOwnerId/:owner_id/:full', authenticateToken, validateObjectId('owner_id'), async (req, res) => {
     try {
-        let { owner_id } = req.params;
+        let { owner_id, full } = req.params;
         // if (!isValidObjectId(owner_id) || owner_id == null)
         //     return res.status(400).json({ msg: 'פרטים לא נכונים' });
-        let reports = await ReportsModel.read({ owner_id: new ObjectId(owner_id) });
+        let reports;
+        if (full == 'true')
+            reports = await ReportsModel.readFull({ owner_id: new ObjectId(owner_id) });
+        else
+            reports = await ReportsModel.read({ owner_id: new ObjectId(owner_id) });
         if (!Array.isArray(reports) || reports.length === 0)
             return res.status(404).json({ error: 'לא נמצאו דיווחים' });
         else
@@ -86,12 +99,16 @@ ReportsRoutes.get('/search/byOwnerId/:owner_id', authenticateToken, validateObje
 
 
 //V --- V 
-ReportsRoutes.get('/search/byUserReported/:userReported', authenticateToken, validateObjectId('userReported'), async (req, res) => {
+ReportsRoutes.get('/search/byUserReported/:userReported/:full', authenticateToken, validateObjectId('userReported'), async (req, res) => {
     try {
-        let { userReported } = req.params;
+        let { userReported, full } = req.params;
         // if (!isValidObjectId(userReported) || userReported == null)
         //     return res.status(400).json({ msg: 'פרטים לא נכונים' });
-        let reports = await ReportsModel.read({ userReported_id: new ObjectId(userReported) });
+        let reports;
+        if (full == 'true')
+            reports = await ReportsModel.readFull({ userReported_id: new ObjectId(userReported) });
+        else
+            reports = await ReportsModel.read({ userReported_id: new ObjectId(userReported) });
         if (!Array.isArray(reports) || reports.length === 0)
             return res.status(404).json({ error: 'לא נמצאו דיווחים מתאימים' });
         else
@@ -105,12 +122,16 @@ ReportsRoutes.get('/search/byUserReported/:userReported', authenticateToken, val
 // can be sent to the same dynamic method??? 
 
 //V --- V
-ReportsRoutes.get('/search/byPost/:postReported', authenticateToken, validateObjectId('postReported'), async (req, res) => {
+ReportsRoutes.get('/search/byPost/:postReported/:full', authenticateToken, validateObjectId('postReported'), async (req, res) => {
     try {
-        let { postReported } = req.params;
+        let { postReported, full } = req.params;
         // if (!isValidObjectId(postReported) || postReported == null)
         //     return res.status(400).json({ msg: 'פרטים לא נכונים' });
-        let reports = await ReportsModel.read({ postReported_id: new ObjectId(postReported) });
+        let reports;
+        if (full == 'true')
+            reports = await ReportsModel.readFull({ postReported_id: new ObjectId(postReported) });
+        else
+            reports = await ReportsModel.read({ postReported_id: new ObjectId(postReported) });
         if (!Array.isArray(reports) || reports.length === 0)
             return res.status(404).json({ error: 'פוסט לא נמצא' });
         else
@@ -123,13 +144,17 @@ ReportsRoutes.get('/search/byPost/:postReported', authenticateToken, validateObj
 
 
 //V --- V
-ReportsRoutes.get('/search/byStatus/:status', authenticateToken, async (req, res) => {
+ReportsRoutes.get('/search/byStatus/:status/:full', authenticateToken, async (req, res) => {
     try {
-        let { status } = req.params;
+        let { status, full } = req.params;
         let validationRes = isValidReportStatus(status);
         if (!validationRes.valid)
             return res.status(400).json({ msg: validationRes.msg });
-        let reports = await ReportsModel.read({ status: status });
+        let reports;
+        if (full == 'true')
+            reports = await ReportsModel.readFull({ status: status });
+        else
+            reports = await ReportsModel.read({ status: status });
         if (!Array.isArray(reports) || reports.length === 0)
             return res.status(404).json({ error: 'לא נמצאו דיווחים מתאימים' });
         else
