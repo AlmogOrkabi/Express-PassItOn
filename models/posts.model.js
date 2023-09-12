@@ -134,18 +134,19 @@ class PostModel {
 
         // Search by Distance
         if (params.maxDistance && params.userCoordinates) {
-            console.log("maxDistance: " + params.maxDistance, "userCoordinates: " + params.userCoordinates)
+            const coordinatesArray = params.userCoordinates.split(',');
+            // console.log("maxDistance: " + params.maxDistance, "userCoordinates: " + params.userCoordinates, typeof params.userCoordinates, "   ", typeof coordinatesArray)
             let results = await new DB().findAll('addresses', {
                 location: {
                     $near: {
                         $geometry: {
                             type: "Point",
-                            coordinates: [Number(params.userCoordinates[0]), Number(params.userCoordinates[1])]
+                            coordinates: [Number(coordinatesArray[0]), Number(coordinatesArray[1])]
                         },
                         $maxDistance: Number(params.maxDistance) * 1000 //kilometers to meters
                     }
                 }
-            });
+            }, { _id: 1 });
             let locations = results.map(location => location._id);
             query.itemLocation_id = { $in: locations };
         }
@@ -156,9 +157,9 @@ class PostModel {
                 let locations = results.map(location => location._id);
                 query.itemLocation_id = { $in: locations };
             }
-
+        // console.log("posts query", query);
         const posts = await new DB().findAll(collection, query);
-
+        // console.log("results", posts)
         if (params.full) {
             const postsFull = await Promise.all(posts.map(async post => {
                 if (post.itemLocation_id) {
