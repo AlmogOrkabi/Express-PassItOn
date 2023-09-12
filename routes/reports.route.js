@@ -271,13 +271,13 @@ ReportsRoutes.post('/create', authenticateToken, async (req, res) => {
 
 ReportsRoutes.get('/search', authenticateToken, async (req, res) => {
     try {
-        const { ownerId, full, status, userReported, postReported } = req.query;
+        const { owner_id, full, status, userReported_id, postReported_id } = req.query;
 
         let filter = {};
-        if (ownerId) filter.owner_id = new ObjectId(ownerId);
+        if (owner_id) filter.owner_id = new ObjectId(owner_id);
         if (status) filter.status = status;
-        if (userReported) filter.userReported_id = new ObjectId(userReported);
-        if (postReported) filter.postReported_id = new ObjectId(postReported);
+        if (userReported_id) filter.userReported_id = new ObjectId(userReported_id);
+        if (postReported_id) filter.postReported_id = new ObjectId(postReported_id);
 
         let reports;
         if (full === 'true') {
