@@ -89,8 +89,10 @@ ReportsRoutes.get('/search/byOwnerId/:owner_id/:full', authenticateToken, valida
             reports = await ReportsModel.read({ owner_id: new ObjectId(owner_id) });
         if (!Array.isArray(reports) || reports.length === 0)
             return res.status(404).json({ error: 'לא נמצאו דיווחים' });
-        else
+        else {
+            console.log("route reports : ", reports)
             return res.status(200).json(reports);
+        }
     } catch (error) {
         console.warn('reportsroute error: get /:owner_id')
         res.status(500).json({ error, msg: 'שגיאה' });
@@ -112,8 +114,7 @@ ReportsRoutes.get('/search/byUserReported/:userReported/:full', authenticateToke
         if (!Array.isArray(reports) || reports.length === 0)
             return res.status(404).json({ error: 'לא נמצאו דיווחים מתאימים' });
         else
-            console.log("route reports : ", reports)
-        return res.status(200).json(reports);
+            return res.status(200).json(reports);
     } catch (error) {
         console.warn('reportsroute error: get /:userReported')
         return res.status(500).json({ error, msg: 'שגיאה' });
