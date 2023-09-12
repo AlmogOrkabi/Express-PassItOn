@@ -83,14 +83,15 @@ ReportsRoutes.get('/search/byOwnerId/:owner_id/:full', authenticateToken, valida
         // if (!isValidObjectId(owner_id) || owner_id == null)
         //     return res.status(400).json({ msg: 'פרטים לא נכונים' });
         let reports;
-        if (full == 'true')
+        if (full == 'true') {
             reports = await ReportsModel.readFull({ owner_id: new ObjectId(owner_id) });
-        else
+        }
+        else {
             reports = await ReportsModel.read({ owner_id: new ObjectId(owner_id) });
+        }
         if (!Array.isArray(reports) || reports.length === 0)
             return res.status(404).json({ error: 'לא נמצאו דיווחים' });
         else {
-            console.log("route reports : ", reports)
             return res.status(200).json(reports);
         }
     } catch (error) {

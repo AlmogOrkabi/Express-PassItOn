@@ -68,8 +68,6 @@ class ReportModel {
         }
         const reports = await new DB().findAll(collection, query);
 
-        console.log(reports)
-
         const fullReports = await Promise.all(reports.map(async report => {
             if (report.postReported_id) {
                 report.post = await PostModel.readOne({ _id: report.postReported_id })
@@ -77,6 +75,7 @@ class ReportModel {
             if (report.userReported_id) {
                 report.userReported = await UserModel.readOne({ _id: report.userReported_id });
             }
+            return report;
         }));
         return fullReports;
     }
