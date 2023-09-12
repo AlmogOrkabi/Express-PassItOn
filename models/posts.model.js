@@ -2,6 +2,7 @@ const { ObjectId } = require('mongodb');
 const DB = require('../utils/DB');
 const collection = 'posts';
 const AddressModel = require('./address.model');
+const UserModel = require('./users.model');
 
 const { isValidObjectId } = require('../utils/validations');
 
@@ -43,19 +44,6 @@ class PostModel {
         return await new DB().insert(collection, { ...newPost });
     }
 
-    // static async read(id) {
-    //     if (!isValidObjectId(id) || id == null) {
-    //         throw new Error('Invalid ObjectId');
-    //     }
-    //     return await new DB().findOne(collection, { _id: id });
-    // }
-
-
-    // static async read() {
-    //     return await new DB().findAll(collection);
-    // }
-
-
     static async read(query = {}) {
         for (let key in query) {
             if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
@@ -74,6 +62,28 @@ class PostModel {
         return postsWithAddress;
     }
 
+    static async readFull(query = {}) {
+        for (let key in query) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
+                throw new Error(`Invalid ObjectId for ${key}`);
+            }
+        }
+
+        //return await new DB().findAll(collection, query);
+        const posts = await new DB().findAll(collection, query);
+        const postsFull = await Promise.all(posts.map(async post => {
+            if (post.itemLocation_id) {
+                post.address = await AddressModel.readOne({ _id: post.itemLocation_id });
+            }
+            if (post.owner_id) {
+                post.owner = await UserModel.readOne({ _id: post.owner_id });
+            }
+            return post;
+        }));
+        return postsFull;
+    }
+
+
     static async readOne(query = {}) {
         for (let key in query) {
             if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
@@ -90,74 +100,135 @@ class PostModel {
         return post;
     }
 
-    //find all posts by a specific user
-    // static async readAll(id) {
-    //     if (!isValidObjectId(id) || id == null) {
-    //         throw new Error('Invalid ObjectId');
-    //     }
-    //     return await new DB().findAll(collection, { owner_id: id });
-    // }
-
-    // static async readByStatus(status) {
-    //     //validate status (switch case?)
-    //     return await new DB().findAll(collection, { status: status });
-    // }
-
-    // static async readByKeywords(keywords) {
-    //     //add some form of validation --- ???
-    //     return await new DB().findAll(collection, { keywords: keywords });
-    // }
-
-
-    //**CHECK***!
-    static async readByKeywords(keywords) {
-        //add some form of validation --- ???
-        return await new DB().findAll(collection, { $text: { $search: keywords } });
-    }
-
-    static async readByCategoryAndKeywords(category, keywords) {
-        //add some form of validation --- ???
-        return await new DB().findAll(collection, { category: category, $text: { $search: keywords } });
-    }
-
-
-    static async readByDistance(maxDistance, userCoordinates, itemName = null) {
-        console.log("posts model ==>> coordinates:",)
-        let query = {
-            location: {
-                $near: {
-                    $geometry: {
-                        type: "Point",
-                        coordinates: [Number(userCoordinates[0]), Number(userCoordinates[1])]
-                    },
-                    $maxDistance: Number(maxDistance) * 1000 //kilometers to meters
-                }
+    static async readOneFull(query = {}) {
+        for (let key in query) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
+                throw new Error(`Invalid ObjectId for ${key}`);
             }
         }
 
-        let results = await new DB().findAll('addresses', query, { _id: 1 })
-        console.log('results:', results);
-        let locations = results.map(location => location._id); //an array of objectIds , $in cannot work with the original results.
-        console.log('locations:', locations);
-        let query2 = {
-            itemLocation_id: { $in: locations }
-        }
-        if (itemName) query2.$text = { $search: itemName };
+        //return await new DB().findOne(collection, query);
 
-        return await new DB().findAll(collection, query2);
+        const post = await new DB().findOne(collection, query);
+        if (post && post.itemLocation_id) {
+            post.address = await AddressModel.readOne({ _id: post.itemLocation_id });
+        }
+        if (post && post.owner_id) {
+            post.owner = await UserModel.readOne({ _id: post.owner_id });
+        }
+        return post;
+    }
+
+    static async searchPosts(params) {
+        let query = {};
+
+        // Basic Filters
+        if (params.owner_id) query.owner_id = params.owner_id;
+        if (params.status) query.status = params.status;
+        if (params.itemName) query.$text = { $search: params.itemName };
+        if (params.itemLocation_id) query.itemLocation_id = params.itemLocation_id;
+        if (params.category) query.category = params.category;
+
+        // Search by Keywords
+        if (params.keywords) query.$text = { $search: params.keywords };
+
+        // Search by Distance
+        if (params.maxDistance && params.userCoordinates) {
+            let results = await new DB().findAll('addresses', {
+                location: {
+                    $near: {
+                        $geometry: {
+                            type: "Point",
+                            coordinates: [Number(params.userCoordinates[0]), Number(params.userCoordinates[1])]
+                        },
+                        $maxDistance: Number(params.maxDistance) * 1000 //kilometers to meters
+                    }
+                }
+            }, { _id: 1 });
+            let locations = results.map(location => location._id);
+            query.itemLocation_id = { $in: locations };
+        }
+
+        // Search by City
+        if (params.city) {
+            let results = await new DB().findAll('addresses', { city: params.city }, { _id: 1 });
+            let locations = results.map(location => location._id);
+            query.itemLocation_id = { $in: locations };
+        }
+
+        const posts = await new DB().findAll(collection, query);
+
+        if (params.full) {
+            const postsFull = await Promise.all(posts.map(async post => {
+                if (post.itemLocation_id) {
+                    post.address = await AddressModel.readOne({ _id: post.itemLocation_id });
+                }
+                if (post.owner_id) {
+                    post.owner = await UserModel.readOne({ _id: post.owner_id });
+                }
+                return post;
+            }));
+            return postsFull;
+        }
+
+        return posts;
     }
 
 
-    static async readByCity(city, itemName) {
-        let results = await new DB().findAll('addresses', { city: city }, { _id: 1 });
-        let locations = results.map(location => location._id); //an array of objectIds , $in cannot work with the original results.
-        let query2 = {
-            itemLocation_id: { $in: locations }, //searches for the location id saved inside the posts
-        }
-        if (itemName) query2.$text = { $search: itemName };
 
-        return await new DB().findAll(collection, query2);
-    }
+
+
+
+
+    // //**CHECK***!
+    // static async readByKeywords(keywords) {
+    //     //add some form of validation --- ???
+    //     return await new DB().findAll(collection, { $text: { $search: keywords } });
+    // }
+
+    // static async readByCategoryAndKeywords(category, keywords) {
+    //     //add some form of validation --- ???
+    //     return await new DB().findAll(collection, { category: category, $text: { $search: keywords } });
+    // }
+
+
+    // static async readByDistance(maxDistance, userCoordinates, itemName = null) {
+    //     console.log("posts model ==>> coordinates:",)
+    //     let query = {
+    //         location: {
+    //             $near: {
+    //                 $geometry: {
+    //                     type: "Point",
+    //                     coordinates: [Number(userCoordinates[0]), Number(userCoordinates[1])]
+    //                 },
+    //                 $maxDistance: Number(maxDistance) * 1000 //kilometers to meters
+    //             }
+    //         }
+    //     }
+
+    //     let results = await new DB().findAll('addresses', query, { _id: 1 })
+    //     console.log('results:', results);
+    //     let locations = results.map(location => location._id); //an array of objectIds , $in cannot work with the original results.
+    //     console.log('locations:', locations);
+    //     let query2 = {
+    //         itemLocation_id: { $in: locations }
+    //     }
+    //     if (itemName) query2.$text = { $search: itemName };
+
+    //     return await new DB().findAll(collection, query2);
+    // }
+
+
+    // static async readByCity(city, itemName) {
+    //     let results = await new DB().findAll('addresses', { city: city }, { _id: 1 });
+    //     let locations = results.map(location => location._id); //an array of objectIds , $in cannot work with the original results.
+    //     let query2 = {
+    //         itemLocation_id: { $in: locations }, //searches for the location id saved inside the posts
+    //     }
+    //     if (itemName) query2.$text = { $search: itemName };
+
+    //     return await new DB().findAll(collection, query2);
+    // }
 
     // read() to search all V
     //read(id) to find posts by user V 
