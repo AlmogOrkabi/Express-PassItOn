@@ -287,7 +287,7 @@ ReportsRoutes.get('/search', authenticateToken, async (req, res) => {
         }
 
         if (!Array.isArray(reports) || reports.length === 0)
-            return res.status(404).json({ error: 'לא נמצאו דיווחים מתאימים' });
+            return res.status(404).json({ error, msg: 'לא נמצאו דיווחים מתאימים' });
         else
             return res.status(200).json(reports);
     } catch (error) {
