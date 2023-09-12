@@ -112,7 +112,8 @@ ReportsRoutes.get('/search/byUserReported/:userReported/:full', authenticateToke
         if (!Array.isArray(reports) || reports.length === 0)
             return res.status(404).json({ error: 'לא נמצאו דיווחים מתאימים' });
         else
-            return res.status(200).json(reports);
+            console.log("route reports : ", reports)
+        return res.status(200).json(reports);
     } catch (error) {
         console.warn('reportsroute error: get /:userReported')
         return res.status(500).json({ error, msg: 'שגיאה' });
