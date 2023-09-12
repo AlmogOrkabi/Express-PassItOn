@@ -149,13 +149,13 @@ class PostModel {
             let locations = results.map(location => location._id);
             query.itemLocation_id = { $in: locations };
         }
-
-        // Search by City
-        if (params.city) {
-            let results = await new DB().findAll('addresses', { city: params.city }, { _id: 1 });
-            let locations = results.map(location => location._id);
-            query.itemLocation_id = { $in: locations };
-        }
+        else
+            // Search by City
+            if (params.city) {
+                let results = await new DB().findAll('addresses', { city: params.city }, { _id: 1 });
+                let locations = results.map(location => location._id);
+                query.itemLocation_id = { $in: locations };
+            }
 
         const posts = await new DB().findAll(collection, query);
 
