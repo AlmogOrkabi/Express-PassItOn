@@ -134,6 +134,7 @@ class PostModel {
 
         // Search by Distance
         if (params.maxDistance && params.userCoordinates) {
+            console.log("maxDistance: " + params.maxDistance, "userCoordinates: " + params.userCoordinates)
             let results = await new DB().findAll('addresses', {
                 location: {
                     $near: {
@@ -144,7 +145,7 @@ class PostModel {
                         $maxDistance: Number(params.maxDistance) * 1000 //kilometers to meters
                     }
                 }
-            }, { _id: 1 });
+            });
             let locations = results.map(location => location._id);
             query.itemLocation_id = { $in: locations };
         }
