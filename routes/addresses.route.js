@@ -40,18 +40,43 @@ AddressRoutes.get('/search/byId/:_id', authenticateToken, validateObjectId('_id'
     }
 });
 
-AddressRoutes.get('/allAddresses', authenticateToken, async (req, res) => {
+//V --- V
+AddressRoutes.get('/search', authenticateToken, async (req, res) => {
     try {
-        let addresses = await AddressModel.read();
-        if (!Array.isArray(addresses) || addresses.length === 0)
-            return res.status(404).json({ msg: 'לא נמצאו כתובות מתאימות' });
-        else
-            return res.status(200).json(addresses);
+        const { _id, city, region, street } = req.params;
+
+        let filter = {};
+        if (_id) filter._id - new ObjectId(_id);
+        if (city) filter.city = city;
+        if (region) filter.region = region
+        if (street) filter.street = street
+
+        const addresses = await AddressModel.find(filter);
+
+        if (!addresses)
+            return res.status(404).json({ msg: 'כתובת לא נמצאה' })
+        return res.status(200).json(addresses);
     } catch (error) {
-        console.warn('addressRoute error: get /allAddresses')
+        console.warn('addressRoute error: get /:_id')
         return res.status(500).json({ error, msg: 'שגיאה' })
     }
 });
+
+
+
+
+// AddressRoutes.get('/allAddresses', authenticateToken, async (req, res) => {
+//     try {
+//         let addresses = await AddressModel.read();
+//         if (!Array.isArray(addresses) || addresses.length === 0)
+//             return res.status(404).json({ msg: 'לא נמצאו כתובות מתאימות' });
+//         else
+//             return res.status(200).json(addresses);
+//     } catch (error) {
+//         console.warn('addressRoute error: get /allAddresses')
+//         return res.status(500).json({ error, msg: 'שגיאה' })
+//     }
+// });
 
 //Methods to add:
 //search by city
