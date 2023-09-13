@@ -312,7 +312,7 @@ RequestsRoutes.get('/search', authenticateToken, async (req, res) => {
         }
 
         if (!Array.isArray(requests) || requests.length === 0)
-            return res.status(404).json({ error, msg: 'לא נמצאו בקשות מתאימות' });
+            return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות' });
         else
             return res.status(200).json(requests);
 
