@@ -276,6 +276,9 @@ function validatePostData(updatedData) {
                     return { valid: false, msg: 'מזהה מקבל הפריט לא תקין' };
                 }
                 break;
+            case 'full':
+
+                break;
             default:
                 return { valid: false, msg: `Unexpected field: ${field}` };
         }
@@ -428,6 +431,9 @@ function validateReportData(data) {
                 if (data.verdictDescription !== '' && !isString(data.verdictDescription) || data.verdictDescription.length > 1000) {
                     return { valid: false, msg: 'פירוט דיווח אינו תקין' };
                 }
+            case 'full':
+
+                break;
             default:
                 return { valid: false, msg: `Unexpected field: ${field}` };
         }
@@ -596,6 +602,9 @@ function validateRequestData(updatedData) { //assuming the sender, the recipient
                 if (!isValidObjectId(updatedData._id)) {
                     return { valid: false, msg: 'זיהוי הבקשה לא תקין' };
                 }
+                break;
+            case 'full':
+
                 break;
             default:
                 return { valid: false, msg: `Unexpected field: ${field}` };
