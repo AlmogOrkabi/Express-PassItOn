@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const collection = 'users';
 
 const { isValidObjectId } = require('../utils/validations');
+const AddressModel = require('./address.model');
 
 class UserModel {
     _id;
@@ -51,9 +52,13 @@ class UserModel {
 
     static async login(email, password) {
         let query = { email: email }
-        let user = await new DB().findOne(collection, query);
+        const user = await new DB().findOne(collection, query);
         if (!user || !(await bcrypt.compare(password, user.password)))
             return null;
+
+        if (user.address_id) {
+            user.address = await AddressModel.readOne({ _id: user.address_id });
+        }
         return user;
     }
 
@@ -66,6 +71,23 @@ class UserModel {
         return await new DB().findAll(collection, query, { password: 0 }); // returns the entire user data excluding the password.
     }
 
+    static async readFull(query = {}) {
+        for (let key in query) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
+                throw new Error(`Invalid ObjectId for ${key}`);
+            }
+        }
+        const users = await new DB().findAll(collection, query, { password: 0 }); // returns the entire user data excluding the password.
+
+        const fullUsers = await Promise.all(users.map(async user => {
+            if (user.address_id) {
+                user.address = await AddressModel.readOne({ _id: user.address_id })
+            }
+            return user
+        }));
+
+        return fullUsers;
+    }
 
     static async readOne(query = {}) {
         for (let key in query) {
@@ -76,6 +98,23 @@ class UserModel {
         return await new DB().findOne(collection, query, { password: 0 }); // returns the entire user data excluding the password.
     }
 
+
+
+
+    static async readOneFull(query = {}) {
+        for (let key in query) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
+                throw new Error(`Invalid ObjectId for ${key}`);
+            }
+        }
+        const user = await new DB().findOne(collection, query, { password: 0 }); // returns the entire user data excluding the password.
+
+        if (user.address_id) {
+            user.address = await AddressModel.readOne({ _id: user.address_id });
+        }
+
+        return user;
+    }
     //get all users
     // static async read() {
     //     return await new DB().findAll(collection);
