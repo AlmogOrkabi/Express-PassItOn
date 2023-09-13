@@ -417,8 +417,8 @@ function validateReportData(data) {
                     return { valid: false, msg: 'שגיאה' };  //chage this
                 }
                 break;
-            case 'postReported':
-                if (data.postReported !== null && !isValidObjectId(data.postReported)) { //can be null
+            case 'postReported_id':
+                if (data.postReported_id !== null && !isValidObjectId(data.postReported_id)) { //can be null
                     return { valid: false, msg: 'שגיאה' }; //change this
                 }
                 break;
