@@ -577,6 +577,26 @@ function validateRequestData(updatedData) { //assuming the sender, the recipient
                     return { valid: false, msg: 'סטטוס הבקשה אינו תקין' };
                 }
                 break;
+            case 'recipient_id':
+                if (!isValidObjectId(updatedData.recipient_id)) {
+                    return { valid: false, msg: 'זיהוי הנמען לא תקין' };
+                }
+                break;
+            case 'sender_id':
+                if (!isValidObjectId(updatedData.sender_id)) {
+                    return { valid: false, msg: 'זיהוי השולח לא תקין' };
+                }
+                break;
+            case 'post_id':
+                if (!isValidObjectId(updatedData.post_id)) {
+                    return { valid: false, msg: 'זיהוי הפוסט לא תקין' };
+                }
+                break;
+            case '_id':
+                if (!isValidObjectId(updatedData._id)) {
+                    return { valid: false, msg: 'זיהוי הבקשה לא תקין' };
+                }
+                break;
             default:
                 return { valid: false, msg: `Unexpected field: ${field}` };
         }

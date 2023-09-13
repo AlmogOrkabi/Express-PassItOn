@@ -271,13 +271,22 @@ ReportsRoutes.post('/create', authenticateToken, async (req, res) => {
 
 ReportsRoutes.get('/search', authenticateToken, async (req, res) => {
     try {
-        const { owner_id, full, status, userReported_id, postReported_id } = req.query;
+        const { _id, owner_id, full, status, userReported_id, postReported_id } = req.query;
+
+
 
         let filter = {};
+        if (_id) filter._id = new ObjectId(_id);
         if (owner_id) filter.owner_id = new ObjectId(owner_id);
         if (status) filter.status = status;
         if (userReported_id) filter.userReported_id = new ObjectId(userReported_id);
         if (postReported_id) filter.postReported_id = new ObjectId(postReported_id);
+
+        let validationsRes = validateReportData(filter);
+        if (!validationsRes.valid) {
+            return res.status(400).json({ msg: validationsRes.msg || 'פרטים לא תקינים' })
+        }
+
 
         let reports;
         if (full === 'true') {
