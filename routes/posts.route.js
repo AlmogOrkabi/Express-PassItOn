@@ -398,7 +398,7 @@ PostsRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), async 
         if (!post)
             return res.status(404).json({ msg: 'פוסט לא קיים במערכת' });
 
-        if (post.status === 'בבדיקת מנהל' && isAdmin(req.user)) {
+        if (post.status === 'בבדיקת מנהל' && !isAdmin(req.user)) {
             return res.status(403).json({ msg: 'לא ניתן לערוך פוסט הנמצא בבדיקת מנהל' });
         }
         let { updatedData, toRemove, toAdd } = req.body;
