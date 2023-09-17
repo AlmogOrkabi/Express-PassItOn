@@ -334,6 +334,7 @@ const { validateNewPostData, validatePostData, isString, validatePostSearchData,
 
 const { authenticateToken, checkAdmin, isAdmin } = require('../utils/authenticateToken');
 const { ObjectId } = require('mongodb');
+const AddressModel = require('../models/address.model');
 
 
 
@@ -409,6 +410,8 @@ PostsRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), async 
         let validationRes = validatePostData(updatedData);
         if (!validationRes.valid)
             return res.status(400).json({ msg: validationRes.msg || 'פרטים לא תקינים' })
+        if (updatedData.itemLocation_id)
+            await AddressModel.delete(new ObjectId(post.itemLocation_id));
         let data = await PostsModel.update(_id, updatedData);
         if (updatedData.status && (updatedData.status === "נסגר" || updatedData.status === "נמסר" || updatedData.status === "מבוטל")) {
             await closeOpenRequests(_id);

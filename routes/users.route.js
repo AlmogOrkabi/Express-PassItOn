@@ -285,7 +285,7 @@ const { uploadImage, removeImage } = require('../functions');
 const jwt = require('jsonwebtoken');
 const { authenticateToken, checkAdmin } = require('../utils/authenticateToken');
 const { ObjectId } = require('mongodb');
-
+const AddressModel = require('../models/address.model')
 
 
 
@@ -437,6 +437,9 @@ UsersRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), async 
         let { _id } = req.params;
         let { updatedData } = req.body;
         let { newPhoto, photo, ...restOfUpdatedData } = updatedData;
+        let user = await UserModel.readOne({ _id: new ObjectId(_id) })
+        if (!user)
+            return res.status(404).json({ msg: 'משתמש לא קיים במערכת' });
         let validationRes = validateUserData(restOfUpdatedData);
         if (!updatedData || !validationRes.valid)
             return res.status(400).json({ msg: validationRes.msg || "לא התקבלו פרטים לעדכון" });
@@ -448,6 +451,8 @@ UsersRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), async 
             restOfUpdatedData.photo = img; // Update the photo in the data to be updated
             if (photo) await removeImage(photo);
         }
+        if (updatedData.address_id)
+            await AddressModel.delete(new ObjectId(user.itemLocation_id));
         let data = await UserModel.update(_id, restOfUpdatedData);
         return res.status(200).json(data);
 
