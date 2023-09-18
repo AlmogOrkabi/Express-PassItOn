@@ -290,11 +290,20 @@ function isValidPostStatus(postStatus) {
     //const validStatuses = ['זמין', 'לא זמין למסירה', 'בתהליך מסירה', 'נמסר', 'סגור', 'מבוטל', 'בבדיקת מנהל']
 
     if (!isString(postStatus) || !postStatuses.includes(postStatus)) {
-        return { valid: false, msg: 'סטטוס לא תקין' }
+        return false
     }
     else
-        return { valid: true }
+        return true;
 }
+// function isValidPostStatus(postStatus) {
+//     //const validStatuses = ['זמין', 'לא זמין למסירה', 'בתהליך מסירה', 'נמסר', 'סגור', 'מבוטל', 'בבדיקת מנהל']
+
+//     if (!isString(postStatus) || !postStatuses.includes(postStatus)) {
+//         return { valid: false, msg: 'סטטוס לא תקין' }
+//     }
+//     else
+//         return { valid: true }
+// }
 
 function validatePostSearchData(maxDistance, userCoordinates, itemName = null) {
     if (itemName) {
