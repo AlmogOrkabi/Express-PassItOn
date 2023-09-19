@@ -444,8 +444,8 @@ UsersRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), async 
         if (!updatedData || !validationRes.valid)
             return res.status(400).json({ msg: validationRes.msg || "לא התקבלו פרטים לעדכון" });
         if (newPhoto) {
-            let imgStr = `data:image/jpg;base64,${newPhoto}`; // sent as base64 string from the client
-            let img = await uploadImage(imgStr);
+            // let imgStr = `data:image/jpg;base64,${newPhoto}`; // sent as base64 string from the client
+            let img = await uploadImage(newPhoto);
             if (!isValidPhoto(img))
                 return res.status(400).json({ msg: 'העלאת התמונה נכשלה' });
             restOfUpdatedData.photo = img; // Update the photo in the data to be updated
