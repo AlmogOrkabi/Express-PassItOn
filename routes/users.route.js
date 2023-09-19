@@ -452,7 +452,7 @@ UsersRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), async 
             if (photo) await removeImage(photo);
         }
         if (updatedData.address_id)
-            await AddressModel.delete(new ObjectId(user.itemLocation_id));
+            await AddressModel.delete(new ObjectId(user.address_id));
         let data = await UserModel.update(_id, restOfUpdatedData);
         return res.status(200).json(data);
 
