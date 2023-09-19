@@ -458,6 +458,9 @@ UsersRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), async 
 
     } catch (error) {
         console.warn('usersroute error: put /editUser/:_id')
+        console.log(error)
+        console.log(error.toString())
+        console.log(error.message)
         return res.status(500).json({ error, msg: 'שגיאה' });
     }
 });
