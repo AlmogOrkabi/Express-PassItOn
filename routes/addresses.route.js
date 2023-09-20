@@ -15,7 +15,7 @@ AddressRoutes.post('/create', async (req, res) => {
         let { region, city, street, house, apartment, notes, simplifiedAddress, lon, lat } = req.body;
         let validationRes = validateNewAddressDetails(region, city, street, house, apartment, notes, simplifiedAddress, lon, lat);
         if (!validationRes.valid)
-            return res.status(400).json({ msg: validationRes.msg });
+            return res.status(400).json({ error: 'INVALID_DETAILS', msg: validationRes.msg });
         let newAddress = await AddressModel.create(region, city, street, house, apartment, notes, simplifiedAddress, lon, lat);
         return res.status(201).json(newAddress);
     } catch (error) {
@@ -32,7 +32,7 @@ AddressRoutes.get('/search/byId/:_id', authenticateToken, validateObjectId('_id'
         // if (!Array.isArray(address) || address.length === 0)
         //     return res.status(404).json({ msg: 'כתובת לא נמצאה' })
         if (!address)
-            return res.status(404).json({ msg: 'כתובת לא נמצאה' })
+            return res.status(404).json({ error: 'NOT_FOUND', msg: 'כתובת לא נמצאה' })
         return res.status(200).json(address);
     } catch (error) {
         console.warn('addressRoute error: get /:_id')
@@ -54,7 +54,7 @@ AddressRoutes.get('/search', authenticateToken, async (req, res) => {
         const addresses = await AddressModel.find(filter);
 
         if (!addresses)
-            return res.status(404).json({ msg: 'כתובת לא נמצאה' })
+            return res.status(404).json({ error: 'NOT_FOUND', msg: 'כתובת לא נמצאה' })
         return res.status(200).json(addresses);
     } catch (error) {
         console.warn('addressRoute error: get /:_id')
@@ -93,7 +93,7 @@ AddressRoutes.put('/editAddress/:_id', authenticateToken, validateObjectId('_id'
         let { updatedData } = req.body;
         let validationRes = validateAddressData(updatedData)
         if (!updatedData || !validationRes.valid)
-            return res.status(400).json({ msg: validationRes.msg || 'לא התקבלו פרטים לעדכון' });
+            return res.status(400).json({ error: 'INVALID_DETAILS', msg: validationRes.msg || 'לא התקבלו פרטים לעדכון' });
         let data = await AddressModel.update(_id, updatedData);
         console.log("DATA ===>>>   ", data);
         res.status(200).json(data);

@@ -347,7 +347,7 @@ PostsRoutes.post('/create', authenticateToken, async (req, res) => {
         let photoUrls = await uploadImages(photos); //required
         let validationRes = validateNewPostData(owner_id, itemName, description, category, photoUrls, itemLocation_id);
         if (!validationRes.valid)
-            return res.status(400).json({ msg: validationRes.msg })
+            return res.status(400).json({ error: 'INVALID_DETAILS', msg: validationRes.msg })
         let newPost = await PostsModel.create(owner_id, itemName, description, category, photoUrls, itemLocation_id);
         return res.status(201).json(newPost);
     } catch (error) {
@@ -375,7 +375,7 @@ PostsRoutes.get('/search', authenticateToken, async (req, res) => {
         const posts = await PostsModel.searchPosts(req.query);
 
         if (!posts || posts.length < 1) {
-            return res.status(404).json({ msg: 'לא נמצאו פוסטים מתאימים' });
+            return res.status(404).json({ error: 'NOT_FOUND', msg: 'לא נמצאו פוסטים מתאימים' });
         }
         else
             return res.status(200).json(posts);
@@ -397,10 +397,10 @@ PostsRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), async 
         let { _id } = req.params;
         let post = await PostsModel.readOne(new ObjectId(_id));
         if (!post)
-            return res.status(404).json({ msg: 'פוסט לא קיים במערכת' });
+            return res.status(404).json({ error: 'NOT_FOUND', msg: 'פוסט לא קיים במערכת' });
 
         if (post.status === 'בבדיקת מנהל' && !isAdmin(req.user)) {
-            return res.status(403).json({ msg: 'לא ניתן לערוך פוסט הנמצא בבדיקת מנהל' });
+            return res.status(403).json({ error: 'UNAUTHORIZED', msg: 'לא ניתן לערוך פוסט הנמצא בבדיקת מנהל' });
         }
         let { updatedData, toRemove, toAdd } = req.body;
         if (Array.isArray(toRemove) && Array.isArray(toAdd)) {
@@ -409,7 +409,7 @@ PostsRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), async 
         }
         let validationRes = validatePostData(updatedData);
         if (!validationRes.valid)
-            return res.status(400).json({ msg: validationRes.msg || 'פרטים לא תקינים' })
+            return res.status(400).json({ error: 'INVALID_DETAILS', msg: validationRes.msg || 'פרטים לא תקינים' })
         if (updatedData.itemLocation_id)
             await AddressModel.delete(new ObjectId(post.itemLocation_id));
         let data = await PostsModel.update(_id, updatedData);
@@ -442,7 +442,7 @@ PostsRoutes.delete('/delete/:_id', authenticateToken, validateObjectId('_id'), a
         let post = await PostsModel.readOne(new ObjectId(_id));
         console.log(post)
         if (!post)
-            return res.status(404).json({ msg: 'פוסט לא קיים במערכת' });
+            return res.status(404).json({ error: 'NOT_FOUND', msg: 'פוסט לא קיים במערכת' });
         if (Array.isArray(post.photos) && post.photos.length > 0)
             await removeImages(post.photos);
         await PostsModel.delete(new ObjectId(_id));

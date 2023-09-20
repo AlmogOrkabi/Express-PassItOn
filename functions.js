@@ -1,5 +1,8 @@
 const { ObjectId } = require('mongodb');
 const RequestsModel = require('./models/requests.model')
+const ReportsModel = require('./models/reports.models')
+const PostsModel = require('./models/posts.models')
+
 const cloudinary = require('cloudinary').v2;
 
 
@@ -99,9 +102,17 @@ const closeOpenRequests = async (_id) => {
 
     return await RequestsModel.updateMany(
         { post_id: new ObjectId(_id), status: "נשלח" },
-        { $set: { status: "closed" } });
+        { $set: { status: "נסגר" } });
 }
 
+const closeAllUserActivities = async (_id) => {
+    try {
+        await RequestsModel.updateMany({ sender_id: id }, { $set: { status: 'נסגר' } });
+        await PostsModel.updateMany({ owner_id: id, status: { $in: ['לא זמין למסירה', 'בתהליך מסירה', 'זמין'] } }, { $set: { status: 'סגור' } });
+        // await ReportsModel.updateMany({owner_id: _id},{}) // all reports need to be reviewed by an admin?
+    } catch (error) {
 
+    }
+}
 
-module.exports = { uploadImage, uploadImages, removeImage, removeImages, editImagesArray, closeOpenRequests };
+module.exports = { uploadImage, uploadImages, removeImage, removeImages, editImagesArray, closeOpenRequests, closeAllUserActivities };

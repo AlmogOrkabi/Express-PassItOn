@@ -11,3 +11,10 @@ const reportStatuses = ['פתוח', 'בטיפול מנהל', 'בבירור', 'ס
 const requestStatuses = ['נסגר', 'נשלח', 'אושר', 'נדחה', 'בוטל'];
 
 module.exports = { userStatuses, postCategories, postStatuses, reportTypes, reportStatuses, requestStatuses };
+
+
+//error types: (just for documentation purposes)
+// error: 'INVALID_DETAILS'
+// error: 'NOT_FOUND'
+// error: 'UNAUTHORIZED'
+// error: 'ACCESS_DENIED'

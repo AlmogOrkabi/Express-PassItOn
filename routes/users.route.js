@@ -280,7 +280,7 @@
 const UserModel = require('../models/users.model')
 const UsersRoutes = require('express').Router();
 const { validateNewUserData, validateObjectId, validateUserData, isValidPhoto, isValidUserStatus, validateSort } = require('../utils/validations');
-const { uploadImage, removeImage } = require('../functions');
+const { uploadImage, removeImage, closeAllUserActivities } = require('../functions');
 
 const jwt = require('jsonwebtoken');
 const { authenticateToken, checkAdmin } = require('../utils/authenticateToken');
@@ -315,11 +315,11 @@ UsersRoutes.post('/register', async (req, res) => {
         // -checks if the email address is already taken by another user in the database
         let existingUser = await UserModel.readOne({ email: email });
         if (existingUser)
-            return res.status(409).json({ msg: 'כתובת המייל אינה פנויה' })
+            return res.status(409).json({ error: 'TAKEN', msg: 'כתובת המייל אינה פנויה' })
 
         let validationRes = validateNewUserData(username, firstName, lastName, phoneNumber, email, password, address)
         if (!validationRes.valid)
-            return res.status(400).json({ msg: validationRes.msg })
+            return res.status(400).json({ error: 'INVALID_DETAILS', msg: validationRes.msg })
 
 
         let img = null;
@@ -328,7 +328,7 @@ UsersRoutes.post('/register', async (req, res) => {
         if (photo) {
             img = await uploadImage(photo);
             if (!img || !isValidPhoto(img))
-                return res.status(400).json({ msg: 'התמונה שהועלתה אינה תקינה' });
+                return res.status(400).json({ error: 'INVALID_PHOTO', msg: 'התמונה שהועלתה אינה תקינה' });
         }
 
         let newUser = await UserModel.create(username, firstName, lastName, phoneNumber, email, password, address, img);
@@ -345,9 +345,9 @@ UsersRoutes.post('/login', async (req, res) => {
         let { email, password } = req.body;
         let user = await UserModel.login(email, password);
         if (!user)
-            return res.status(404).json({ msg: "משתמש לא קיים" });
+            return res.status(404).json({ error: 'NOT_FOUND', msg: "משתמש לא קיים" });
         else if (user.activationStatus !== 'פעיל')
-            return res.status(403).json({ user: null, msg: `משתמש ${user.activationStatus}` }); // *user is not active or has been banned by an administrator
+            return res.status(403).json({ error: 'INACTIVE_USER', user: null, msg: `משתמש ${user.activationStatus}` }); // *user is not active or has been banned by an administrator
         else {
             delete user.password; // -removes the password from the response to the client 
             let payload = {
@@ -368,7 +368,7 @@ UsersRoutes.get('/checkEmailAvailability/:email', async (req, res) => {
         let { email } = req.params;
         let existingUser = await UserModel.readOne({ email: email });
         if (existingUser)
-            return res.status(409).json({ msg: 'כתובת המייל אינה פנויה' })
+            return res.status(409).json({ error: 'TAKEN', msg: 'כתובת המייל אינה פנויה' })
         else
             return res.status(200).json({ msg: 'כתובת המייל פנויה לשימוש' })
     } catch (error) {
@@ -398,7 +398,7 @@ UsersRoutes.get('/search', authenticateToken, async (req, res) => {
         }
 
         if (!Array.isArray(users) || users.length == 0)
-            return res.status(404).json({ msg: 'לא נמצאו משתמשים מתאימים' });
+            return res.status(404).json({ error: 'NOT_FOUND', msg: 'לא נמצאו משתמשים מתאימים' });
 
         else
             return res.status(200).json(users);
@@ -421,8 +421,11 @@ UsersRoutes.put('/:_id/updateStatus', authenticateToken, checkAdmin, validateObj
         let { activationStatus } = req.body;
         let validationRes = isValidUserStatus(activationStatus);
         if (!validationRes.valid)
-            return res.status(403).json({ msg: validationRes.msg });
+            return res.status(400).json({ error: 'INVALID_DETAILS', msg: validationRes.msg });
         let data = await UserModel.update(_id, { activationStatus: activationStatus })
+        if (activationStatus !== 'פעיל') {
+            await closeAllUserActivities({ _id: new ObjectId(_id) }); // closes all the reports/requests/posts of the user if they are banned
+        }
         return res.status(200).json(data);
     } catch (error) {
         console.warn('usersroute error: put /:_id/updateStatus')
@@ -439,15 +442,15 @@ UsersRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), async 
         let { newPhoto, photo, ...restOfUpdatedData } = updatedData;
         let user = await UserModel.readOne({ _id: new ObjectId(_id) })
         if (!user)
-            return res.status(404).json({ msg: 'משתמש לא קיים במערכת' });
+            return res.status(404).json({ error: 'NOT_FOUND', msg: 'משתמש לא קיים במערכת' });
         let validationRes = validateUserData(restOfUpdatedData);
         if (!updatedData || !validationRes.valid)
-            return res.status(400).json({ msg: validationRes.msg || "לא התקבלו פרטים לעדכון" });
+            return res.status(400).json({ error: 'INVALID_DETAILS', msg: validationRes.msg || "לא התקבלו פרטים לעדכון" });
         if (newPhoto) {
             // let imgStr = `data:image/jpg;base64,${newPhoto}`; // sent as base64 string from the client
             let img = await uploadImage(newPhoto);
             if (!isValidPhoto(img))
-                return res.status(400).json({ msg: 'העלאת התמונה נכשלה' });
+                return res.status(400).json({ error: 'INVALID_PHOTO', msg: 'העלאת התמונה נכשלה' });
             restOfUpdatedData.photo = img; // Update the photo in the data to be updated
             if (photo) await removeImage(photo);
         }

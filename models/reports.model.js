@@ -121,6 +121,14 @@ class ReportModel {
     //find by status V 
     //find by verdict *??????*
 
+    static async updateMany(query, updatedData) {
+
+
+        return await new DB().updateMany(collection, query, updatedData);
+    }
+
+
+
 
     static async update(_id, updateData) {
         if (!isValidObjectId(_id)) {
@@ -129,6 +137,9 @@ class ReportModel {
         updateData.updateDate = new Date();
         return await new DB().updateById(collection, new ObjectId(_id), updateData);
     }
+
+
+
 
     static async delete(_id) {
         if (!isValidObjectId(_id)) {

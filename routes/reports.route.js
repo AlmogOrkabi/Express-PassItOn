@@ -245,7 +245,7 @@ ReportsRoutes.post('/create', authenticateToken, async (req, res) => {
         let photoUrls = await uploadImages(photos);
         let validationRes = validateNewReportData(owner_id, reportType, userReported, postReported, photoUrls, description);
         if (!validationRes.valid)
-            return res.status(400).json({ msg: validationRes.msg });
+            return res.status(400).json({ error: 'INVALID_DETAILS', msg: validationRes.msg });
         let newReport = await ReportsModel.create(owner_id, reportType, userReported, postReported, photoUrls, description);
         if (postReported) {
             await PostModel.updateMany({ _id: new ObjectId(postReported) }, {
@@ -284,7 +284,7 @@ ReportsRoutes.get('/search', authenticateToken, async (req, res) => {
 
         let validationsRes = validateReportData(filter);
         if (!validationsRes.valid) {
-            return res.status(400).json({ msg: validationsRes.msg || 'פרטים לא תקינים' })
+            return res.status(400).json({ error: 'INVALID_DETAILS', msg: validationsRes.msg || 'פרטים לא תקינים' })
         }
 
 
@@ -296,7 +296,7 @@ ReportsRoutes.get('/search', authenticateToken, async (req, res) => {
         }
 
         if (!Array.isArray(reports) || reports.length === 0)
-            return res.status(404).json({ msg: 'לא נמצאו דיווחים מתאימים' });
+            return res.status(404).json({ error: 'NOT_FOUND', msg: 'לא נמצאו דיווחים מתאימים' });
         else
             return res.status(200).json(reports);
     } catch (error) {
@@ -317,7 +317,7 @@ ReportsRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), asyn
         let { updatedData, toRemove, toAdd } = req.body;
         let report = await ReportsModel.readOne(new ObjectId(_id));
         if (!report)
-            return res.status(404).json({ msg: 'דיווח לא קיים במערכת' });
+            return res.status(404).json({ error: 'NOT_FOUND', msg: 'דיווח לא קיים במערכת' });
         if (Array.isArray(toRemove) && Array.isArray(toAdd)) {
             let newPhotosArray = await editImagesArray(report.photos, toRemove, toAdd);
             updatedData.photos = newPhotosArray;
@@ -325,7 +325,7 @@ ReportsRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), asyn
         }
         let validationRes = validateReportData(updatedData);
         if (!validationRes.valid)
-            return res.status(400).json({ msg: validationRes.msg });
+            return res.status(400).json({ error: 'INVALID_DETAILS', msg: validationRes.msg });
         let data = await ReportsModel.update(_id, updatedData);
         return res.status(200).json(data);
     } catch (error) {
@@ -342,7 +342,7 @@ ReportsRoutes.put('/edit/status/:_id', authenticateToken, checkAdmin, validateOb
         let { updatedStatus } = req.body;
         let validationRes = isValidReportStatus(updatedStatus);
         if (!validationRes.valid)
-            return res.status(400).json({ msg: validationRes.msg });
+            return res.status(400).json({ error: 'INVALID_DETAILS', msg: validationRes.msg });
         let data = await ReportsModel.update(new ObjectId(_id), { status: updatedStatus });
         return res.status(200).json(data);
     } catch (error) {
@@ -358,7 +358,7 @@ ReportsRoutes.delete('/delete/:_id', authenticateToken, validateObjectId('_id'),
         let report = await ReportsModel.readOne(new ObjectId(_id));
         console.log(report)
         if (!report)
-            return res.status(404).json({ msg: 'דיווח לא קיים במערכת' });
+            return res.status(404).json({ error: 'NOT_FOUND', msg: 'דיווח לא קיים במערכת' });
         if (Array.isArray(report.photos) && report.photos.length > 0)
             await removeImages(report.photos);
         await ReportsModel.delete(new ObjectId(_id));

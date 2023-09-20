@@ -253,7 +253,7 @@ RequestsRoutes.post('/create', authenticateToken, async (req, res) => {
         let { sender_id, recipient_id, requestMessage, post_id } = req.body;
         let validationsRes = validateNewRequestData(sender_id, recipient_id, requestMessage, post_id);
         if (!validationsRes.valid) {
-            return res.status(400).json({ msg: validationsRes.msg || 'פרטים לא תקינים' });
+            return res.status(400).json({ error: 'INVALID_DETAILS', msg: validationsRes.msg || 'פרטים לא תקינים' });
         }
         let newRequest = await RequestModel.create(sender_id, recipient_id, requestMessage, post_id);
         return res.status(201).json(newRequest);
@@ -270,14 +270,14 @@ RequestsRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), asy
         let { updatedData } = req.body;
         let request = await RequestModel.readOne(new ObjectId(_id));
         if (!request) {
-            return res.status(404).json({ msg: 'בקשה לא קיימת במערכת' });
+            return res.status(404).json({ error: 'NOT_FOUND', msg: 'בקשה לא קיימת במערכת' });
         } else if (request.status === 'בוטל') {
-            return res.status(403).json({ msg: 'לא ניתן לערוך בקשה שבוטלה' });
+            return res.status(403).json({ error: 'UNAUTHORIZED', msg: 'לא ניתן לערוך בקשה שבוטלה' });
         }
         // *** ***  check if the post related to the request is still available?
         let validationsRes = validateRequestData(updatedData);
         if (!validationsRes.valid) {
-            return res.status(400).json({ msg: validationsRes.msg });
+            return res.status(400).json({ error: 'INVALID_DETAILS', msg: validationsRes.msg });
         }
         let data = await RequestModel.update(_id, updatedData);
         return res.status(200).json(data);
@@ -302,7 +302,7 @@ RequestsRoutes.get('/search', authenticateToken, async (req, res) => {
 
         let validationsRes = validateRequestData(filter);
         if (!validationsRes.valid) {
-            return res.status(400).json({ msg: validationsRes.msg || 'פרטים לא תקינים' })
+            return res.status(400).json({ error: 'INVALID_DETAILS', msg: validationsRes.msg || 'פרטים לא תקינים' })
         }
         let requests;
         if (full === 'true') {
@@ -312,7 +312,7 @@ RequestsRoutes.get('/search', authenticateToken, async (req, res) => {
         }
 
         if (!Array.isArray(requests) || requests.length === 0)
-            return res.status(404).json({ msg: 'לא נמצאו בקשות מתאימות' });
+            return res.status(404).json({ error: 'NOT_FOUND', msg: 'לא נמצאו בקשות מתאימות' });
         else
             return res.status(200).json(requests);
 
