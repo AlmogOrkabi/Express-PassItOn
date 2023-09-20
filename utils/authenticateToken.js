@@ -5,7 +5,7 @@ function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
-    if (token == null) return res.status(401).json({ error: 'UNAUTHORIZED', msg: 'גישה נדחתה' }); // if there isn't any token
+    if (token == null) return res.status(401).json({ error: 'ACCESS_DENIED', msg: 'גישה נדחתה' }); // if there isn't any token
 
     jwt.verify(token, process.env.ACCESS_TOKEN, (err, user) => {
         if (err) return res.status(403).json({ error: 'ACCESS_DENIED', msg: 'נותקת מהמערכת' });
