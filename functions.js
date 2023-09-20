@@ -1,7 +1,7 @@
 const { ObjectId } = require('mongodb');
 const RequestsModel = require('./models/requests.model')
-const ReportsModel = require('./models/reports.models')
-const PostsModel = require('./models/posts.models')
+const ReportsModel = require('./models/reports.model')
+const PostsModel = require('./models/posts.model')
 
 const cloudinary = require('cloudinary').v2;
 
