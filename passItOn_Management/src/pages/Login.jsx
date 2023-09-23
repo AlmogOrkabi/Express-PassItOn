@@ -4,7 +4,7 @@ import Logo from '../components/Logo'
 import TextField from '@mui/material/TextField';
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form';
-
+import { login } from '../api/index';
 
 export default function Login() {
     const navigation = useNavigate();
@@ -12,6 +12,7 @@ export default function Login() {
     const { handleSubmit } = useForm();
 
     function userLogin(data) {
+
         let user = login(data.email, data.password);
         if (!user) {
             alert('משתמש לא קיים');

@@ -11,6 +11,7 @@ export const login = async (email, password) => {
             password,
             managementLogin: true,
         }),
+        credentials: 'include', // *required for cookies to be sent (without this line the browser would not accept and save the coockie 🍪)
     });
 
     const res = await response.json();
