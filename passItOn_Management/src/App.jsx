@@ -11,7 +11,9 @@ import NotFound from './pages/NotFound'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import OverView from './pages/OverView'
-
+import Reports from './pages/Reports'
+import Users from './pages/Users'
+import Posts from './pages/Posts'
 
 function App() {
 
@@ -24,6 +26,9 @@ function App() {
             <Route path='/' element={<Home />} />
             <Route path='/Login' element={<Login />} />
             <Route path='/Overview' element={<OverView />} />
+            <Route path='/reports' element={<Reports />} />
+            <Route path='/users' element={<Users />} />
+            <Route path='/posts' element={<Posts />} />
             <Route path='/*' element={<NotFound />} />
           </Routes>
         </BrowserRouter>

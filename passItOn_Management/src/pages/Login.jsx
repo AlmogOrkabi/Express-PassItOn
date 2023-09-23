@@ -1,38 +1,51 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext, useState } from 'react'
 import Logo from '../components/Logo'
-import { TextField, CircularProgress } from '@mui/material';
-//import { useNavigate } from 'react-router-dom'
+import { TextField, CircularProgress, InputAdornment, IconButton } from '@mui/material';
+import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form';
 import { login } from '../api/index';
 import { AppContext } from '../contexts/AppContext';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+//import { Visibility, VisibilityOff } from '@mui/icons-material';
 
-
-export default function Login({ navigation }) {
-    // const navigation = useNavigate();
+export default function Login() {
+    const navigation = useNavigate();
     // navigation('/login')
     const { handleSubmit } = useForm();
     const [loading, setLoading] = useState(false);
+    const [inputs, setInputs] = useState({
+        email: '',
+        password: '',
+    })
+    const [err, setErr] = useState(null);
 
+    const { setLoggedUser } = useContext(AppContext)
 
-    async function userLogin(data) {
-        console.log("data : " + { ...data })
+    const [showPassword, setShowPassword] = useState(false);
+
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+    const handleMouseDownPassword = (event) => {
+        event.preventDefault();
+    };
+
+    async function userLogin() {
+        console.log("inputs: " + inputs.password)
         try {
             setLoading(true)
-            let user = await login(data.email, data.password);
-            if (!user) {
-                alert('משתמש לא קיים');
-            }
-            else if (user.role != 'admin') {
-                alert('משתמש לא מורשה');
-            }
-            else {
+            setErr(null);
+            const user = await login(inputs.email, inputs.password);
+            setLoggedUser(user);
 
-                //navigation(`/profile/${user.username}`);
-                navigation.navigate(`OverView`)
-            }
+
+            //navigation(`/profile/${user.username}`);
+            navigation(`/Overview`)
+
         } catch (error) {
             console.log(error)
+            setErr(error)
         }
         finally {
             setLoading(false);
@@ -47,9 +60,29 @@ export default function Login({ navigation }) {
                     <div className='container-right'>
                         <h2 className='title'>התחברות</h2>
                         <form className='form login-form' onSubmit={handleSubmit(userLogin)}>
-                            <TextField id="email" label="כתובת אימייל" variant="outlined" type="email" />
-                            <TextField id="password" label="סיסמה" variant="outlined" type="password" />
+                            <TextField id="email" label="כתובת אימייל" variant="outlined" type="email"
+                                value={inputs.email}
+                                onChange={(e) => setInputs({ ...inputs, email: e.target.value })}
+                            />
+                            <TextField id="password" label="סיסמה" variant="outlined"
+                                value={inputs.password}
+                                onChange={(e) => setInputs({ ...inputs, password: e.target.value })}
+                                type={showPassword ? 'text' : 'password'}
+                                endadornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                        //edge="end"
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                            />
                             <button className='btn btn-small align-center'>התחברות</button>
+                            <h3 className='errMsg'>{err ? err.msg : null}</h3>
                         </form>
                     </div>
                 </div>}

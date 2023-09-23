@@ -26,5 +26,5 @@ export const login = async (email, password) => {
     }
     //await setToken(res.token); -->> THIS LINE HERE
     console.log("Raw data from API:", res); // Print out the raw data
-    return res;
+    return res.user;
 };

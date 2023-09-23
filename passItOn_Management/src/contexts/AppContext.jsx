@@ -4,10 +4,10 @@ export const AppContext = createContext();
 
 
 export default function AppContextProvider({ children }) {
-    const [loggedUser, SetLoggedUser] = useState(null); // the user currently logged in 
+    const [loggedUser, setLoggedUser] = useState(null); // the user currently logged in 
 
 
-    const value = { loggedUser, SetLoggedUser };
+    const value = { loggedUser, setLoggedUser };
 
     return (
         <AppContext.Provider value={value}>

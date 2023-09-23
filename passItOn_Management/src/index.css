@@ -31,7 +31,7 @@
 
 /* 
 .bg{
-  background-color: var(--light-orange);
+  background-color: נvar(--light-orange);
 } */
 
 body{
@@ -52,6 +52,11 @@ width: 50%;
 text-align: right;
 }
 
+.sub-container{
+  margin:3rem
+}
+
+
 .Logo{
 
 margin-inline:10%;
@@ -64,9 +69,10 @@ max-width: 30%;
 .btn {
   margin: 2%;
   padding: 0.5em;
-background-color: var(--strong-orange);
+background-color: var(--medium-orange);
 border:none;
 border-radius: 5px;
+
 }
 
 .btn-small{
@@ -81,6 +87,18 @@ border:none;
 border-radius: 5px; */
 opacity: 0.7;
 }
+
+
+.buttons-container{
+  margin:5%
+}
+
+/* .btn-decoration{
+        border-radius: 5px;
+        border-color: lightgray;
+        border-bottom-width: '3%';
+        border-right-width: '2%';
+} */
 
 .align-center{
   align-self: center;
@@ -100,4 +118,8 @@ opacity: 0.7;
 
 .title{
   margin-bottom: 1em;
+}
+
+.errMsg{
+  color:red;
 }
