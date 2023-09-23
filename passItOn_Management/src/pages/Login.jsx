@@ -1,43 +1,58 @@
 /* eslint-disable no-unused-vars */
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import Logo from '../components/Logo'
-import TextField from '@mui/material/TextField';
-import { useNavigate } from 'react-router-dom'
+import { TextField, CircularProgress } from '@mui/material';
+//import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form';
 import { login } from '../api/index';
+import { AppContext } from '../contexts/AppContext';
 
-export default function Login() {
-    const navigation = useNavigate();
+
+export default function Login({ navigation }) {
+    // const navigation = useNavigate();
     // navigation('/login')
     const { handleSubmit } = useForm();
+    const [loading, setLoading] = useState(false);
 
-    function userLogin(data) {
 
-        let user = login(data.email, data.password);
-        if (!user) {
-            alert('משתמש לא קיים');
+    async function userLogin(data) {
+        console.log("data : " + { ...data })
+        try {
+            setLoading(true)
+            let user = await login(data.email, data.password);
+            if (!user) {
+                alert('משתמש לא קיים');
+            }
+            else if (user.role != 'admin') {
+                alert('משתמש לא מורשה');
+            }
+            else {
+
+                //navigation(`/profile/${user.username}`);
+                navigation.navigate(`OverView`)
+            }
+        } catch (error) {
+            console.log(error)
         }
-        else if (user.role != 'admin') {
-            alert('משתמש לא מורשה');
-        }
-        else {
-            navigation(`/profile/${user.username}`);
+        finally {
+            setLoading(false);
         }
     }
 
     return (
         <>
-            <div className='main-container'>
-                <Logo></Logo>
-                <div className='container-right'>
-                    <h2 className='title'>התחברות</h2>
-                    <form className='form login-form' onSubmit={handleSubmit}>
-                        <TextField id="outlined-basic" label="כתובת אימייל" variant="outlined" />
-                        <TextField id="outlined-basic" label="סיסמה" variant="outlined" />
-                        <button className='btn btn-small align-center' >התחברות</button>
-                    </form>
-                </div>
-            </div>
+            {loading ? <CircularProgress /> :
+                <div className='main-container'>
+                    <Logo></Logo>
+                    <div className='container-right'>
+                        <h2 className='title'>התחברות</h2>
+                        <form className='form login-form' onSubmit={handleSubmit(userLogin)}>
+                            <TextField id="email" label="כתובת אימייל" variant="outlined" type="email" />
+                            <TextField id="password" label="סיסמה" variant="outlined" type="password" />
+                            <button className='btn btn-small align-center'>התחברות</button>
+                        </form>
+                    </div>
+                </div>}
         </>
     )
 }

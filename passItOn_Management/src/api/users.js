@@ -1,7 +1,10 @@
-import { BASE_URL } from '@env';
+// import { VITE_BASE_URL } from '@env';
+const baseUrl = import.meta.env.VITE_BASE_URL;
 
 export const login = async (email, password) => {
-    const response = await fetch(`${BASE_URL}/api/users/login`, {
+    console.log("we got here")
+    console.log(baseUrl)
+    const response = await fetch(`${baseUrl}/api/users/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

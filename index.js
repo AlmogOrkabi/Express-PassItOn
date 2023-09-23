@@ -6,6 +6,19 @@ const PORT = process.env.PORT || 5500;
 
 
 
+
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (/^http:\/\/localhost(:\d+)?$/.test(origin) || !origin) {
+            callback(null, true)
+        } else {
+            callback(new Error('Not allowed by CORS'))
+        }
+    },
+    credentials: true
+}
+
+
 //Images:
 
 // Require the cloudinary library
@@ -24,7 +37,7 @@ cloudinary.config({
 // Step 2: creation of the server:
 let server = express();
 server.use(express.json({ limit: '100mb' })); //size limit for the request body
-server.use(cors());
+server.use(cors(corsOptions));
 
 
 //step 3: routes:

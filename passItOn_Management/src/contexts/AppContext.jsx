@@ -1,7 +1,18 @@
+import { createContext, useState, useEffect } from 'react'
+
+export const AppContext = createContext();
 
 
-export default function AppContext() {
+export default function AppContextProvider({ children }) {
+    const [loggedUser, SetLoggedUser] = useState(null); // the user currently logged in 
+
+
+    const value = { loggedUser, SetLoggedUser };
+
     return (
-        <div>AppContext</div>
+        <AppContext.Provider value={value}>
+            {children}
+        </AppContext.Provider>
     )
+
 }
