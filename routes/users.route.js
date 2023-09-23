@@ -358,6 +358,10 @@ UsersRoutes.post('/login', async (req, res) => {
                 role: user.role
             }
             let token = jwt.sign(payload, process.env.ACCESS_TOKEN, { expiresIn: `${process.env.TOKEN_EXPIRATION}` }); // *expires within a certain time
+            if (managementLogin) {
+                res.setHeader('Set-Cookie', `auth_token=${token}; HttpOnly; Max-Age=${60 * 30}`); //stores the token as a cookie in the browser (more secure)
+                return res.status(200).json({ user });
+            }
             return res.status(200).json({ token, user }); // -Send the token and user data
         }
     } catch (error) {
