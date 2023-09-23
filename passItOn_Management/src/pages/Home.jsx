@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react'
 import Logo from '../components/Logo'
 import Button from '@mui/material/Button';

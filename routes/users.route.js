@@ -342,13 +342,16 @@ UsersRoutes.post('/register', async (req, res) => {
 //V --- V
 UsersRoutes.post('/login', async (req, res) => {
     try {
-        let { email, password } = req.body;
+        let { email, password, managementLogin } = req.body;
         let user = await UserModel.login(email, password);
         if (!user)
             return res.status(404).json({ error: 'NOT_FOUND', msg: "משתמש לא קיים" });
         else if (user.activationStatus !== 'פעיל')
             return res.status(403).json({ error: 'INACTIVE_USER', user: null, msg: `משתמש ${user.activationStatus}` }); // *user is not active or has been banned by an administrator
         else {
+            if (managementLogin && user.role !== 'admin') {
+                return res.status(403).json({ error: 'UNAUTHORIZED', msg: 'אינך מורשה גישה למערכת' })
+            }
             delete user.password; // -removes the password from the response to the client 
             let payload = {
                 id: user._id,
