@@ -4,10 +4,11 @@ const baseUrl = import.meta.env.VITE_BASE_URL;
 export const getPostsStatistics = async (searchQuery = {}) => {
     const params = new URLSearchParams(searchQuery);
 
-    const response = await fetch(`${baseUrl}/api/posts/search?${params.toString()}`, {
+    const response = await fetch(`${baseUrl}/api/posts/statistics?${params.toString()}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
+            // 'Authorization': `Bearer ${token}`
         },
         credentials: 'include',
     });
