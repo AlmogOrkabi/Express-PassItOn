@@ -32,8 +32,8 @@ function authenticateToken(req, res, next) {
     // If no token in Authorization header, check cookies (requests from web application)
     if (!token) {
         const cookies = cookie.parse(req.headers.cookie || '');
-        if (cookies && cookies.auth_token) {
-            token = cookies.auth_token;
+        if (cookies && cookies.token) {
+            token = cookies.token;
             fromCookie = true;
         }
     }
