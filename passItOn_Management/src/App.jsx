@@ -14,6 +14,9 @@ import OverView from './pages/OverView'
 import Reports from './pages/Reports'
 import Users from './pages/Users'
 import Posts from './pages/Posts'
+import Requests from './pages/Requests'
+import Statistics from './pages/Statistics'
+
 
 function App() {
 
@@ -29,6 +32,8 @@ function App() {
             <Route path='/reports' element={<Reports />} />
             <Route path='/users' element={<Users />} />
             <Route path='/posts' element={<Posts />} />
+            <Route path='/requests' element={<Requests />} />
+            <Route path='/statistics' element={<Statistics />} />
             <Route path='/*' element={<NotFound />} />
           </Routes>
         </BrowserRouter>
