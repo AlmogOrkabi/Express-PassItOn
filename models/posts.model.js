@@ -336,7 +336,7 @@ class PostModel {
 
             return await new DB().aggregate(collection, pipeline);
         } catch (error) {
-            console.error(`Error in UserModel.getStatistics: ${error}`);
+            console.error(`Error in PostModel.getStatistics: ${error}`);
             throw error;
         }
 

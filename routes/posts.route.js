@@ -456,7 +456,7 @@ PostsRoutes.delete('/delete/:_id', authenticateToken, validateObjectId('_id'), a
 
 
 
-UsersRoutes.get('/statistics', authenticateToken, async (req, res) => {
+PostsRoutes.get('/statistics', authenticateToken, async (req, res) => {
     const { type } = req.query;
     try {
         const stats = await PostsModel.getStatistics(type);

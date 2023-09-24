@@ -54,7 +54,7 @@ export const getUsers = async (queryParams = {}) => {
     return res;
 };
 
-export const getStatistics = async (queryParams = {}) => {
+export const getUsersStatistics = async (queryParams = {}) => {
     const params = new URLSearchParams(queryParams);
     const response = await fetch(`${baseUrl}/api/users/statistics?${params.toString()}`, {
         method: 'GET',
