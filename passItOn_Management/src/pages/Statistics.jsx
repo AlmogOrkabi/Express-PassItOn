@@ -1,23 +1,86 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { AppContext } from '../contexts/AppContext'
+import BarChart from '../components/charts/BarChart';
+import { CircularProgress } from '@mui/material';
+import { getStatistics } from '../api';
 
 export default function Statistics() {
     const { loadUsers, users } = useContext(AppContext);
+    const [loading, setloading] = useState(false);
 
     useEffect(() => {
         getData();
     }, []);
 
 
+    // async function getData() {
+    //     try {
+    //         setloading(true);
+    //         await loadUsers({ full: 'true' })
+    //         if (users && users.length > 0) {
+    //             const filteredUsers = users.filter((user) => user.address && user.address.city);
+    //             setUserData({
+    //                 labels: [filteredUsers.map((user) => user.address.city)],
+    //                 datasets: [{
+    //                     label: 'מספר משתמשים לפי ערים',
+    //                     data: filteredUsers.map((user) => user.address.city),
+    //                 }]
+    //             })
+    //         }
+
+
+
+    //     } catch (error) {
+    //         console.log("statistics error: " + error)
+    //     }
+    //     finally {
+    //         setloading(false);
+    //     }
+
+
+    // }
+
+
     async function getData() {
-        await loadUsers({ full: 'true' }).then(() => {
-            console.log(users)
-        });
+        try {
+            setloading(true);
+            const res = await getStatistics({ type: 'usersByCity' })
+            if (users && users.length > 0) {
+                const filteredUsers = users.filter((user) => user.address && user.address.city);
+                setUserData({
+                    labels: [filteredUsers.map((user) => user.address.city)],
+                    datasets: [{
+                        label: 'מספר משתמשים לפי ערים',
+                        data: filteredUsers.map((user) => user.address.city),
+                    }]
+                })
+            }
+
+
+
+        } catch (error) {
+            console.log("statistics error: " + error)
+        }
+        finally {
+            setloading(false);
+        }
+
+
     }
+
+
+    const [userData, setUserData] = useState(null)
+
 
     return (
         <>
-            <h1>סטטיסטיקות</h1>
+            {loading ? <CircularProgress /> :
+                (userData && (<div>
+                    <h1>סטטיסטיקות</h1>
+                    <div>
+                        <BarChart chartData={userData} />
+                    </div>
+                </div>))}
         </>
     )
 }

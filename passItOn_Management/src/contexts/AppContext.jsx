@@ -11,8 +11,10 @@ export default function AppContextProvider({ children }) {
 
     const loadUsers = async (query = {}) => {
         try {
-            const res = await API.getUsers(query)
-            setUsers(res);
+            const res = await API.getUsers(query).then((res) => {
+                setUsers(res);
+            })
+
         } catch (error) {
             console.log("get users error: " + error)
             throw error;

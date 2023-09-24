@@ -53,3 +53,28 @@ export const getUsers = async (queryParams = {}) => {
     console.log("Raw data from API - USERS : ", res); // Print out the raw data
     return res;
 };
+
+export const getStatistics = async (queryParams = {}) => {
+    const params = new URLSearchParams(queryParams);
+    const response = await fetch(`${baseUrl}/api/users/search?${params.toString()}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            // 'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include',
+    });
+
+
+    const res = await response.json();
+
+    if (!response.ok) {
+        if (response.status === 404)
+            return 404;
+        else
+            throw { ...res, status: response.status };
+    }
+
+    console.log("Raw data from API - USERS  - statistics : ", res); // Print out the raw data
+    return res;
+}

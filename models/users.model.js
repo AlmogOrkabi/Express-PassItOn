@@ -150,6 +150,51 @@ class UserModel {
 
 
     //other methods to to be added:
+
+
+    static async getStatistics(type, options = {}) {
+        try {
+            let query = {};
+            let pipeline = [];
+
+            // if (options.donated) {
+            //     query.donated = true;  // Add this condition only if 'donated' is true
+            // }
+
+            switch (type) {
+                case 'usersByCity':
+                    pipeline = [
+                        {
+                            $lookup: {
+                                from: 'addresses',
+                                localField: 'address_id', // field from the 'users' collection
+                                foreignField: '_id', // field from the 'addresses' collection
+                                as: 'address' // array containing matching documents from the 'addresses' collection
+                            }
+                        },
+                        {
+                            $unwind: '$address' // deconstruct the 'address' array field, outputting one document for each element
+                        },
+                        { $match: query },
+                        { $group: { _id: "$address.city", count: { $sum: 1 } } },
+                        { $sort: { count: -1 } }
+                    ];
+                    break;
+
+                // Add more cases for other types of statistics
+                default:
+                    throw new Error('Invalid statistic type');
+            }
+
+            return await new DB().aggregate(collection, pipeline).toArray();
+
+        } catch (error) {
+            console.error(`Error in UserModel.getStatistics: ${error}`);
+            throw error;
+        }
+
+
+    }
 }
 
 

@@ -537,6 +537,17 @@ UsersRoutes.delete('/delete/:_id', authenticateToken, checkAdmin, validateObject
 // });
 
 
+//! example of a dynamic route for statistics
+UsersRoutes.get('/statistics', authenticateToken, async (req, res) => {
+    const { type } = req.query;
+    try {
+        const stats = await UserModel.getStatistics(type, { donated: donated === 'true' });
+        return res.status(200).json(stats);
+    } catch (error) {
+        console.warn(`users route error: get /statistics?type=${type}`);
+        return res.status(500).json({ error: error.toString(), msg: 'Server error' });
+    }
+});
 
 
 module.exports = UsersRoutes;
