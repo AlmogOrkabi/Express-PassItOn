@@ -286,7 +286,7 @@ const jwt = require('jsonwebtoken');
 const { authenticateToken, checkAdmin } = require('../utils/authenticateToken');
 const { ObjectId } = require('mongodb');
 const AddressModel = require('../models/address.model')
-
+const cookie = require('cookie');
 
 
 
@@ -361,13 +361,21 @@ UsersRoutes.post('/login', async (req, res) => {
             if (managementLogin) {
 
                 // res.setHeader('Set-Cookie', `auth_token=${token}; HttpOnly; Max-Age=${60 * 30}`); //stores the token as a cookie in the browser (more secure)
-                res.cookie('auth_token', token, {
+                // res.cookie('auth_token', token, {
+                //     httpOnly: true,
+                //     // secure: true,
+                //     maxAge: 60 * 30 * 1000,  // 30 minutes in milliseconds
+                //     sameSite: 'none' // Allows the cookie to be sent cross-origin
+                // });
+                const cookieOptions = {
                     httpOnly: true,
-                    // secure: true,
-                    maxAge: 60 * 30 * 1000,  // 30 minutes in milliseconds
-                    sameSite: 'none' // Allows the cookie to be sent cross-origin
-                });
+                    sameSite: 'none',
+                    //secure: true,
+                }
+                const cookieString = cookie.serialize('jwtToken', token, cookieOptions);
 
+                //set the cookie in the response header:
+                res.setHeader('Set-Cookie', cookieString);
 
                 return res.status(200).json({ user });
             }
