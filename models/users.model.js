@@ -180,6 +180,13 @@ class UserModel {
                         { $sort: { count: -1 } }
                     ];
                     break;
+                case 'userStatus':
+                    pipeline = [
+                        { $match: query },
+                        { $group: { _id: "$activationStatus", count: { $sum: 1 } } },
+                        { $sort: { count: -1 } }
+                    ];
+                    break;
 
                 // Add more cases for other types of statistics
                 default:

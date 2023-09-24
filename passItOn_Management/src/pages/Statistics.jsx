@@ -57,7 +57,15 @@ export default function Statistics() {
             //         }]
             //     })
             // }
-
+            if (res && res.length > 0) {
+                setUserData({
+                    labels: res.map((stat) => stat._id),
+                    datasets: [{
+                        label: 'מספר משתמשים לפי ערים',
+                        data: res.map((stat) => stat.count),
+                    }]
+                })
+            }
 
 
         } catch (error) {
@@ -77,15 +85,15 @@ export default function Statistics() {
     return (
         <>
             {loading ? <CircularProgress /> :
-                // (userData && (<div>
-                //     <h1>סטטיסטיקות</h1>
-                //     <div>
-                //         <BarChart chartData={userData} />
-                //     </div>
-                // </div>))
-                <div>
+                (userData && (<div>
                     <h1>סטטיסטיקות</h1>
-                </div>
+                    <div>
+                        <BarChart chartData={userData} />
+                    </div>
+                </div>))
+                // <div>
+                //     <h1>סטטיסטיקות</h1>
+                // </div>
 
             }
         </>
