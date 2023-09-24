@@ -186,8 +186,7 @@ class UserModel {
                     throw new Error('Invalid statistic type');
             }
 
-            return await new DB().aggregate(collection, pipeline).toArray();
-
+            return await new DB().aggregate(collection, pipeline);
         } catch (error) {
             console.error(`Error in UserModel.getStatistics: ${error}`);
             throw error;
