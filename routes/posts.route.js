@@ -454,6 +454,20 @@ PostsRoutes.delete('/delete/:_id', authenticateToken, validateObjectId('_id'), a
     }
 });
 
+
+
+UsersRoutes.get('/statistics', authenticateToken, async (req, res) => {
+    const { type } = req.query;
+    try {
+        const stats = await PostsModel.getStatistics(type);
+        return res.status(200).json(stats);
+    } catch (error) {
+        console.warn(`posts route error: get /statistics?type=${type}`);
+        return res.status(500).json({ error: error.toString(), msg: 'Server error' });
+    }
+});
+
+
 module.exports = PostsRoutes;
 
 

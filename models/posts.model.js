@@ -287,6 +287,62 @@ class PostModel {
         return await new DB().deleteOne(collection, _id);
     }
 
+
+
+
+    static async getStatistics(type, options = {}) {
+        try {
+            let query = {};
+            let pipeline = [];
+
+            switch (type) {
+                case 'postsByCity':
+                    pipeline = [
+                        {
+                            $lookup: {
+                                from: 'addresses',
+                                localField: 'itemLocation_id', // field from the 'posts' collection
+                                foreignField: '_id', // field from the 'addresses' collection
+                                as: 'address' // array containing matching documents from the 'addresses' collection
+                            }
+                        },
+                        {
+                            $unwind: '$address' // deconstruct the 'address' array field, outputting one document for each element
+                        },
+                        { $match: query },
+                        { $group: { _id: "$address.city", count: { $sum: 1 } } },
+                        { $sort: { count: -1 } }
+                    ];
+                    break;
+                case 'postsByStatus':
+                    pipeline = [
+                        { $match: query },
+                        { $group: { _id: "$status", count: { $sum: 1 } } },
+                        { $sort: { count: -1 } }
+                    ];
+                    break;
+                case 'postsByCategory':
+                    pipeline = [
+                        { $match: query },
+                        { $group: { _id: "$category", count: { $sum: 1 } } },
+                        { $sort: { count: -1 } }
+                    ];
+                    break;
+
+                // Add more cases for other types of statistics
+                default:
+                    throw new Error('Invalid statistic type');
+            }
+
+            return await new DB().aggregate(collection, pipeline);
+        } catch (error) {
+            console.error(`Error in UserModel.getStatistics: ${error}`);
+            throw error;
+        }
+
+
+    }
+
 }
 
 module.exports = PostModel;
