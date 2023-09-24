@@ -38,7 +38,7 @@ export const getUsers = async (queryParams = {}) => {
             'Content-Type': 'application/json',
             // 'Authorization': `Bearer ${token}`
         },
-        credentials: 'include'
+        credentials: 'include',
     });
 
     const res = await response.json();

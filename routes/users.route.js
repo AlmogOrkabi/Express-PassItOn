@@ -372,7 +372,7 @@ UsersRoutes.post('/login', async (req, res) => {
                     sameSite: 'none',
                     //secure: true,
                 }
-                const cookieString = cookie.serialize('jwtToken', token, cookieOptions);
+                const cookieString = cookie.serialize('token', token, cookieOptions);
 
                 //set the cookie in the response header:
                 res.setHeader('Set-Cookie', cookieString);
