@@ -45,16 +45,18 @@ export default function Statistics() {
         try {
             setloading(true);
             const res = await getStatistics({ type: 'usersByCity' })
-            if (users && users.length > 0) {
-                const filteredUsers = users.filter((user) => user.address && user.address.city);
-                setUserData({
-                    labels: [filteredUsers.map((user) => user.address.city)],
-                    datasets: [{
-                        label: 'מספר משתמשים לפי ערים',
-                        data: filteredUsers.map((user) => user.address.city),
-                    }]
-                })
-            }
+
+            console.log(res)
+            // if (res && res.length > 0) {
+            //     const filteredUsers = users.filter((user) => user.address && user.address.city);
+            //     setUserData({
+            //         labels: [filteredUsers.map((user) => user.address.city)],
+            //         datasets: [{
+            //             label: 'מספר משתמשים לפי ערים',
+            //             data: filteredUsers.map((user) => user.address.city),
+            //         }]
+            //     })
+            // }
 
 
 
@@ -75,12 +77,17 @@ export default function Statistics() {
     return (
         <>
             {loading ? <CircularProgress /> :
-                (userData && (<div>
+                // (userData && (<div>
+                //     <h1>סטטיסטיקות</h1>
+                //     <div>
+                //         <BarChart chartData={userData} />
+                //     </div>
+                // </div>))
+                <div>
                     <h1>סטטיסטיקות</h1>
-                    <div>
-                        <BarChart chartData={userData} />
-                    </div>
-                </div>))}
+                </div>
+
+            }
         </>
     )
 }

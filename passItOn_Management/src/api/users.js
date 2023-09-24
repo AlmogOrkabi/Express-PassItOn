@@ -56,7 +56,7 @@ export const getUsers = async (queryParams = {}) => {
 
 export const getStatistics = async (queryParams = {}) => {
     const params = new URLSearchParams(queryParams);
-    const response = await fetch(`${baseUrl}/api/users/search?${params.toString()}`, {
+    const response = await fetch(`${baseUrl}/api/users/statistics?${params.toString()}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

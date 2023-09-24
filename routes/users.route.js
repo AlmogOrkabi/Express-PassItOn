@@ -541,7 +541,7 @@ UsersRoutes.delete('/delete/:_id', authenticateToken, checkAdmin, validateObject
 UsersRoutes.get('/statistics', authenticateToken, async (req, res) => {
     const { type } = req.query;
     try {
-        const stats = await UserModel.getStatistics(type, { donated: donated === 'true' });
+        const stats = await UserModel.getStatistics(type);
         return res.status(200).json(stats);
     } catch (error) {
         console.warn(`users route error: get /statistics?type=${type}`);
