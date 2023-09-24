@@ -1,17 +1,61 @@
 const jwt = require('jsonwebtoken');
+const cookie = require('cookie');
+
+
+// function authenticateToken(req, res, next) {
+//     const authHeader = req.headers['authorization'];
+//     const token = authHeader && authHeader.split(' ')[1];
+
+//     if (token == null) return res.status(401).json({ error: 'ACCESS_DENIED', msg: 'גישה נדחתה' }); // if there isn't any token
+
+//     jwt.verify(token, process.env.ACCESS_TOKEN, (err, user) => {
+//         if (err) return res.status(403).json({ error: 'ACCESS_DENIED', msg: 'נותקת מהמערכת' });
+//         req.user = user;
+//         next();
+//     })
+// }
+
+
 
 
 function authenticateToken(req, res, next) {
+    let token = null;
+    let fromCookie = false;
+
+
+    // Check the Authorization header (requests from the react native app)
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    if (authHeader) {
+        token = authHeader.split(' ')[1];
+    }
 
-    if (token == null) return res.status(401).json({ error: 'ACCESS_DENIED', msg: 'גישה נדחתה' }); // if there isn't any token
+    // If no token in Authorization header, check cookies (requests from web application)
+    if (!token) {
+        const cookies = cookie.parse(req.headers.cookie || '');
+        if (cookies && cookies.auth_token) {
+            token = cookies.auth_token;
+            fromCookie = true;
+        }
+    }
 
+    // If token is still null, return 401 Unauthorized
+    if (token == null) {
+        return res.status(401).json({ error: 'ACCESS_DENIED', msg: 'גישה נדחתה' });
+    }
+
+    // Verify token
     jwt.verify(token, process.env.ACCESS_TOKEN, (err, user) => {
         if (err) return res.status(403).json({ error: 'ACCESS_DENIED', msg: 'נותקת מהמערכת' });
+
+
+        // If token is from a cookie (management site) and the user is not an admin, return 403 aunauthorized access
+        if (fromCookie && user.role !== 'admin') {
+            return res.status(403).json({ error: 'UNAUTHORIZED', msg: 'גישה נדחתה' });
+        }
+
         req.user = user;
         next();
-    })
+    });
 }
 
 
