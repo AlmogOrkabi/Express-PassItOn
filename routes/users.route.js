@@ -369,8 +369,8 @@ UsersRoutes.post('/login', async (req, res) => {
                 // });
                 const cookieOptions = {
                     httpOnly: true,
-                    // sameSite: 'none',
-                    // secure: true,
+                    sameSite: 'none',
+                    secure: true,
                 }
                 const cookieString = cookie.serialize('token', token, cookieOptions);
 
