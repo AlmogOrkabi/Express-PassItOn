@@ -22,7 +22,7 @@ function authenticateToken(req, res, next) {
     let token = null;
     let fromCookie = false;
 
-    console.log("req header: " + req.headers.cookie.token)
+
     // Check the Authorization header (requests from the react native app)
     const authHeader = req.headers['authorization'];
     if (authHeader) {
