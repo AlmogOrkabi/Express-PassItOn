@@ -16,6 +16,7 @@ export const getPostsStatistics = async (searchQuery = {}) => {
     const res = await response.json();
 
     if (!response.ok) {
+        console.log("res error posts => " + res);
         if (response.status == 404)
             return 404;
         else
