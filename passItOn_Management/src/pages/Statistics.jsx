@@ -67,7 +67,7 @@ export default function Statistics() {
                 })
             }
         } catch (error) {
-            console.log("error2 : " + error)
+            console.log("error2 : " + error.error)
         }
     }
 
