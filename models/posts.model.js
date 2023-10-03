@@ -328,6 +328,24 @@ class PostModel {
                         { $sort: { count: -1 } }
                     ];
                     break;
+                case 'postsDelivered':
+                    pipeline = [
+                        { $match: query },
+                        {
+                            $group: {
+                                _id: {
+                                    $cond: [ //condition : 
+                                        { $eq: ["$status", "נמסר"] }, //equals 
+                                        "נמסר",                       // True: Use "נמסר" as the grouping key
+                                        "לא נמסר"                   // False: Use "לא נמסר" as the grouping key
+                                    ]
+                                },
+                                count: { $sum: 1 }
+                            }
+                        },
+                        { $sort: { count: -1 } }
+                    ];
+                    break;
 
                 // Add more cases for other types of statistics
                 default:

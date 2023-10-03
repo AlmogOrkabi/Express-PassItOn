@@ -105,7 +105,7 @@ export default function Statistics() {
             if (res && res.length > 0) {
 
                 const data = {
-                    labels: res.map((stat) => stat._id),
+                    labels: res.map((stat) => stat._id.hasPosted == 'Has Not Posted' ? 'לא פירסמו פריטים' : 'כן פירסמו פריטים'),
                     datasets: [{
                         label: 'משתמשים שפירסמו פוסטים',
                         data: res.map((stat) => stat.count),
