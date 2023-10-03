@@ -75,6 +75,9 @@ class ReportModel {
             if (report.userReported_id) {
                 report.userReported = await UserModel.readOne({ _id: report.userReported_id });
             }
+            if (report.owner_id) {
+                report.owner = await UserModel.readOne({ _id: report.owner_id });
+            }
             return report;
         }));
         return fullReports;

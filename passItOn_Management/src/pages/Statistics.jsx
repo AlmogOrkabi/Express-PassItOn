@@ -6,7 +6,7 @@ import PieChart from '../components/charts/PieChart';
 import CountBox from '../components/CountBox';
 
 import { CircularProgress } from '@mui/material';
-import { getUsersStatistics, getPostsStatistics } from '../api';
+import { getUsersStatistics, getPostsStatistics, amountOfUsers, amountOfPosts } from '../api';
 
 export default function Statistics() {
     const { loadUsers, users } = useContext(AppContext);
@@ -15,6 +15,7 @@ export default function Statistics() {
 
     const [userData, setUserData] = useState(null)
     const [postData, setPostData] = useState(null)
+    const [countData, setCountData] = useState([])
 
 
 
@@ -27,12 +28,12 @@ export default function Statistics() {
     async function getData() {
         try {
             setloading(true);
-            //const res = await getStatistics({ type: 'usersByCity' })
             await userStatus();
             await usersPosted();
             await getPostsByCategory();
             await postsByCity();
             await postsDelivered();
+            await getNumbers();
 
         } catch (error) {
             console.log("statistics error: " + error)
@@ -44,33 +45,25 @@ export default function Statistics() {
 
     }
 
+    async function getNumbers() {
+        try {
+            const users = await amountOfUsers();
+            const posts = await amountOfPosts();
 
 
-    // async function userStatus() {
-    //     try {
-
-    //         const res = await getUsersStatistics({ type: 'userStatus' })
-
-    //         console.log(res)
-
-    //         if (res && res.length > 0) {
-    //             setUserData({
-    //                 labels: res.map((stat) => stat._id),
-    //                 datasets: [{
-    //                     label: 'משתמשים במערכת',
-    //                     data: res.map((stat) => stat.count),
-    //                 }]
-    //             })
-    //         }
-    //     } catch (error) {
-    //         console.log("error1 : " + error)
-    //     }
-    // }
+            if (!countData.some(item => item.title == 'משתמשים רשומים')) {
+                setCountData((prev) => ([...prev, { title: 'משתמשים רשומים', amount: users }]));
+            }
+            if (!countData.some(item => item.title == 'פוסטים במערכת')) {
+                setCountData((prev) => ([...prev, { title: 'פוסטים במערכת', amount: posts }]));
+            }
 
 
 
-    // { text => setAddress((prev) => ({ ...prev, notes: text })) }
-
+        } catch (error) {
+            console.log("error6 : " + error)
+        }
+    }
 
     async function userStatus() {
         try {
@@ -172,6 +165,9 @@ export default function Statistics() {
 
     async function postsDelivered() {
         try {
+
+            console.log("postsDelivered called");
+
             const res = await getPostsStatistics({ type: 'postsDelivered' })
 
             console.log(res)
@@ -184,6 +180,14 @@ export default function Statistics() {
                     }]
                 }
                 setPostData((prev) => ({ ...prev, byDelivered: data }))
+
+                // setCountData((prev) => ([...prev, { title: 'פריטים שנמסרו', amount: res[1].count }]));
+                // !for dev purposes only (hot-reloading while saving changes)
+                if (!countData.some(item => item.title == 'פריטים שנמסרו')) {
+                    setCountData((prev) => ([...prev, { title: 'פריטים שנמסרו', amount: res[1].count }]));
+                }
+
+
             }
 
         } catch (error) {
@@ -194,30 +198,17 @@ export default function Statistics() {
 
     return (
         <>
-            {/* {loading ? <CircularProgress /> :
-                (userData && (<div>
-                    <h1>סטטיסטיקות</h1>
-                    <div>
-                        <BarChart chartData={userData} />
-                    </div>
-                </div>)
-                )
-                // <div>
-                //     <h1>סטטיסטיקות</h1>
-                // </div>
-
-            } */}
-
-
             {loading ? <CircularProgress /> :
                 <div className='main-container'>
                     <h1>סטטיסטיקות</h1>
 
                     <div className='countbox-container'>
 
-                        <CountBox title={'סה"כ משתמשים רשומים במערכת:'} amount={15} />
-                        <CountBox title={'סה"כ משתמשים רשומים במערכת:'} amount={15} />
-                        <CountBox title={'סה"כ משתמשים רשומים במערכת:'} amount={15} />
+                        {
+                            countData.map((item, index) => {
+                                return <CountBox title={item.title} amount={item.amount} key={index} />
+                            })
+                        }
 
                     </div>
 

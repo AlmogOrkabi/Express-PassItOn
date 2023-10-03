@@ -99,3 +99,28 @@ export const userLogOut = async () => {
     console.log("logout results : ", res);
     return res;
 };
+
+
+
+export const amountOfUsers = async () => {
+
+    const response = await fetch(`${baseUrl}/api/users/count?`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            // 'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include',
+    });
+
+    const res = await response.json();
+
+    if (!response.ok) {
+        console.log("res error posts => " + res);
+        throw response;
+    }
+
+    console.log("Raw data from API - USERS:", res); // Print out the raw data
+    return res;
+
+};

@@ -27,3 +27,27 @@ export const getPostsStatistics = async (searchQuery = {}) => {
     return res;
 
 };
+
+
+export const amountOfPosts = async () => {
+
+    const response = await fetch(`${baseUrl}/api/posts/count?`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            // 'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include',
+    });
+
+    const res = await response.json();
+
+    if (!response.ok) {
+        console.log("res error posts => " + res);
+        throw response;
+    }
+
+    console.log("Raw data from API - POSTS:", res); // Print out the raw data
+    return res;
+
+};
