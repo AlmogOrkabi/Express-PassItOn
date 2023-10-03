@@ -192,26 +192,25 @@ class UserModel {
                         {
                             $lookup: {
                                 from: 'posts',
-                                localField: '_id',  // _id from the users collection
-                                foreignField: 'owner_id',  // the post's owner's _id
+                                localField: '_id',
+                                foreignField: 'owner_id',
                                 as: 'posts'
                             }
                         },
                         {
-                            $project: {  // $project  creates a new field called 'hasPosted'
-                                hasPosted: {
-                                    $cond: { if: { $gt: [{ $size: "$posts" }, 0] }, then: "Posted", else: "Not Posted" }
-                                }
+                            $project: {
+                                numberOfPosts: { $size: "$posts" }
                             }
                         },
                         {
                             $group: {
-                                _id: "$hasPosted",
+                                _id: {
+                                    hasPosted: {
+                                        $cond: [{ $gt: ["$numberOfPosts", 0] }, "Has Posted", "Has Not Posted"]
+                                    }
+                                },
                                 count: { $sum: 1 }
                             }
-                        },
-                        {
-                            $sort: { count: -1 }
                         }
                     ];
                     break;

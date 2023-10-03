@@ -27,6 +27,7 @@ export default function Statistics() {
             setloading(true);
             //const res = await getStatistics({ type: 'usersByCity' })
             await userStatus();
+            await usersPosted();
             await getPostsByCategory();
             await postsByCity();
 
@@ -86,6 +87,32 @@ export default function Statistics() {
                 }
 
                 setUserData((prev) => ({ ...prev, byStatus: data }))
+            }
+
+            console.log("userData", userData)
+
+        } catch (error) {
+            console.log("error1 : " + error)
+        }
+    }
+    async function usersPosted() {
+        try {
+
+            const res = await getUsersStatistics({ type: 'userPosts' })
+
+            console.log(res)
+
+            if (res && res.length > 0) {
+
+                const data = {
+                    labels: res.map((stat) => stat._id),
+                    datasets: [{
+                        label: 'משתמשים שפירסמו פוסטים',
+                        data: res.map((stat) => stat.count),
+                    }]
+                }
+
+                setUserData((prev) => ({ ...prev, byPosts: data }))
             }
 
             console.log("userData", userData)
@@ -167,6 +194,9 @@ export default function Statistics() {
                         <div className='charts-container'>
                             {userData && userData.byStatus &&
                                 <BarChart chartData={userData.byStatus} className='chart' />
+                            }
+                            {userData && userData.byPosts &&
+                                <BarChart chartData={userData.byPosts} className='chart' />
                             }
                         </div>
                     </div>
