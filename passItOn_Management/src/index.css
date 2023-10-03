@@ -75,11 +75,36 @@ align-items: space-between;
 
 .Logo{
 
-margin-inline:10%;
-margin-block: 5%;
+/* margin-inline:10%;
+margin-block: 5%; */
 max-width: 30%;
 
 
+}
+
+.logo-top{
+  margin:2%;
+  max-width: 100%;
+
+}
+
+.logo-btn{
+  background: none;
+  border: none;
+margin-inline: 40%;
+/* max-width: 20%;
+min-width: 10%; */
+width: 15%;
+height: auto;
+}
+
+.header-container{
+  display: flex;
+  width: 100%;
+  height: auto;
+  align-items: center;
+  justify-content: flex-end;
+  
 }
 
 .btn {
@@ -144,6 +169,8 @@ opacity: 0.7;
   width: 35%;
   height: 35%;
   margin-inline: 1%;
+  margin-block: 1%;
+    background-color: rgba(245, 245, 245, 0.575);
 }
 
 .statistics-container{
@@ -159,4 +186,22 @@ flex-direction: column;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+}
+
+.countbox{
+  width: fit-content;
+  height: fit-content;
+  font-weight: 600;
+  padding:1%;
+  text-align: center;
+  box-shadow: 0px 0px 10px 1px rgba(66, 66, 66, 0.74);
+    background-color: rgba(245, 245, 245, 0.575);
+}
+
+.countbox-container{
+  display: flex;
+width: 80%;
+margin-block: 3%;
+justify-content: space-evenly;
+
 }

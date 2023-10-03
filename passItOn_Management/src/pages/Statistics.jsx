@@ -3,6 +3,8 @@ import { AppContext } from '../contexts/AppContext'
 import BarChart from '../components/charts/BarChart';
 import LineChart from '../components/charts/LineChart';
 import PieChart from '../components/charts/PieChart';
+import CountBox from '../components/CountBox';
+
 import { CircularProgress } from '@mui/material';
 import { getUsersStatistics, getPostsStatistics } from '../api';
 
@@ -210,6 +212,15 @@ export default function Statistics() {
             {loading ? <CircularProgress /> :
                 <div className='main-container'>
                     <h1>סטטיסטיקות</h1>
+
+                    <div className='countbox-container'>
+
+                        <CountBox title={'סה"כ משתמשים רשומים במערכת:'} amount={15} />
+                        <CountBox title={'סה"כ משתמשים רשומים במערכת:'} amount={15} />
+                        <CountBox title={'סה"כ משתמשים רשומים במערכת:'} amount={15} />
+
+                    </div>
+
 
 
                     <div className='statistics-container'>

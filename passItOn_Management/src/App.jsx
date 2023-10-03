@@ -18,6 +18,8 @@ import Requests from './pages/Requests'
 import Statistics from './pages/Statistics'
 
 
+import Header from './components/Header'
+
 function App() {
 
 
@@ -25,6 +27,7 @@ function App() {
     <>
       <AppContextProvider>
         <BrowserRouter>
+          <Header />
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/Login' element={<Login />} />

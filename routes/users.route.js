@@ -553,4 +553,15 @@ UsersRoutes.get('/count', authenticateToken, async (req, res) => {
 })
 
 
+UsersRoutes.post('/logout', async (req, res) => {
+    try {
+        res.clearCookie('token');
+        res.status(200).json({ msg: 'logout successful!' });
+    } catch (error) {
+        console.warn("usersroute error : post /logout", error.toString());
+        res.status(500).json({ error, msg: error.toString() });
+    }
+});
+
+
 module.exports = UsersRoutes;
