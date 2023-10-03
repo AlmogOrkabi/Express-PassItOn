@@ -187,6 +187,34 @@ class UserModel {
                         { $sort: { count: -1 } }
                     ];
                     break;
+                case 'userPosts':
+                    pipeline = [
+                        {
+                            $lookup: {
+                                from: 'posts',
+                                localField: '_id',  // _id from the users collection
+                                foreignField: 'owner_id',  // the post's owner's _id
+                                as: 'posts'
+                            }
+                        },
+                        {
+                            $project: {  // $project  creates a new field called 'hasPosted'
+                                hasPosted: {
+                                    $cond: { if: { $gt: [{ $size: "$posts" }, 0] }, then: "Posted", else: "Not Posted" }
+                                }
+                            }
+                        },
+                        {
+                            $group: {
+                                _id: "$hasPosted",
+                                count: { $sum: 1 }
+                            }
+                        },
+                        {
+                            $sort: { count: -1 }
+                        }
+                    ];
+                    break;
 
                 // Add more cases for other types of statistics
                 default:

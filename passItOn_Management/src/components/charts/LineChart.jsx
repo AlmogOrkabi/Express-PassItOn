@@ -4,7 +4,9 @@ import { Chart as chartJS } from 'chart.js/auto'
 export default function LineChart({ chartData, options = null }) {
     return (
         <>
-            <Line data={chartData} options={options} />
+            <div className='chart'>
+                <Line data={chartData} options={options} />
+            </div>
         </>
     )
 }

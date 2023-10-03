@@ -5,7 +5,9 @@ import { Chart as chartJS } from 'chart.js/auto'
 export default function BarChart({ chartData, options = null }) {
     return (
         <>
-            <Bar data={chartData} options={options} />
+            <div className='chart'>
+                <Bar data={chartData} options={options} />
+            </div>
         </>
     )
 }

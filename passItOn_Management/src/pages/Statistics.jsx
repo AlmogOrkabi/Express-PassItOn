@@ -10,6 +10,14 @@ export default function Statistics() {
     const { loadUsers, users } = useContext(AppContext);
     const [loading, setloading] = useState(false);
 
+
+    const [userData, setUserData] = useState(null)
+    const [postData, setPostData] = useState(null)
+
+
+
+
+
     useEffect(() => {
         getData();
     }, []);
@@ -19,7 +27,8 @@ export default function Statistics() {
             setloading(true);
             //const res = await getStatistics({ type: 'usersByCity' })
             await userStatus();
-            await postsByCategory();
+            await getPostsByCategory();
+            await postsByCity();
 
         } catch (error) {
             console.log("statistics error: " + error)
@@ -31,49 +40,104 @@ export default function Statistics() {
 
     }
 
+
+
+    // async function userStatus() {
+    //     try {
+
+    //         const res = await getUsersStatistics({ type: 'userStatus' })
+
+    //         console.log(res)
+
+    //         if (res && res.length > 0) {
+    //             setUserData({
+    //                 labels: res.map((stat) => stat._id),
+    //                 datasets: [{
+    //                     label: 'משתמשים במערכת',
+    //                     data: res.map((stat) => stat.count),
+    //                 }]
+    //             })
+    //         }
+    //     } catch (error) {
+    //         console.log("error1 : " + error)
+    //     }
+    // }
+
+
+
+    // { text => setAddress((prev) => ({ ...prev, notes: text })) }
+
+
     async function userStatus() {
         try {
+
             const res = await getUsersStatistics({ type: 'userStatus' })
 
             console.log(res)
 
             if (res && res.length > 0) {
-                setUserData({
+
+                const data = {
                     labels: res.map((stat) => stat._id),
                     datasets: [{
                         label: 'משתמשים במערכת',
                         data: res.map((stat) => stat.count),
                     }]
-                })
+                }
+
+                setUserData((prev) => ({ ...prev, byStatus: data }))
             }
+
+            console.log("userData", userData)
+
         } catch (error) {
             console.log("error1 : " + error)
         }
     }
 
-    async function postsByCategory() {
+    async function getPostsByCategory() {
         try {
             const res = await getPostsStatistics({ type: 'postsByCategory' })
 
             console.log(res)
 
             if (res && res.length > 0) {
-                setPostData({
+                const data = {
                     labels: res.map((stat) => stat._id),
                     datasets: [{
                         label: 'פריטים שפורסמו לפי קטגוריה',
                         data: res.map((stat) => stat.count),
-                    }]
-                })
+                    }
+                    ]
+                }
+                setPostData((prev) => ({ ...prev, byCategory: data }))
             }
+
         } catch (error) {
             console.log("error2 : " + error.error)
         }
     }
 
+    async function postsByCity() {
+        try {
+            const res = await getPostsStatistics({ type: 'postsByCity' })
 
-    const [userData, setUserData] = useState(null)
-    const [postData, setPostData] = useState(null)
+            console.log(res)
+            if (res && res.length > 0) {
+                const data = {
+                    labels: res.map((stat) => stat._id),
+                    datasets: [{
+                        label: 'פריטים שפורסמו לפי עיר',
+                        data: res.map((stat) => stat.count),
+                    }]
+                }
+                setPostData((prev) => ({ ...prev, byCity: data }))
+            }
+
+        } catch (error) {
+            console.log("error3 : " + error.error)
+        }
+    }
 
 
     return (
@@ -94,12 +158,28 @@ export default function Statistics() {
 
 
             {loading ? <CircularProgress /> :
-                <div>
+                <div className='main-container'>
                     <h1>סטטיסטיקות</h1>
-                    {userData &&
-                        <BarChart chartData={userData} />
-                    }
-                    {postData && <BarChart chartData={postData} />}
+
+
+                    <div className='statistics-container'>
+                        <h3>סטטיסטיקות משתמשים:</h3>
+                        <div className='charts-container'>
+                            {userData && userData.byStatus &&
+                                <BarChart chartData={userData.byStatus} className='chart' />
+                            }
+                        </div>
+                    </div>
+
+
+                    <div className='statistics-container'>
+                        <h3>סטטיסטיקות פוסטים:</h3>
+                        <div className='charts-container'>
+                            {postData && postData.byCity && <BarChart chartData={postData.byCity} />}
+                            {postData && postData.byCategory && <BarChart chartData={postData.byCategory} />}
+                        </div>
+                    </div>
+
                 </div>
             }
 

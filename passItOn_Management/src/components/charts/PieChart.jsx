@@ -5,7 +5,9 @@ import { Chart as chartJS } from 'chart.js/auto'
 export default function PieChart({ chartData, options = null }) {
     return (
         <>
-            <Pie data={chartData} options={options} />
+            <div className='chart'>
+                <Pie data={chartData} options={options} />
+            </div>
         </>
     )
 }

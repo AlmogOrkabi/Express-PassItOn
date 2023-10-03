@@ -11,6 +11,9 @@
 --medium-blue:#2596fe;
 --light-blue:#add9ff;
 --background-color:#e8d3f6;
+--background-color-2:#d9e3eb;
+--medium-green:#60cca8;
+--strong-green:#4ea98b;
 }
 
 *,
@@ -37,13 +40,19 @@
 body{
   background-color: var(--light-orange);
   background-color: var(--background-color);
+  background-color: var(--background-color-2);
+    width: 100%;
+  height: 100%;
 }
 
 .main-container{
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
+  width: 100%;
+  height: 100%;
+  padding: 1%;
 }
 
 .container-right{
@@ -54,6 +63,13 @@ text-align: right;
 
 .sub-container{
   margin:3rem
+}
+
+.sub-container-2{
+  /* align-items: center; */
+  display: flex;
+  flex-direction: column;
+align-items: space-between;
 }
 
 
@@ -122,4 +138,25 @@ opacity: 0.7;
 
 .errMsg{
   color:red;
+}
+
+.chart{
+  width: 35%;
+  height: 35%;
+  margin-inline: 1%;
+}
+
+.statistics-container{
+    width: 100%;
+  height: 50%;
+  display: flex;
+flex-direction: column;
+  margin-block: 3%;
+}
+.charts-container{
+    width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
