@@ -202,16 +202,16 @@ class UserModel {
                                 numberOfPosts: { $size: "$posts" }
                             }
                         },
-                        // {
-                        //     $group: {
-                        //         _id: {
-                        //             hasPosted: {
-                        //                 $cond: [{ $gt: ["$numberOfPosts", 0] }, "Has Posted", "Has Not Posted"]
-                        //             }
-                        //         },
-                        //         count: { $sum: 1 }
-                        //     }
-                        // }
+                        {
+                            $group: {
+                                _id: {
+                                    hasPosted: {
+                                        $cond: [{ $gt: ["$numberOfPosts", 0] }, "Has Posted", "Has Not Posted"]
+                                    }
+                                },
+                                count: { $sum: 1 }
+                            }
+                        }
                     ];
                     break;
 
