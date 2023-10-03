@@ -79,3 +79,23 @@ export const getUsersStatistics = async (queryParams = {}) => {
     console.log("Raw data from API - USERS  - statistics : ", res); // Print out the raw data
     return res;
 }
+
+
+export const userLogOut = async () => {
+    const response = await fetch(`${baseUrl}/api/users/logout`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+    });
+
+    const res = await response.json();
+
+    if (!response.ok) {
+        throw response.status;
+    }
+
+    console.log("logout results : ", res);
+    return res;
+};

@@ -555,7 +555,17 @@ UsersRoutes.get('/count', authenticateToken, async (req, res) => {
 
 UsersRoutes.post('/logout', async (req, res) => {
     try {
-        res.clearCookie('token');
+        const cookieOptions = {
+            httpOnly: true,
+            sameSite: 'none',
+            secure: true,
+            path: '/',
+            expires: new Date(0) // Setting it to a past date to clear the cookie
+        };
+        const cookieString = cookie.serialize('token', '', cookieOptions);
+
+        // Clear the cookie in the response header:
+        res.setHeader('Set-Cookie', cookieString);
         res.status(200).json({ msg: 'logout successful!' });
     } catch (error) {
         console.warn("usersroute error : post /logout", error.toString());
