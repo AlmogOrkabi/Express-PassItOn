@@ -30,6 +30,7 @@ export default function Statistics() {
             await usersPosted();
             await getPostsByCategory();
             await postsByCity();
+            await postsDelivered();
 
         } catch (error) {
             console.log("statistics error: " + error)
@@ -118,7 +119,7 @@ export default function Statistics() {
             console.log("userData", userData)
 
         } catch (error) {
-            console.log("error1 : " + error)
+            console.log("error4 : " + error)
         }
     }
 
@@ -167,6 +168,28 @@ export default function Statistics() {
     }
 
 
+    async function postsDelivered() {
+        try {
+            const res = await getPostsStatistics({ type: 'postsDelivered' })
+
+            console.log(res)
+            if (res && res.length > 0) {
+                const data = {
+                    labels: res.map((stat) => stat._id),
+                    datasets: [{
+                        label: 'פריטים שנמסרו בפועל',
+                        data: res.map((stat) => stat.count),
+                    }]
+                }
+                setPostData((prev) => ({ ...prev, byDelivered: data }))
+            }
+
+        } catch (error) {
+            console.log("error4 : " + error.error)
+        }
+    }
+
+
     return (
         <>
             {/* {loading ? <CircularProgress /> :
@@ -207,6 +230,7 @@ export default function Statistics() {
                         <div className='charts-container'>
                             {postData && postData.byCity && <BarChart chartData={postData.byCity} />}
                             {postData && postData.byCategory && <BarChart chartData={postData.byCategory} />}
+                            {postData && postData.byDelivered && <BarChart chartData={postData.byDelivered} />}
                         </div>
                     </div>
 

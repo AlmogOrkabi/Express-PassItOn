@@ -542,5 +542,15 @@ UsersRoutes.get('/statistics', authenticateToken, async (req, res) => {
     }
 });
 
+UsersRoutes.get('/count', authenticateToken, async (req, res) => {
+    try {
+        const count = await UserModel.count();
+        return res.status(200).json(count);
+    } catch (error) {
+        console.warn("usersroute error : get /count", error.toString());
+        res.status(500).json({ error, msg: error.toString() });
+    }
+})
+
 
 module.exports = UsersRoutes;

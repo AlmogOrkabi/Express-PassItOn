@@ -116,4 +116,16 @@ AddressRoutes.delete('/delete/:_id', authenticateToken, validateObjectId('_id'),
     }
 });
 
+
+
+AddressRoutes.get('/count', authenticateToken, async (req, res) => {
+    try {
+        const count = await AddressModel.count();
+        return res.status(200).json(count);
+    } catch (error) {
+        console.warn("addressroute error : get /count", error.toString());
+        res.status(500).json({ error, msg: error.toString() });
+    }
+});
+
 module.exports = AddressRoutes;

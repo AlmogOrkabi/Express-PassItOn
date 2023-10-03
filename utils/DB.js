@@ -134,6 +134,22 @@ class DB {
             await this.client.close();
         }
     }
+
+
+    async count(collection) {
+        try {
+            await this.client.connect();
+            return await this.client.db(this.db_name).collection(collection).countDocuments();
+        } catch (error) {
+            console.log(`\x1b[42m%s\x1b[0m`, error); //prtins the error in green so it'll be easier to understand where it occurred.
+            throw error;
+        } finally {
+            await this.client.close();
+        }
+    }
 }
+
+
+
 
 module.exports = DB;

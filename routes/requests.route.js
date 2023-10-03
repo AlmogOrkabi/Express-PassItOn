@@ -336,4 +336,14 @@ RequestsRoutes.delete('/delete/:_id', authenticateToken, checkAdmin, validateObj
 });
 
 
+RequestsRoutes.get('/count', authenticateToken, async (req, res) => {
+    try {
+        const count = await RequestModel.count();
+        return res.status(200).json(count);
+    } catch (error) {
+        console.warn("requests route error : get /count", error.toString());
+        res.status(500).json({ error, msg: error.toString() });
+    }
+});
+
 module.exports = RequestsRoutes;

@@ -148,6 +148,16 @@ class ReportModel {
         return await new DB().deleteOne(collection, _id);
     }
 
+
+    static async count() {
+        try {
+            return await new DB().count(collection);
+        } catch (error) {
+            console.log("error in count: ", error);
+            throw error;
+        }
+    }
+
 }
 
 

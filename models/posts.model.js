@@ -357,8 +357,15 @@ class PostModel {
             console.error(`Error in PostModel.getStatistics: ${error}`);
             throw error;
         }
+    }
 
-
+    static async count() {
+        try {
+            return await new DB().count(collection);
+        } catch (error) {
+            console.log("error in count: ", error);
+            throw error;
+        }
     }
 
 }

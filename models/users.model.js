@@ -225,9 +225,18 @@ class UserModel {
             console.error(`Error in UserModel.getStatistics: ${error}`);
             throw error;
         }
-
-
     }
+
+    static async count() {
+        try {
+            return await new DB().count(collection);
+        } catch (error) {
+            console.log("error in count: ", error);
+            throw error;
+        }
+    }
+
+
 }
 
 

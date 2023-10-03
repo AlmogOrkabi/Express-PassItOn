@@ -369,5 +369,18 @@ ReportsRoutes.delete('/delete/:_id', authenticateToken, validateObjectId('_id'),
     }
 });
 
+ReportsRoutes.get('/count', authenticateToken, async (req, res) => {
+    try {
+        const count = await ReportsModel.count();
+        return res.status(200).json(count);
+    } catch (error) {
+        console.warn("reportsroute error : get /count", error.toString());
+        res.status(500).json({ error, msg: error.toString() });
+    }
+});
+
+
+
+
 module.exports = ReportsRoutes;
 
