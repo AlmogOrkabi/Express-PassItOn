@@ -9,6 +9,8 @@ export default function AppContextProvider({ children }) {
 
     const [users, setUsers] = useState([]);
 
+
+
     const loadUsers = async (query = {}) => {
         try {
             const res = await API.getUsers(query).then((res) => {
@@ -22,8 +24,12 @@ export default function AppContextProvider({ children }) {
     }
 
 
+    const [reports, setReports] = useState([]);
 
-    const value = { loggedUser, setLoggedUser, loadUsers, users };
+
+
+
+    const value = { loggedUser, setLoggedUser, loadUsers, users, reports, setReports };
 
     return (
         <AppContext.Provider value={value}>
