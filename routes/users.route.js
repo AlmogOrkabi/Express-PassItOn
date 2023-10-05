@@ -439,7 +439,7 @@ UsersRoutes.put('/:_id/updateStatus', authenticateToken, checkAdmin, validateObj
         let validationRes = isValidUserStatus(activationStatus);
         if (!validationRes.valid)
             return res.status(400).json({ error: 'INVALID_DETAILS', msg: validationRes.msg });
-        let data = await UserModel.update({ _id: new ObjectId(_id) }, { activationStatus: activationStatus })
+        let data = await UserModel.update(new ObjectId(_id), { activationStatus: activationStatus })
         if (activationStatus !== 'פעיל') {
             await closeAllUserActivities({ _id: new ObjectId(_id) }); // closes all the reports/requests/posts of the user if they are banned
         }
@@ -456,7 +456,7 @@ UsersRoutes.put('/:_id/changeUserRole', authenticateToken, checkAdmin, validateO
         const validationRes = isValidUserRole(role);
         if (!validationRes.valid)
             return res.status(400).json({ error: 'INVALID_DETAILS', msg: validationRes.msg });
-        let data = await UserModel.update({ _id: new ObjectId(_id) }, { role: role })
+        let data = await UserModel.update(new ObjectId(_id), { role: role })
         return res.status(200).json(data);
     } catch (error) {
         console.warn('usersroute error: put /:_id/updateStatus')
