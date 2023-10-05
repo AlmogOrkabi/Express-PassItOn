@@ -105,7 +105,7 @@ export default function ReportPage() {
                     <div>
                         <label for="statuses">סטטוס: </label>
 
-                        <select name="statuses" id="cars" onChange={(e) => handleSelect(e)}>
+                        <select name="statuses" id="status" onChange={(e) => handleSelect(e)}>
                             {
                                 reportStatuses.map((s) => { return <option value={s}>{s}</option> })
 

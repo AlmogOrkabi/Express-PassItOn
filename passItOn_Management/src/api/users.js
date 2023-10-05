@@ -124,3 +124,57 @@ export const amountOfUsers = async () => {
     return res;
 
 };
+
+
+export const updateUserStatus = async (_id, status) => {
+    console.log("id:", _id, " status: ", status);
+    const response = await fetch(`${baseUrl}/api/users/${_id}/updateStatus`, {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json',
+            // 'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            activationStatus: status
+        }),
+        credentials: 'include',
+    });
+
+    const res = await response.json();
+    console.log("response: " + JSON.stringify(res));
+    if (!response.ok) {
+        console.log("res error users => " + res);
+        throw response;
+    }
+
+    console.log("Raw data from API - USERS:", res); // Print out the raw data
+    return res;
+
+};
+
+
+export const updateUserRole = async (_id, role) => {
+
+    const response = await fetch(`${baseUrl}/api/users/${_id}/changeUserRole`, {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json',
+            // 'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            role: role
+        }),
+        credentials: 'include',
+    });
+
+    const res = await response.json();
+
+    if (!response.ok) {
+        console.log("res error users => " + res);
+        throw response;
+    }
+
+    console.log("Raw data from API - USERS:", res); // Print out the raw data
+    return res;
+
+};
