@@ -22,7 +22,7 @@ export default function Login() {
     })
     const [err, setErr] = useState(null);
 
-    const { setLoggedUser } = useContext(AppContext)
+    const { setLoggedUser, loadAppData } = useContext(AppContext)
 
     const [showPassword, setShowPassword] = useState(false);
 
@@ -40,7 +40,7 @@ export default function Login() {
             const res = await login(inputs.email, inputs.password);
             setLoggedUser(res);
 
-
+            await loadAppData();
             //navigation(`/profile/${user.username}`);
             navigation(`/Overview`)
 

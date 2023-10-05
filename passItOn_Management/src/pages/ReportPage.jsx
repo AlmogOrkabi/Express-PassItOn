@@ -4,6 +4,9 @@ import { AppContext } from '../contexts/AppContext';
 import { IconButton, TextField } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import { useNavigate } from 'react-router-dom';
+import ArticleIcon from '@mui/icons-material/Article';
 
 const initialState = {
     status: {
@@ -76,6 +79,9 @@ export default function ReportPage() {
     const [zoomedImg, setZoomedImg] = useState(null);
     // const [editStatus, setEditStatus] = useState(false);
 
+    const navigation = useNavigate();
+
+
     useEffect(() => {
         // console.log("logged user: " + JSON.stringify(loggedUser))
         console.log('changed ' + formState.status.value)
@@ -122,9 +128,17 @@ export default function ReportPage() {
                     </IconButton></p>
                 }
                 {report.admin || formState.admin.edited ? <p>הדיווח בטיפול: {report.admin || formState.admin.value}</p> : null}
-                <p>סוג דיווח: {report.reportType}</p>
+                <p>סוג דיווח: {report.reportType} </p>
                 <p>תיאור: {report.description}</p>
-                <p>המשתמש המדווח: {report.owner.username}</p>
+                <p>המשתמש המדווח: {report.owner.username} <IconButton aria-label="profile" onClick={() => { navigation(`/users/${report.owner.username}`) }}>
+                    <AccountBoxIcon />
+                </IconButton></p>
+                {report.userReported && <p>המשתמש שדווח:{report.userReported.username} <IconButton aria-label="profile" onClick={() => { navigation(`/users/${report.owner.username}`) }}>
+                    <AccountBoxIcon />
+                </IconButton></p>}
+                {report.post && <p>הפוסט שדווח:{report.post.itemName} <IconButton aria-label="cancel" onClick={() => { navigation(`/posts/${report.post._id}`) }} >
+                    <ArticleIcon />
+                </IconButton></p>}
                 <div className='pictures-container'>
                     {report.photos.map((photo, index) => {
                         return <div key={index} className={zoomedImg === index ? 'zoomed-photo-container' : ''} onClick={() => setZoomedImg(() => zoomedImg !== null ? null : index)} >

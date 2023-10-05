@@ -44,7 +44,7 @@ export default function UserPage() {
             if (res2)
                 setUser((prev) => ({ ...prev, role: data.role }));
 
-
+            setEdit(null);
         } catch (error) {
             console.log("update user error: " + error)
         } finally {
@@ -66,7 +66,7 @@ export default function UserPage() {
                         <p>מספר טלפון: {user.phoneNumber}</p>
                         {edit && edit.activationStatus ?
                             <div>
-                                <label for="status">סוג משתמש: </label>
+                                <label htmlFor="status">סטטוס פעילות: </label>
 
                                 <select name="status" id="status" onChange={(e) => handleSelectStatus(e)}>
 
@@ -90,9 +90,9 @@ export default function UserPage() {
                             </IconButton></p>}
                         {edit && edit.role ?
                             <div>
-                                <label for="role">סוג משתמש: </label>
+                                <label htmlFor="role">סוג משתמש: </label>
 
-                                <select name="role" id="role" onChange={(e) => handleSelectStatus(e)}>
+                                <select name="role" id="role" onChange={(e) => handleSelectRole(e)}>
 
                                     <option value={'user'}>user</option>
                                     <option value={'admin'}>admin</option>

@@ -10,7 +10,7 @@ export default function Reports() {
     const navigation = useNavigate();
     const [loading, setloading] = useState(false);
 
-    const { reports, setReports } = useContext(AppContext);
+    const { reports, setReports, fetchUsers, fetchReports } = useContext(AppContext);
 
 
     useEffect(() => {
@@ -20,11 +20,11 @@ export default function Reports() {
     async function loadReports() {
         try {
             setloading(true);
-            const reportslist = await getReports({ full: 'true' });
-            setReports(reportslist);
+            await fetchReports();
+            // await fetchUsers();
             setloading(false);
         } catch (error) {
-            console.log("error - reports " + error);
+            console.log("error - reports: " + error);
         }
     }
 

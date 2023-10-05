@@ -15,7 +15,7 @@ export default function ReportCard({ report, index }) {
                 <p>סוג דיווח: {report.reportType}</p>
                 <p>תיאור: {report.description}</p>
                 <p>המשתמש המדווח: {report.owner.username}</p>
-                <IconButton className='btn-end' aria-label="open" onClick={() => { navigation(`/reports/${index}`,) }} >
+                <IconButton className='btn-end' aria-label="open" onClick={() => { navigation(`/reports/${index}`) }} >
                     <OpenInFullIcon />
                 </IconButton>
             </div>

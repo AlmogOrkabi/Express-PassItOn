@@ -18,6 +18,7 @@ import Requests from './pages/Requests'
 import Statistics from './pages/Statistics'
 import ReportPage from './pages/ReportPage'
 import UserPage from './pages/UserPage'
+import PostPage from './pages/PostPage'
 
 import Header from './components/Header'
 
@@ -42,6 +43,7 @@ function App() {
             <Route path='/users' element={<Users />} />
             <Route path='/users/:username' element={<UserPage />} />
             <Route path='/posts' element={<Posts />} />
+            <Route path='/posts/:_id' element={<PostPage />} />
             <Route path='/requests' element={<Requests />} />
             <Route path='/statistics' element={<Statistics />} />
 

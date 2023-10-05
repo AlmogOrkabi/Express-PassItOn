@@ -129,7 +129,7 @@ export const amountOfUsers = async () => {
 export const updateUserStatus = async (_id, status) => {
     console.log("id:", _id, " status: ", status);
     const response = await fetch(`${baseUrl}/api/users/${_id}/updateStatus`, {
-        method: 'post',
+        method: 'put',
         headers: {
             'Content-Type': 'application/json',
             // 'Authorization': `Bearer ${token}`
@@ -156,7 +156,7 @@ export const updateUserStatus = async (_id, status) => {
 export const updateUserRole = async (_id, role) => {
 
     const response = await fetch(`${baseUrl}/api/users/${_id}/changeUserRole`, {
-        method: 'post',
+        method: 'put',
         headers: {
             'Content-Type': 'application/json',
             // 'Authorization': `Bearer ${token}`

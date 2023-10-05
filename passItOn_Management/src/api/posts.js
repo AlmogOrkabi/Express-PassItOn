@@ -44,10 +44,38 @@ export const amountOfPosts = async () => {
 
     if (!response.ok) {
         console.log("res error posts => " + res);
-        throw response;
+        throw { ...res, status: response.status };
     }
 
     console.log("Raw data from API - POSTS:", res); // Print out the raw data
     return res;
 
 };
+
+
+export const getPosts = async (query = {}) => {
+    const params = new URLSearchParams(query);
+
+    const response = await fetch(`${baseUrl}/api/posts/search?${params.toString()}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            // 'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include',
+    });
+
+    const res = await response.json();
+
+    if (!response.ok) {
+        console.log("res error posts => " + res);
+        if (response.status == 404)
+            return 404;
+        else
+            throw { ...res, status: response.status };
+    }
+
+    console.log("Raw data from API - POSTS:", res); // Print out the raw data
+    return res;
+
+}

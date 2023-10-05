@@ -33,8 +33,9 @@ export default function Statistics() {
             await usersPosted();
             await getPostsByCategory();
             await postsByCity();
-            await postsDelivered();
             await getNumbers();
+            await postsDelivered();
+
 
         } catch (error) {
             console.log("statistics error: " + error)
@@ -55,8 +56,8 @@ export default function Statistics() {
             if (!countData.some(item => item.title == 'משתמשים רשומים')) {
                 setCountData((prev) => ([...prev, { title: 'משתמשים רשומים', amount: users }]));
             }
-            if (!countData.some(item => item.title == 'פוסטים במערכת')) {
-                setCountData((prev) => ([...prev, { title: 'פוסטים במערכת', amount: posts }]));
+            if (!countData.some(item => item.title == 'פריטים במערכת')) {
+                setCountData((prev) => ([...prev, { title: 'פריטים במערכת', amount: posts }]));
             }
 
 

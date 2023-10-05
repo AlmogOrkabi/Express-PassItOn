@@ -5,7 +5,7 @@ import Loading from '../components/Loading';
 import UserCard from '../components/UserCard';
 export default function Users() {
 
-    const { users, setUsers } = useContext(AppContext);
+    const { users, setUsers, fetchUsers } = useContext(AppContext);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -16,10 +16,7 @@ export default function Users() {
     async function loadUsers() {
         try {
             setLoading(true);
-            const res = await getUsers({});
-            setUsers(() => res);
-
-
+            await fetchUsers();
         } catch (error) {
             console.log("load users error: " + error)
         } finally {
