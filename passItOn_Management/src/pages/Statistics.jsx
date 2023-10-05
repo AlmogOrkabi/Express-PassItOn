@@ -4,8 +4,9 @@ import BarChart from '../components/charts/BarChart';
 import LineChart from '../components/charts/LineChart';
 import PieChart from '../components/charts/PieChart';
 import CountBox from '../components/CountBox';
+import Loading from '../components/Loading';
 
-import { CircularProgress } from '@mui/material';
+// import { CircularProgress } from '@mui/material';
 import { getUsersStatistics, getPostsStatistics, amountOfUsers, amountOfPosts } from '../api';
 
 export default function Statistics() {
@@ -198,7 +199,7 @@ export default function Statistics() {
 
     return (
         <>
-            {loading ? <CircularProgress /> :
+            {loading ? <Loading /> :
                 <div className='main-container'>
                     <h1>סטטיסטיקות</h1>
 

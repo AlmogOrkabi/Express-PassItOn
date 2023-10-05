@@ -17,9 +17,13 @@ import Posts from './pages/Posts'
 import Requests from './pages/Requests'
 import Statistics from './pages/Statistics'
 import ReportPage from './pages/ReportPage'
-
+import UserPage from './pages/UserPage'
 
 import Header from './components/Header'
+
+
+
+
 
 function App() {
 
@@ -36,6 +40,7 @@ function App() {
             <Route path='/reports' element={<Reports />} />
             <Route path='/reports/:index' element={<ReportPage />} />
             <Route path='/users' element={<Users />} />
+            <Route path='/users/:username' element={<UserPage />} />
             <Route path='/posts' element={<Posts />} />
             <Route path='/requests' element={<Requests />} />
             <Route path='/statistics' element={<Statistics />} />

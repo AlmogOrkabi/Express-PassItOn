@@ -181,6 +181,14 @@ function isValidUserStatus(userStatus) {
         return { valid: true }
 }
 
+function isValidUserRole(role) {
+    if (role !== 'user' && role !== 'admin') {
+        return { valid: false, msg: 'הכתובת אינה תקינה' };
+    }
+    else
+        return { valid: true }
+}
+
 //_____________________POSTS________________________________//
 
 
@@ -679,4 +687,4 @@ function validateObjectId(paramNames) {
 
 
 
-module.exports = { isValidObjectId, isString, validateSort, validateNewUserData, validateUserData, isValidUserStatus, validateNewPostData, validatePostData, validatePostSearchData, isValidPostStatus, isValidPostCategory, validateNewReportData, validateReportData, isValidReportStatus, validateNewAddressDetails, validateAddressData, isValidPhoto, validateObjectId, validateNewRequestData, validateRequestData }
+module.exports = { isValidObjectId, isString, validateSort, validateNewUserData, validateUserData, isValidUserStatus, validateNewPostData, validatePostData, validatePostSearchData, isValidPostStatus, isValidPostCategory, validateNewReportData, validateReportData, isValidReportStatus, validateNewAddressDetails, validateAddressData, isValidPhoto, validateObjectId, validateNewRequestData, validateRequestData, isValidUserRole }

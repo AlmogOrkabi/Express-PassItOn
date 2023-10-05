@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 export default function Home() {
     return (
         <>
-            <div className='main-container'>
+            <div className='main-container start-container'>
                 <Logo />
                 <h1>מערכת ניהול משתמשים</h1>
                 {/* <Button className='btn btn-login' variant="contained">התחברות</Button> */}

@@ -18,6 +18,7 @@ class ReportModel {
     creationDate;
     updateDate; // for the stages of handling the report // initialized to the creation date
     verdictDescription;
+    admin;
 
     constructor(owner_id, reportType, userReported, postReported, photos = [], description) {
         this.owner_id = new ObjectId(owner_id);
@@ -31,6 +32,7 @@ class ReportModel {
         this.description = description;
         this.updateDate = new Date();
         this.verdictDescription = null;
+        this.admin = null; // no admin in charge yet
     }
 
     // static async create(owner_id, reportType, userReported, postReported, photos, description) {

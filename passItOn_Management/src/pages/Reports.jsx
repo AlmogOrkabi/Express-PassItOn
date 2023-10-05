@@ -2,7 +2,8 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { getReports } from '../api';
 import ReportCard from '../components/ReportCard';
-import { CircularProgress } from '@mui/material';
+// import { CircularProgress } from '@mui/material';
+import Loading from '../components/Loading';
 import { AppContext } from '../contexts/AppContext';
 
 export default function Reports() {
@@ -33,7 +34,7 @@ export default function Reports() {
             <h1>דיווחי משתמשים</h1>
 
             {
-                loading ? <CircularProgress />
+                loading ? <Loading />
                     :
                     <div>
 

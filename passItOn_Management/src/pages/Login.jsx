@@ -8,6 +8,7 @@ import { login } from '../api/index';
 import { AppContext } from '../contexts/AppContext';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Loading from '../components/Loading';
 //import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 export default function Login() {
@@ -36,8 +37,8 @@ export default function Login() {
         try {
             setLoading(true)
             setErr(null);
-            const user = await login(inputs.email, inputs.password);
-            setLoggedUser(user);
+            const res = await login(inputs.email, inputs.password);
+            setLoggedUser(res);
 
 
             //navigation(`/profile/${user.username}`);
@@ -54,12 +55,12 @@ export default function Login() {
 
     return (
         <>
-            {loading ? <CircularProgress /> :
+            {loading ? <Loading /> :
                 <div className='main-container'>
-                    <Logo></Logo>
-                    <div className='container-right'>
-                        <h2 className='title'>התחברות</h2>
-                        <form className='form login-form' onSubmit={handleSubmit(userLogin)}>
+                    <Logo />
+                    <div className='sub-container'>
+                        <h2 className='title align-center'>התחברות</h2>
+                        <form className='form login-form   align-center' onSubmit={handleSubmit(userLogin)}>
                             <TextField id="email" label="כתובת אימייל" variant="outlined" type="email"
                                 value={inputs.email}
                                 onChange={(e) => setInputs({ ...inputs, email: e.target.value })}
