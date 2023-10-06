@@ -107,11 +107,11 @@ const closeOpenRequests = async (_id) => {
 
 const closeAllUserActivities = async (_id) => {
     try {
-        await RequestsModel.updateMany({ sender_id: id }, { $set: { status: 'נסגר' } });
-        await PostsModel.updateMany({ owner_id: id, status: { $in: ['לא זמין למסירה', 'בתהליך מסירה', 'זמין'] } }, { $set: { status: 'סגור' } });
+        await RequestsModel.updateMany({ sender_id: _id }, { $set: { status: 'נסגר' } });
+        await PostsModel.updateMany({ owner_id: _id, status: { $in: ['לא זמין למסירה', 'בתהליך מסירה', 'זמין'] } }, { $set: { status: 'סגור' } });
         // await ReportsModel.updateMany({owner_id: _id},{}) // all reports need to be reviewed by an admin?
     } catch (error) {
-
+        throw error;
     }
 }
 

@@ -176,7 +176,7 @@ export default function ReportPage() {
                     <p>המשתמש המדווח: {report.owner.username} <IconButton aria-label="navigate-to-profile" onClick={() => { navigation(`/users/${report.owner.username}`) }}>
                         <AccountBoxIcon />
                     </IconButton></p>
-                    {report.userReported && <p>המשתמש שדווח:{report.userReported.username} <IconButton aria-label="navigate-to-profile" onClick={() => { navigation(`/users/${report.owner.username}`) }}>
+                    {report.userReported && <p>המשתמש שדווח:{report.userReported.username} <IconButton aria-label="navigate-to-profile" onClick={() => { navigation(`/users/${report.userReported.username}`) }}>
                         <AccountBoxIcon />
                     </IconButton></p>}
                     {report.post && <p>הפוסט שדווח:{report.post.itemName} <IconButton aria-label="navigate-to-post" onClick={() => { navigation(`/posts/${report.post._id}`) }} >
