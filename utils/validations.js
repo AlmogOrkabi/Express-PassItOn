@@ -451,6 +451,7 @@ function validateReportData(data) {
                 if (!isValidPhotosArray(data.photos)) {
                     return { valid: false, msg: 'תמונה לא תקינה' };
                 }
+                break;
             case 'verdict':
                 if (!isString(data.verdict) || data.verdict.length > 100) {
                     return { valid: false, msg: 'גזר הדין ארוך מידי' };
@@ -460,10 +461,12 @@ function validateReportData(data) {
                 if (data.verdictDescription !== '' && !isString(data.verdictDescription) || data.verdictDescription.length > 1000) {
                     return { valid: false, msg: 'פירוט דיווח אינו תקין' };
                 }
+                break;
             case 'status':
                 if (!checkReportStatus(data.status)) {
                     return { valid: false, msg: 'הסטטוס אינו תקין' };
                 }
+                break;
             case 'full':
 
                 break;

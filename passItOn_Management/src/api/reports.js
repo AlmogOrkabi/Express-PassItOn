@@ -30,6 +30,8 @@ export const getReports = async (queryParams = {}) => {
 
 export const updateReport = async (updatedData, _id) => {
     console.log("report id: ", _id);
+    console.log("updated data here : ", updatedData);
+
     const response = await fetch(`${baseUrl}/api/reports/edit/${_id}`, {
         method: 'PUT',
         headers: {
