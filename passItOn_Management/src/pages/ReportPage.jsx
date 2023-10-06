@@ -109,17 +109,20 @@ export default function ReportPage() {
             setLoading(true);
             const updatedData = {};
             if (formState.status.edited) {
-                console.log("status here: " + formState.status.value)
                 updatedData.status = formState.status.value;
+                dispatch({ type: 'cancel', field: 'status' });
             }
             if (formState.admin.edited) {
                 updatedData.admin = formState.admin.value;
+                dispatch({ type: 'cancel', field: 'admin' });
             }
             if (formState.verdict.edited) {
                 updatedData.verdict = formState.verdict.value;
+                dispatch({ type: 'cancel', field: 'verdict' });
             }
             if (formState.verdictDescription.edited) {
                 updatedData.verdictDescription = formState.verdictDescription.value;
+                dispatch({ type: 'cancel', field: 'verdictDescription' });
             }
             const res = await updateReport(updatedData, report._id);
             console.log(res);
@@ -186,8 +189,8 @@ export default function ReportPage() {
                             <>
                                 {formState.verdict.edited ?
                                     <>
-                                        <input className='input' type='text' placeholder='פסק דין' value={formState.verdict.value} onChange={(text) => dispatch({ type: 'update', field: 'verdict', value: text })} ></input>
-                                        <textarea className='input' type='text' placeholder='נימוק' aria-multiline value={formState.verdictDescription.value} onChange={(text) => dispatch({ type: 'update', field: 'verdictDescription', value: text })}></textarea>
+                                        <input className='input' type='text' placeholder='פסק דין' onChange={(text) => dispatch({ type: 'update', field: 'verdict', value: text })} ></input>
+                                        <textarea className='input' type='text' placeholder='נימוק' aria-multiline onChange={(text) => dispatch({ type: 'update', field: 'verdictDescription', value: text })}></textarea>
                                         <button className='btn btn-smaller cancell-btn' onClick={() => {
                                             dispatch({ type: 'cancel', field: 'verdict' });
                                             dispatch({ type: 'cancel', field: 'verdictDescription' });

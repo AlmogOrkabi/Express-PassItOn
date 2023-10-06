@@ -451,6 +451,10 @@ function validateReportData(data) {
                 if (!isValidPhotosArray(data.photos)) {
                     return { valid: false, msg: 'תמונה לא תקינה' };
                 }
+            case 'verdict':
+                if (!isString(data.verdict) || data.verdict.length > 100) {
+                    return { valid: false, msg: 'גזר הדין ארוך מידי' };
+                }
                 break;
             case 'verdictDescription':
                 if (data.verdictDescription !== '' && !isString(data.verdictDescription) || data.verdictDescription.length > 1000) {
