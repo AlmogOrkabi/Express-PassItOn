@@ -205,14 +205,14 @@ export default function ReportPage() {
                                     : <button className='btn action-btn btn-small align-center' onClick={() => { dispatch({ type: 'edit', field: 'verdict' }); dispatch({ type: 'edit', field: 'verdictDescription' }); }}>סגירת הדיווח</button>
                                 }
 
-                                <button className='btn btn-small align-center' onClick={() => handleSaveChanges()}>שמור שינויים</button>
+
                             </> :
                             <>
                                 <p>גזר הדין: {report.verdict}</p>
                                 <p>פירוט גזר הדין: <br /> {report.verdictDescription}</p>
                             </>
                     }
-
+                    <button className='btn btn-small align-center' onClick={() => handleSaveChanges()}>שמור שינויים</button>
                 </div>}
         </>
     )

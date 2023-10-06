@@ -441,7 +441,7 @@ UsersRoutes.put('/:_id/updateStatus', authenticateToken, checkAdmin, validateObj
             return res.status(400).json({ error: 'INVALID_DETAILS', msg: validationRes.msg });
         let data = await UserModel.update(new ObjectId(_id), { activationStatus: activationStatus })
         if (activationStatus !== 'פעיל') {
-            await closeAllUserActivities({ _id: new ObjectId(_id) }); // closes all the reports/requests/posts of the user if they are banned
+            await closeAllUserActivities(new ObjectId(_id)); // closes all the reports/requests/posts of the user if they are banned
         }
         return res.status(200).json(data);
     } catch (error) {
