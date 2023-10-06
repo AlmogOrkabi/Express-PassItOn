@@ -371,320 +371,332 @@ function isValidReportStatus(reportStatus) {
     else
         return { valid: true }
 }
+function checkReportStatus(reportStatus) {
+    // const validStatuses = ['פתוח', 'בטיפול מנהל', 'בבירור', 'סגור'];
 
-// function validateNewReportData(owner_id, reportType, userReported, postReported, photoUrls) {
-//     if (!isValidObjectId(owner_id) || owner_id == null || !isString(reportType) || !isValidReportType(reportType) || !isValidObjectId(userReported) || userReported == null || !isValidObjectId(postReported) || !isValidPhotosArray(photoUrls)) // the postReported can be null because it could be only a user was reported and not a post (if a post was reported the creator will be reported as well)
-//         throw new Error("פרטים לא תקינים");
-//     else
-//         return true;
-// }
-
-function validateNewReportData(owner_id, reportType, userReported, postReported, photoUrls, description) {
-    if (!isValidObjectId(owner_id)) {
-        return { valid: false, msg: 'שגיאה בהעלעת הפוסט' };
-    }
-    if (!isValidReportType(reportType)) {
-        return { valid: false, msg: 'סוג דיווח לא תקין' };
-    }
-    if (!isValidObjectId(userReported)) { // the owner of the post in case a post was reported
-        return { valid: false, msg: 'שגיאה בהעלעת הפוסט' };
-    }
-    if (postReported !== null && !isValidObjectId(postReported)) { // can be null, the report can be only regarding a user and not a specific post
-        return { valid: false, msg: 'שגיאה בהעלעת הפוסט' };
-    }
-    if (!isValidPhotosArray(photoUrls)) {
-        return { valid: false, msg: 'תמונה לא תקינה' };
-    }
-    if (!isString(description) || description.length > 1000) {
-        return { valid: false, msg: 'תיאור לא תקין או ארוך מידי' };
-    }
-
-    return { valid: true };
-}
-
-
-
-function validateReportData(data) {
-    let fieldsToUpdate = Object.keys(data);
-
-    for (let field of fieldsToUpdate) {
-        switch (field) {
-            case 'owner_id':
-                if (!isValidObjectId(data.owner_id)) {
-                    return { valid: false, msg: 'שגיאה בהעלעת הפוסט' };
-                }
-                break;
-            case 'reportType':
-                if (!isValidReportType(data.itemName)) {
-                    return { valid: false, msg: 'סיבת דיווח לא תקינה' };
-                }
-                break;
-            case 'description':
-                if (data.description !== '' && !isString(data.description) || data.description.length > 1000) {
-                    return { valid: false, msg: 'פירוט דיווח אינו תקין' };
-                }
-                break;
-            case 'photots':
-                if (!isValidPhotosArray(data.photots)) {
-                    return { valid: false, msg: 'תמונה אינה תקינה' };
-                }
-                break;
-            case 'userReported':
-                if (!isValidObjectId(data.userReported)) {
-                    return { valid: false, msg: 'שגיאה' };  //chage this
-                }
-                break;
-            case 'postReported_id':
-                if (data.postReported_id !== null && !isValidObjectId(data.postReported_id)) { //can be null
-                    return { valid: false, msg: 'שגיאה' }; //change this
-                }
-                break;
-            case 'photos':
-                if (!isValidPhotosArray(data.photos)) {
-                    return { valid: false, msg: 'תמונה לא תקינה' };
-                }
-                break;
-            case 'verdictDescription':
-                if (data.verdictDescription !== '' && !isString(data.verdictDescription) || data.verdictDescription.length > 1000) {
-                    return { valid: false, msg: 'פירוט דיווח אינו תקין' };
-                }
-            case 'full':
-
-                break;
-            default:
-                return { valid: false, msg: `Unexpected field: ${field}` };
-        }
-    }
-    return { valid: true };
-}
-
-//_____________________ADDRESSES________________________________//
-
-
-// function isValidLocation(location) {
-//     return typeof location === 'object' && location.type === 'Point' && Array.isArray(location.coordinates) && location.coordinates.length == 2 && isNumber(location.coordinates[0]) && isNumber(location.coordinates[1]) && location.coordinates[0] >= -180 && location.coordinates[0] <= 180 && location.coordinates[1] >= -90 && location.coordinates[1] <= 90;
-// }
-
-
-// function isValidLocation(location) {
-//     return typeof location === 'object' && location.type === 'Point' && isValidCoordinates(location.coordinates);
-// }
-
-// function isValidCoordinates(coordinates) {
-//     return Array.isArray(coordinates) && coordinates.length == 2 && isNumber(coordinates[0]) && isNumber(coordinates[1]) && coordinates[0] >= -180 && coordinates[0] <= 180 && coordinates[1] >= -90 && coordinates[1] <= 90;
-// }
-
-function isNumber(value) {
-    return value !== 0 && isFinite(value);
-    // isFinite - a function in javascript that checks if a value is an actual valid number (accepts strings as well) - will treat empty strings and white spaces as 0!!!
-}
-
-function isValidCoordinates(lon, lat) {
-    return isNumber(lon) && isNumber(lat) && lon >= -180 && lon <= 180 && lat >= -90 && lat <= 90;
-}
-
-
-
-
-function validateNewAddressDetails(region, city, street, house, apartment, notes, simplifiedAddress, lon, lat) {
-    if (!isString(region)) {
-        return { valid: false, msg: 'קלט לא תקין' };
-    }
-    if (!isString(city)) {
-        return { valid: false, msg: 'קלט לא תקין' };
-    }
-    if (!isString(street)) {
-        return { valid: false, msg: 'קלט לא תקין' };
-    }
-    if (!isNumber(house)) {
-        return { valid: false, msg: 'קלט לא תקין' };
-    }
-    if (!isNumber(apartment) && apartment != null) { // can be null (a private house)
-        return { valid: false, msg: 'קלט לא תקין' };
-    }
-    if (!isValidCoordinates(lon, lat)) {
-        return { valid: false, msg: 'קלט לא תקין' };
-    }
-    if (!isString(notes) || notes.length > 100) {
-        return { valid: false, msg: 'תיאור לא תקין או ארוך מידי' };
-    }
-    if (!isString(simplifiedAddress) || simplifiedAddress.length > 51) {
-        return { valid: false, msg: 'קלט לא תקין' };
-    }
-
-    return { valid: true };
-}
-
-
-
-
-function validateAddressData(updatedData) {
-    let fieldsToUpdate = Object.keys(updatedData);
-
-    for (let field of fieldsToUpdate) {
-        switch (field) {
-            case 'apartment':
-                if (!isNumber(updatedData.apartment) && apartment != nul) { // can be null (private house/ not an apartment building)
-                    return { valid: false, msg: 'קלט לא תקין' };
-                }
-                break;
-            case 'house':
-                if (!isNumber(updatedData.house)) {
-                    return { valid: false, msg: 'קלט לא תקין' };
-                }
-                break;
-            case 'notes':
-                if (!isString(updatedData.notes) || updatedData.notes.length > 100) {
-                    return { valid: false, msg: 'תיאור לא תקין או ארוך מידי' };
-                }
-                break;
-            default:
-                return { valid: false, msg: `Unexpected field: ${field}` };
-        }
-    }
-    return { valid: true };
-}
-
-//NO EDITS YET - NOT SURE IF NECESSARY
-
-
-
-//!_____________________REQUESTS________________________________//
-
-function isValidRequestStatus(requestStatus) {
-    if (!isString(requestStatus) || !requestStatuses.includes(requestStatus)) {
+    if (!isString(reportStatus) || !reportStatuses.includes(reportStatus)) {
         return false;
     }
-    return true;
-}
-
-function isValidRequestString(requestString) {
-    return typeof requestString === 'string' && requestString.length < 301;
-}
-
-function validateNewRequestData(sender_id, recipient_id, requestMessage, post_id) {
-
-    if (!isValidObjectId(sender_id)) {
-        return { valid: false, msg: 'זיהוי השולח לא תקין' };
-    }
-    if (!isValidObjectId(recipient_id)) {
-        return { valid: false, msg: 'זיהוי הנמען לא תקין' };
-    }
-    if (!isValidObjectId(post_id)) {
-        return { valid: false, msg: 'זיהוי הפוסט לא תקין' };
-    }
-    if (!isValidRequestString(requestMessage)) {
-        return { valid: false, msg: 'מלל הבקשה אינו תקין או ארוך מידי' };
-    }
-
-    return { valid: true };
-}
-
-function validateRequestData(updatedData) { //assuming the sender, the recipient and the post should NOT be changed.
-    let fieldsToUpdate = Object.keys(updatedData);
-
-    for (let field of fieldsToUpdate) {
-        switch (field) {
-            case 'requestMessage':
-                if (!isValidRequestString(updatedData.requestMessage)) {
-                    return { valid: false, msg: 'מלל הבקשה אינו תקין או ארוך מידי' };
-                }
-                break;
-            case 'responseMessage':
-                if (updatedData.responseMessage && !isValidRequestString(updatedData.responseMessage)) {
-                    return { valid: false, msg: 'מלל התשובה אינו תקין או ארוך מידי' };
-                }
-                break;
-            case 'status':
-                if (!isValidRequestStatus(updatedData.status)) {
-                    return { valid: false, msg: 'סטטוס הבקשה אינו תקין' };
-                }
-                break;
-            case 'recipient_id':
-                if (!isValidObjectId(updatedData.recipient_id)) {
-                    return { valid: false, msg: 'זיהוי הנמען לא תקין' };
-                }
-                break;
-            case 'sender_id':
-                if (!isValidObjectId(updatedData.sender_id)) {
-                    return { valid: false, msg: 'זיהוי השולח לא תקין' };
-                }
-                break;
-            case 'post_id':
-                if (!isValidObjectId(updatedData.post_id)) {
-                    return { valid: false, msg: 'זיהוי הפוסט לא תקין' };
-                }
-                break;
-            case '_id':
-                if (!isValidObjectId(updatedData._id)) {
-                    return { valid: false, msg: 'זיהוי הבקשה לא תקין' };
-                }
-                break;
-            case 'full':
-
-                break;
-            default:
-                return { valid: false, msg: `Unexpected field: ${field}` };
-        }
-    }
-    return { valid: true };
-}
-
-
-
-
-//----------------------------------------------------------
-
-function validateSort(sortBy, order) {
-    if (!isString(sortBy) || order != -1 && order != 1)
-        return { valid: false, msg: 'קלט לא תקין' };
     else
-        return { valid: true };
-}
+        return true;
 
+    // function validateNewReportData(owner_id, reportType, userReported, postReported, photoUrls) {
+    //     if (!isValidObjectId(owner_id) || owner_id == null || !isString(reportType) || !isValidReportType(reportType) || !isValidObjectId(userReported) || userReported == null || !isValidObjectId(postReported) || !isValidPhotosArray(photoUrls)) // the postReported can be null because it could be only a user was reported and not a post (if a post was reported the creator will be reported as well)
+    //         throw new Error("פרטים לא תקינים");
+    //     else
+    //         return true;
+    // }
 
-//a middleware to validate objectIds in the route layer:
-function validateObjectId(paramNames) {
-    return function (req, res, next) {
-        if (!Array.isArray(paramNames)) {
-            paramNames = [paramNames];  // handle single paramName for backward compatibility
+    function validateNewReportData(owner_id, reportType, userReported, postReported, photoUrls, description) {
+        if (!isValidObjectId(owner_id)) {
+            return { valid: false, msg: 'שגיאה בהעלעת הפוסט' };
         }
-        for (let paramName of paramNames) {
-            let objectId = req.params[paramName];
-            if (!isValidObjectId(objectId)) {
-                return res.status(400).json({ msg: 'פרטים לא נכונים' });
+        if (!isValidReportType(reportType)) {
+            return { valid: false, msg: 'סוג דיווח לא תקין' };
+        }
+        if (!isValidObjectId(userReported)) { // the owner of the post in case a post was reported
+            return { valid: false, msg: 'שגיאה בהעלעת הפוסט' };
+        }
+        if (postReported !== null && !isValidObjectId(postReported)) { // can be null, the report can be only regarding a user and not a specific post
+            return { valid: false, msg: 'שגיאה בהעלעת הפוסט' };
+        }
+        if (!isValidPhotosArray(photoUrls)) {
+            return { valid: false, msg: 'תמונה לא תקינה' };
+        }
+        if (!isString(description) || description.length > 1000) {
+            return { valid: false, msg: 'תיאור לא תקין או ארוך מידי' };
+        }
+
+        return { valid: true };
+    }
+
+
+
+    function validateReportData(data) {
+        let fieldsToUpdate = Object.keys(data);
+
+        for (let field of fieldsToUpdate) {
+            switch (field) {
+                case 'owner_id':
+                    if (!isValidObjectId(data.owner_id)) {
+                        return { valid: false, msg: 'שגיאה בהעלעת הפוסט' };
+                    }
+                    break;
+                case 'reportType':
+                    if (!isValidReportType(data.itemName)) {
+                        return { valid: false, msg: 'סיבת דיווח לא תקינה' };
+                    }
+                    break;
+                case 'description':
+                    if (data.description !== '' && !isString(data.description) || data.description.length > 1000) {
+                        return { valid: false, msg: 'פירוט דיווח אינו תקין' };
+                    }
+                    break;
+                case 'photots':
+                    if (!isValidPhotosArray(data.photots)) {
+                        return { valid: false, msg: 'תמונה אינה תקינה' };
+                    }
+                    break;
+                case 'userReported':
+                    if (!isValidObjectId(data.userReported)) {
+                        return { valid: false, msg: 'שגיאה' };  //chage this
+                    }
+                    break;
+                case 'postReported_id':
+                    if (data.postReported_id !== null && !isValidObjectId(data.postReported_id)) { //can be null
+                        return { valid: false, msg: 'שגיאה' }; //change this
+                    }
+                    break;
+                case 'photos':
+                    if (!isValidPhotosArray(data.photos)) {
+                        return { valid: false, msg: 'תמונה לא תקינה' };
+                    }
+                    break;
+                case 'verdictDescription':
+                    if (data.verdictDescription !== '' && !isString(data.verdictDescription) || data.verdictDescription.length > 1000) {
+                        return { valid: false, msg: 'פירוט דיווח אינו תקין' };
+                    }
+                case 'status':
+                    if (checkReportStatus(data.status)) {
+                        return { valid: false, msg: 'הסטטוס אינו תקין' };
+                    }
+                case 'full':
+
+                    break;
+                default:
+                    return { valid: false, msg: `Unexpected field: ${field}` };
             }
         }
-        next();
-    };
-}
+        return { valid: true };
+    }
+
+    //_____________________ADDRESSES________________________________//
+
+
+    // function isValidLocation(location) {
+    //     return typeof location === 'object' && location.type === 'Point' && Array.isArray(location.coordinates) && location.coordinates.length == 2 && isNumber(location.coordinates[0]) && isNumber(location.coordinates[1]) && location.coordinates[0] >= -180 && location.coordinates[0] <= 180 && location.coordinates[1] >= -90 && location.coordinates[1] <= 90;
+    // }
+
+
+    // function isValidLocation(location) {
+    //     return typeof location === 'object' && location.type === 'Point' && isValidCoordinates(location.coordinates);
+    // }
+
+    // function isValidCoordinates(coordinates) {
+    //     return Array.isArray(coordinates) && coordinates.length == 2 && isNumber(coordinates[0]) && isNumber(coordinates[1]) && coordinates[0] >= -180 && coordinates[0] <= 180 && coordinates[1] >= -90 && coordinates[1] <= 90;
+    // }
+
+    function isNumber(value) {
+        return value !== 0 && isFinite(value);
+        // isFinite - a function in javascript that checks if a value is an actual valid number (accepts strings as well) - will treat empty strings and white spaces as 0!!!
+    }
+
+    function isValidCoordinates(lon, lat) {
+        return isNumber(lon) && isNumber(lat) && lon >= -180 && lon <= 180 && lat >= -90 && lat <= 90;
+    }
 
 
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~FOR LATER IF THERE'S TIME: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// async function checkOwnerOrAdmin(req, res, next) {
-//     let postId = req.params._id;
-//     let userId = req.user._id; // assuming that authenticateToken middleware adds user object to request
+    function validateNewAddressDetails(region, city, street, house, apartment, notes, simplifiedAddress, lon, lat) {
+        if (!isString(region)) {
+            return { valid: false, msg: 'קלט לא תקין' };
+        }
+        if (!isString(city)) {
+            return { valid: false, msg: 'קלט לא תקין' };
+        }
+        if (!isString(street)) {
+            return { valid: false, msg: 'קלט לא תקין' };
+        }
+        if (!isNumber(house)) {
+            return { valid: false, msg: 'קלט לא תקין' };
+        }
+        if (!isNumber(apartment) && apartment != null) { // can be null (a private house)
+            return { valid: false, msg: 'קלט לא תקין' };
+        }
+        if (!isValidCoordinates(lon, lat)) {
+            return { valid: false, msg: 'קלט לא תקין' };
+        }
+        if (!isString(notes) || notes.length > 100) {
+            return { valid: false, msg: 'תיאור לא תקין או ארוך מידי' };
+        }
+        if (!isString(simplifiedAddress) || simplifiedAddress.length > 51) {
+            return { valid: false, msg: 'קלט לא תקין' };
+        }
 
-//     try {
-//         let post = await PostsModel.findById(postId);
-//         if (!post) {
-//             return res.status(404).json({ msg: "Post not found." });
-//         }
-
-//         if (post.owner_id.toString() !== userId && req.user.role !== 'admin') {
-//             return res.status(403).json({ msg: "You do not have permission to perform this action." });
-//         }
-
-//         // Pass the execution to the next middleware function/route handler
-//         next();
-//     } catch (error) {
-//         return res.status(500).json({ msg: "An error occurred.", error });
-//     }
-// }
+        return { valid: true };
+    }
 
 
 
 
-module.exports = { isValidObjectId, isString, validateSort, validateNewUserData, validateUserData, isValidUserStatus, validateNewPostData, validatePostData, validatePostSearchData, isValidPostStatus, isValidPostCategory, validateNewReportData, validateReportData, isValidReportStatus, validateNewAddressDetails, validateAddressData, isValidPhoto, validateObjectId, validateNewRequestData, validateRequestData, isValidUserRole }
+    function validateAddressData(updatedData) {
+        let fieldsToUpdate = Object.keys(updatedData);
+
+        for (let field of fieldsToUpdate) {
+            switch (field) {
+                case 'apartment':
+                    if (!isNumber(updatedData.apartment) && apartment != nul) { // can be null (private house/ not an apartment building)
+                        return { valid: false, msg: 'קלט לא תקין' };
+                    }
+                    break;
+                case 'house':
+                    if (!isNumber(updatedData.house)) {
+                        return { valid: false, msg: 'קלט לא תקין' };
+                    }
+                    break;
+                case 'notes':
+                    if (!isString(updatedData.notes) || updatedData.notes.length > 100) {
+                        return { valid: false, msg: 'תיאור לא תקין או ארוך מידי' };
+                    }
+                    break;
+                default:
+                    return { valid: false, msg: `Unexpected field: ${field}` };
+            }
+        }
+        return { valid: true };
+    }
+
+    //NO EDITS YET - NOT SURE IF NECESSARY
+
+
+
+    //!_____________________REQUESTS________________________________//
+
+    function isValidRequestStatus(requestStatus) {
+        if (!isString(requestStatus) || !requestStatuses.includes(requestStatus)) {
+            return false;
+        }
+        return true;
+    }
+
+    function isValidRequestString(requestString) {
+        return typeof requestString === 'string' && requestString.length < 301;
+    }
+
+    function validateNewRequestData(sender_id, recipient_id, requestMessage, post_id) {
+
+        if (!isValidObjectId(sender_id)) {
+            return { valid: false, msg: 'זיהוי השולח לא תקין' };
+        }
+        if (!isValidObjectId(recipient_id)) {
+            return { valid: false, msg: 'זיהוי הנמען לא תקין' };
+        }
+        if (!isValidObjectId(post_id)) {
+            return { valid: false, msg: 'זיהוי הפוסט לא תקין' };
+        }
+        if (!isValidRequestString(requestMessage)) {
+            return { valid: false, msg: 'מלל הבקשה אינו תקין או ארוך מידי' };
+        }
+
+        return { valid: true };
+    }
+
+    function validateRequestData(updatedData) { //assuming the sender, the recipient and the post should NOT be changed.
+        let fieldsToUpdate = Object.keys(updatedData);
+
+        for (let field of fieldsToUpdate) {
+            switch (field) {
+                case 'requestMessage':
+                    if (!isValidRequestString(updatedData.requestMessage)) {
+                        return { valid: false, msg: 'מלל הבקשה אינו תקין או ארוך מידי' };
+                    }
+                    break;
+                case 'responseMessage':
+                    if (updatedData.responseMessage && !isValidRequestString(updatedData.responseMessage)) {
+                        return { valid: false, msg: 'מלל התשובה אינו תקין או ארוך מידי' };
+                    }
+                    break;
+                case 'status':
+                    if (!isValidRequestStatus(updatedData.status)) {
+                        return { valid: false, msg: 'סטטוס הבקשה אינו תקין' };
+                    }
+                    break;
+                case 'recipient_id':
+                    if (!isValidObjectId(updatedData.recipient_id)) {
+                        return { valid: false, msg: 'זיהוי הנמען לא תקין' };
+                    }
+                    break;
+                case 'sender_id':
+                    if (!isValidObjectId(updatedData.sender_id)) {
+                        return { valid: false, msg: 'זיהוי השולח לא תקין' };
+                    }
+                    break;
+                case 'post_id':
+                    if (!isValidObjectId(updatedData.post_id)) {
+                        return { valid: false, msg: 'זיהוי הפוסט לא תקין' };
+                    }
+                    break;
+                case '_id':
+                    if (!isValidObjectId(updatedData._id)) {
+                        return { valid: false, msg: 'זיהוי הבקשה לא תקין' };
+                    }
+                    break;
+                case 'full':
+
+                    break;
+                default:
+                    return { valid: false, msg: `Unexpected field: ${field}` };
+            }
+        }
+        return { valid: true };
+    }
+
+
+
+
+    //----------------------------------------------------------
+
+    function validateSort(sortBy, order) {
+        if (!isString(sortBy) || order != -1 && order != 1)
+            return { valid: false, msg: 'קלט לא תקין' };
+        else
+            return { valid: true };
+    }
+
+
+    //a middleware to validate objectIds in the route layer:
+    function validateObjectId(paramNames) {
+        return function (req, res, next) {
+            if (!Array.isArray(paramNames)) {
+                paramNames = [paramNames];  // handle single paramName for backward compatibility
+            }
+            for (let paramName of paramNames) {
+                let objectId = req.params[paramName];
+                if (!isValidObjectId(objectId)) {
+                    return res.status(400).json({ msg: 'פרטים לא נכונים' });
+                }
+            }
+            next();
+        };
+    }
+
+
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~FOR LATER IF THERE'S TIME: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // async function checkOwnerOrAdmin(req, res, next) {
+    //     let postId = req.params._id;
+    //     let userId = req.user._id; // assuming that authenticateToken middleware adds user object to request
+
+    //     try {
+    //         let post = await PostsModel.findById(postId);
+    //         if (!post) {
+    //             return res.status(404).json({ msg: "Post not found." });
+    //         }
+
+    //         if (post.owner_id.toString() !== userId && req.user.role !== 'admin') {
+    //             return res.status(403).json({ msg: "You do not have permission to perform this action." });
+    //         }
+
+    //         // Pass the execution to the next middleware function/route handler
+    //         next();
+    //     } catch (error) {
+    //         return res.status(500).json({ msg: "An error occurred.", error });
+    //     }
+    // }
+
+
+
+
+    module.exports = { isValidObjectId, isString, validateSort, validateNewUserData, validateUserData, isValidUserStatus, validateNewPostData, validatePostData, validatePostSearchData, isValidPostStatus, isValidPostCategory, validateNewReportData, validateReportData, isValidReportStatus, validateNewAddressDetails, validateAddressData, isValidPhoto, validateObjectId, validateNewRequestData, validateRequestData, isValidUserRole }

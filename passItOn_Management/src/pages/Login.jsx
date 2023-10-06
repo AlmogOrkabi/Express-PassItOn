@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext, useState } from 'react'
 import Logo from '../components/Logo'
-import { TextField, CircularProgress, InputAdornment, IconButton } from '@mui/material';
+import { TextField, CircularProgress, InputAdornment, IconButton, Input, OutlinedInput, InputLabel } from '@mui/material';
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form';
 import { login } from '../api/index';
@@ -33,7 +33,6 @@ export default function Login() {
     };
 
     async function userLogin() {
-        console.log("inputs: " + inputs.password)
         try {
             setLoading(true)
             setErr(null);
@@ -61,21 +60,24 @@ export default function Login() {
                     <div className='sub-container'>
                         <h2 className='title align-center'>התחברות</h2>
                         <form className='form login-form   align-center' onSubmit={handleSubmit(userLogin)}>
-                            <TextField id="email" label="כתובת אימייל" variant="outlined" type="email"
+                            <InputLabel htmlFor="email">כתובת אימייל</InputLabel>
+                            <OutlinedInput id="email" type="email"
                                 value={inputs.email}
                                 onChange={(e) => setInputs({ ...inputs, email: e.target.value })}
                             />
-                            <TextField id="password" label="סיסמה" variant="outlined"
+
+                            <InputLabel htmlFor="password">סיסמה</InputLabel>
+                            <OutlinedInput id="password"
                                 value={inputs.password}
                                 onChange={(e) => setInputs({ ...inputs, password: e.target.value })}
                                 type={showPassword ? 'text' : 'password'}
-                                endadornment={
+                                endAdornment={
                                     <InputAdornment position="end">
                                         <IconButton
                                             aria-label="toggle password visibility"
                                             onClick={handleClickShowPassword}
                                             onMouseDown={handleMouseDownPassword}
-                                        //edge="end"
+                                            edge="end"
                                         >
                                             {showPassword ? <VisibilityOff /> : <Visibility />}
                                         </IconButton>

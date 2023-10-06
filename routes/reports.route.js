@@ -311,7 +311,7 @@ ReportsRoutes.get('/search', authenticateToken, async (req, res) => {
 
 
 //V -- V
-ReportsRoutes.put('/edit/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
+ReportsRoutes.put('/edit/:_id', authenticateToken, checkAdmin, validateObjectId('_id'), async (req, res) => {
     try {
         let { _id } = req.params;
         let { updatedData, toRemove, toAdd } = req.body;

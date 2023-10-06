@@ -7,6 +7,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { useNavigate } from 'react-router-dom';
 import ArticleIcon from '@mui/icons-material/Article';
+import Loading from '../components/Loading';
+import { updateReport } from '../api';
 
 const initialState = {
     status: {
@@ -17,7 +19,7 @@ const initialState = {
         edited: false,
         value: '',
     },
-    verdict_description: {
+    verdictDescription: {
         edited: false,
         value: ''
     },
@@ -72,7 +74,7 @@ export default function ReportPage() {
 
     const reportStatuses = ['פתוח', 'בטיפול מנהל', 'בבירור', 'סגור'];
 
-
+    const [loading, setLoading] = useState(false);
 
     const { index } = useParams();
     const [report, setReport] = useState(reports[index]);
@@ -98,60 +100,106 @@ export default function ReportPage() {
     }, [formState.status]);
 
     function handleSelect(e) {
-        const selectedValue = event.target.value;
+        const selectedValue = e.target.value;
         dispatch({ type: 'update', field: 'status', value: selectedValue });
     }
+
+    async function handleSaveChanges() {
+        try {
+            setLoading(true);
+            const updatedData = {};
+            if (formState.status.edited) {
+                updatedData.status = formState.status.value;
+            }
+            if (formState.admin.edited) {
+                updatedData.admin = formState.admin.value;
+            }
+            if (formState.verdict.edited) {
+                updatedData.verdict = formState.verdict.value;
+            }
+            if (formState.verdictDescription.edited) {
+                updatedData.verdictDescription = formState.verdictDescription.value;
+            }
+            const res = await updateReport(updatedData, report._id);
+            console.log(res);
+
+            setReport((prev) => ({ ...prev, ...updatedData }));
+
+        } catch (error) {
+            console.log("update report error: " + error.msg);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+
 
 
     return (
         <>
-            <div className='sub-container-2'>
-                <h1>דף דיווח</h1>
-                {formState.status.edited ?
-                    <div>
-                        <label for="statuses">סטטוס: </label>
+            {loading ? <Loading /> :
+                <div className='sub-container-2'>
+                    <h1>דף דיווח</h1>
+                    {formState.status.edited ?
+                        <div>
+                            <label htmlFor="statuses">סטטוס: </label>
 
-                        <select name="statuses" id="status" onChange={(e) => handleSelect(e)}>
-                            {
-                                reportStatuses.map((s) => { return <option value={s}>{s}</option> })
+                            <select name="statuses" id="status" onChange={(e) => handleSelect(e)}>
+                                {
+                                    reportStatuses.map((s, index) => { return <option value={s} key={index}>{s}</option> })
 
-                            }
+                                }
 
-                        </select>
-                        <IconButton aria-label="cancel" onClick={() => { dispatch({ type: 'cancel', field: 'status' }) }}>
-                            <ClearIcon />
-                        </IconButton>
-                    </div>
-                    :
-                    <p>סטטוס: {report.status}    <IconButton aria-label="cancel" onClick={() => { dispatch({ type: 'edit', field: 'status' }) }}>
-                        <EditIcon />
-                    </IconButton></p>
-                }
-                {report.admin || formState.admin.edited ? <p>הדיווח בטיפול: {report.admin || formState.admin.value}</p> : null}
-                <p>סוג דיווח: {report.reportType} </p>
-                <p>תיאור: {report.description}</p>
-                <p>המשתמש המדווח: {report.owner.username} <IconButton aria-label="profile" onClick={() => { navigation(`/users/${report.owner.username}`) }}>
-                    <AccountBoxIcon />
-                </IconButton></p>
-                {report.userReported && <p>המשתמש שדווח:{report.userReported.username} <IconButton aria-label="profile" onClick={() => { navigation(`/users/${report.owner.username}`) }}>
-                    <AccountBoxIcon />
-                </IconButton></p>}
-                {report.post && <p>הפוסט שדווח:{report.post.itemName} <IconButton aria-label="cancel" onClick={() => { navigation(`/posts/${report.post._id}`) }} >
-                    <ArticleIcon />
-                </IconButton></p>}
-                <div className='pictures-container'>
-                    {report.photos.map((photo, index) => {
-                        return <div key={index} className={zoomedImg === index ? 'zoomed-photo-container' : ''} onClick={() => setZoomedImg(() => zoomedImg !== null ? null : index)} >
-                            <img className={zoomedImg === index ? 'zoomed-photo' : 'photo'} src={photo.url} alt='' />
+                            </select>
+                            <IconButton aria-label="cancel" onClick={() => { dispatch({ type: 'cancel', field: 'status' }); dispatch({ type: 'cancel', field: 'admin' }) }}>
+                                <ClearIcon />
+                            </IconButton>
                         </div>
-                    })}
-                </div>
+                        :
+                        <p>סטטוס: {report.status}    <IconButton aria-label="cancel" onClick={() => { dispatch({ type: 'edit', field: 'status' }) }}>
+                            <EditIcon />
+                        </IconButton></p>
+                    }
+                    {report.admin || formState.admin.edited ? <p>הדיווח בטיפול: {report.admin || formState.admin.value}</p> : null}
+                    <p>סוג דיווח: {report.reportType} </p>
+                    <p>תיאור: {report.description}</p>
+                    <p>המשתמש המדווח: {report.owner.username} <IconButton aria-label="navigate-to-profile" onClick={() => { navigation(`/users/${report.owner.username}`) }}>
+                        <AccountBoxIcon />
+                    </IconButton></p>
+                    {report.userReported && <p>המשתמש שדווח:{report.userReported.username} <IconButton aria-label="navigate-to-profile" onClick={() => { navigation(`/users/${report.owner.username}`) }}>
+                        <AccountBoxIcon />
+                    </IconButton></p>}
+                    {report.post && <p>הפוסט שדווח:{report.post.itemName} <IconButton aria-label="navigate-to-post" onClick={() => { navigation(`/posts/${report.post._id}`) }} >
+                        <ArticleIcon />
+                    </IconButton></p>}
+                    <div className='pictures-container'>
+                        {report.photos.map((photo, index) => {
+                            return <div key={index} className={zoomedImg === index ? 'zoomed-photo-container' : ''} onClick={() => setZoomedImg(() => zoomedImg !== null ? null : index)} >
+                                <img className={zoomedImg === index ? 'zoomed-photo' : 'photo'} src={photo.url} alt='' />
+                            </div>
+                        })}
+                    </div>
 
-                <input className='input' type='text' placeholder='פסק דין'></input>
-                <textarea className='input' type='text' placeholder='נימוק' aria-multiline></textarea>
-                <button className='btn btn-small align-center'>שמור שינויים</button>
+                    {
+                        report.status !== 'סגור' ?
+                            <>
+                                {formState.verdict.edited ?
+                                    <>
+                                        <input className='input' type='text' placeholder='פסק דין' value={formState.verdict.value} onChange={(text) => dispatch({ type: 'update', field: 'verdict', value: text })} ></input>
+                                        <textarea className='input' type='text' placeholder='נימוק' aria-multiline value={formState.verdictDescription.value} onChange={(text) => dispatch({ type: 'update', field: 'verdictDescription', value: text })}></textarea>
+                                        <button className='btn btn-smaller cancell-btn' onClick={() => {
+                                            dispatch({ type: 'cancel', field: 'verdict' });
+                                            dispatch({ type: 'cancel', field: 'verdictDescription' });
+                                        }}>ביטול</button>
+                                    </>
+                                    : <button className='btn action-btn btn-small align-center' onClick={() => { dispatch({ type: 'edit', field: 'verdict' }); dispatch({ type: 'edit', field: 'verdictDescription' }); }}>סגירת הדיווח</button>
+                                }
 
-            </div>
+                                <button className='btn btn-small align-center' onClick={() => handleSaveChanges()}>שמור שינויים</button>
+                            </> : null
+                    }
+
+                </div>}
         </>
     )
 }

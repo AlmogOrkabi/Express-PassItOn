@@ -28,7 +28,6 @@ export default function OverView() {
                             <button className='btn' onClick={() => { navigation('/reports') }}>דיווחים</button>
                             <button className='btn' onClick={() => { navigation('/users') }}>משתמשים</button>
                             <button className='btn' onClick={() => { navigation('/posts') }}>פוסטים</button>
-                            <button className='btn' onClick={() => { navigation('/requests') }}>בקשות</button>
                             <button className='btn' onClick={() => { navigation('/statistics') }}>סטטיסטיקות</button>
 
                         </div>

@@ -147,8 +147,19 @@ min-width: fit-content;
 
 }
 
+.action-btn{
+  background-color: var(--strong-green);
+}
+
+.cancell-btn{
+  background-color: rgb(214, 63, 63);
+}
+
 .btn-small{
   width: 30%;
+}
+.btn-smaller{
+  width: 4em;
 }
 
 .btn:hover {
