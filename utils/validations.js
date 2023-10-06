@@ -463,6 +463,9 @@ function validateReportData(data) {
             case 'full':
 
                 break;
+            case 'admin':
+
+                break;
             default:
                 return { valid: false, msg: `Unexpected field: ${field}` };
         }
