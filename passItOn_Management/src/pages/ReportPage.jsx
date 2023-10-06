@@ -109,6 +109,7 @@ export default function ReportPage() {
             setLoading(true);
             const updatedData = {};
             if (formState.status.edited) {
+                console.log("status here: " + formState.status.value)
                 updatedData.status = formState.status.value;
             }
             if (formState.admin.edited) {

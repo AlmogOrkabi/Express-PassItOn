@@ -457,7 +457,7 @@ function validateReportData(data) {
                     return { valid: false, msg: 'פירוט דיווח אינו תקין' };
                 }
             case 'status':
-                if (checkReportStatus(data.status)) {
+                if (!checkReportStatus(data.status)) {
                     return { valid: false, msg: 'הסטטוס אינו תקין' };
                 }
             case 'full':
