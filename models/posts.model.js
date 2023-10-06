@@ -123,10 +123,10 @@ class PostModel {
         let query = {};
 
         // Basic Filters
-        if (params.owner_id) query.owner_id = params.owner_id;
+        if (params.owner_id) query.owner_id = new ObjectId(params.owner_id);
         if (params.status) query.status = params.status;
         if (params.itemName) query.$text = { $search: params.itemName };
-        if (params.itemLocation_id) query.itemLocation_id = params.itemLocation_id;
+        if (params.itemLocation_id) query.itemLocation_id = new ObjectId(params.itemLocation_id);
         if (params.category) query.category = params.category;
 
         // Search by Keywords
