@@ -3,7 +3,7 @@ import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import { IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-export default function ReportCard({ report, index }) {
+export default function ReportCard({ report, _id }) {
 
     const navigation = useNavigate();
 
@@ -15,7 +15,7 @@ export default function ReportCard({ report, index }) {
                 <p>סוג דיווח: {report.reportType}</p>
                 <p>תיאור: {report.description}</p>
                 <p>המשתמש המדווח: {report.owner.username}</p>
-                <IconButton className='btn-end' aria-label="open" onClick={() => { navigation(`/reports/${index}`) }} >
+                <IconButton className='btn-end' aria-label="open" onClick={() => { navigation(`/reports/${_id}`) }} >
                     <OpenInFullIcon />
                 </IconButton>
             </div>

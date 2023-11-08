@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useContext, useReducer } from 'react'
-import { useParams } from 'react-router-dom'
 import { AppContext } from '../contexts/AppContext';
 import { IconButton, TextField } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ArticleIcon from '@mui/icons-material/Article';
 import Loading from '../components/Loading';
 import { updateReport } from '../api';
@@ -69,6 +68,7 @@ export default function ReportPage() {
 
     const { reports, loggedUser } = useContext(AppContext);
 
+    const { _id } = useParams();
 
     const [formState, dispatch] = useReducer(formReducer, initialState);
 
@@ -77,7 +77,7 @@ export default function ReportPage() {
     const [loading, setLoading] = useState(false);
 
     const { index } = useParams();
-    const [report, setReport] = useState(reports[index]);
+    const [report, setReport] = useState(reports.find(r => r._id === _id));
     const [zoomedImg, setZoomedImg] = useState(null);
     // const [editStatus, setEditStatus] = useState(false);
 

@@ -4,6 +4,10 @@ import { useNavigate, useParams } from 'react-router-dom'
 import Loading from '../components/Loading'
 import { IconButton } from '@mui/material';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+
 export default function PostPage() {
 
     const { _id } = useParams();
@@ -12,6 +16,7 @@ export default function PostPage() {
     const [post, setPost] = useState(posts.find((p) => p._id == _id));
     const [loading, setloading] = useState(false);
     const [zoomedImg, setZoomedImg] = useState(null);
+    const [showReports, setShowReports] = useState(false);
 
 
     return (
@@ -41,8 +46,30 @@ export default function PostPage() {
                     <p>מעלה הפריט: {post.owner.username} <IconButton aria-label="profile" onClick={() => { navigation(`/users/${post.owner.username}`) }}>
                         <AccountBoxIcon />
                     </IconButton></p>
-                    <p>מספר דיווחים על הפריט: {post.reports.length}</p>
-
+                    <p>מספר דיווחים על הפריט: {post.reports.length} {
+                        showReports ? <IconButton aria-label='show-less' onClick={() => { setShowReports((prev) => false) }} >
+                            <ExpandLessIcon />
+                        </IconButton>
+                            :
+                            !showReports ?
+                                <IconButton aria-label={post.reports.length < 1 ? 'show-more-disabled' : 'show-more'} disabled={post.reports.length < 1} onClick={() => { setShowReports((prev) => true) }} >
+                                    <ExpandMoreIcon />
+                                </IconButton>
+                                :
+                                null
+                    }</p>
+                    {
+                        showReports && <ul>
+                            {
+                                post.reports.map((report, index, _id) => {
+                                    return <li className='clickable' key={index} onClick={() => { navigation(`/reports/${_id}`) }
+                                    }>
+                                        דיווח מס' : {index + 1}
+                                    </li>
+                                })
+                            }
+                        </ul>
+                    }
                 </div>}
         </>
     )
