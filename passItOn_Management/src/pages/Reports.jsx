@@ -73,41 +73,43 @@ export default function Reports() {
 
     return (
         <>
-            <h1>דיווחי משתמשים</h1>
+            <div className='main-container2'>
+                <h1>דיווחי משתמשים</h1>
 
-            {
-                loading ? <Loading />
-                    :
-                    <div>
+                {
+                    loading ? <Loading />
+                        :
+                        <div>
 
-                        <form className='flex-row margin-block'>
-                            <input type="radio" id="all" name="status" value="all" onChange={(e) => handleRadioBtnChange(e)}></input>
-                            <label htmlFor="all">הכל</label>
-                            <input type="radio" id="open" name="status" value="פתוח" onChange={(e) => handleRadioBtnChange(e)}></input>
-                            <label htmlFor="inactive">פתוח</label>
-                            <input type="radio" id="in-process" name="status" value="בטיפול" onChange={(e) => handleRadioBtnChange(e)}></input>
-                            <label htmlFor="banned">בטיפול</label>
-                            <input type="radio" id="closed" name="status" value="סגור" onChange={(e) => handleRadioBtnChange(e)}></input>
-                            <label htmlFor="banned">סגור</label>
-                        </form>
+                            <form className='flex-row margin-block'>
+                                <input type="radio" id="all" name="status" value="all" onChange={(e) => handleRadioBtnChange(e)}></input>
+                                <label htmlFor="all">הכל</label>
+                                <input type="radio" id="open" name="status" value="פתוח" onChange={(e) => handleRadioBtnChange(e)}></input>
+                                <label htmlFor="inactive">פתוח</label>
+                                <input type="radio" id="in-process" name="status" value="בטיפול" onChange={(e) => handleRadioBtnChange(e)}></input>
+                                <label htmlFor="banned">בטיפול</label>
+                                <input type="radio" id="closed" name="status" value="סגור" onChange={(e) => handleRadioBtnChange(e)}></input>
+                                <label htmlFor="banned">סגור</label>
+                            </form>
 
 
 
-                        {
-                            Array.isArray(currentReports) && currentReports.length > 0 ?
+                            {
+                                Array.isArray(currentReports) && currentReports.length > 0 ?
 
-                                currentReports.map((item, index) => {
-                                    return <ReportCard report={item} _id={item._id} key={index} />
-                                })
+                                    currentReports.map((item, index) => {
+                                        return <ReportCard report={item} _id={item._id} key={index} />
+                                    })
 
-                                :
+                                    :
 
-                                <h3>
-                                    לא נמצאו דיווחים מתאימים
-                                </h3>
-                        }
-                    </div>
-            }
+                                    <h3>
+                                        לא נמצאו דיווחים מתאימים
+                                    </h3>
+                            }
+                        </div>
+                }
+            </div>
         </>
     )
 }
