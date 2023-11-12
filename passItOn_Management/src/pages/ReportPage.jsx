@@ -166,11 +166,15 @@ export default function ReportPage() {
                             </IconButton>
                         </div>
                         :
-                        <p>סטטוס: {report.status}    <IconButton aria-label="cancel" onClick={() => { dispatch({ type: 'edit', field: 'status' }) }}>
+                        <p>סטטוס: {report.status}    <IconButton aria-label="edit" onClick={() => { dispatch({ type: 'edit', field: 'status' }) }}>
                             <EditIcon />
                         </IconButton></p>
                     }
-                    {report.admin || formState.admin.edited ? <p>הדיווח בטיפול: {report.admin || formState.admin.value}</p> : null}
+                    {report.admin || formState.admin.edited ?
+                        <p>{report.status === 'סגור' ? 'טופל על ידי' : 'הדיווח בטיפול'}: {report.admin || formState.admin.value}</p>
+                        :
+                        null
+                    }
                     <p>סוג דיווח: {report.reportType} </p>
                     <p>תיאור: {report.description}</p>
                     <p>המשתמש המדווח: {report.owner.username} <IconButton aria-label="navigate-to-profile" onClick={() => { navigation(`/users/${report.owner.username}`) }}>

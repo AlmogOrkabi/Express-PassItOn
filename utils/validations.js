@@ -546,7 +546,7 @@ function validateAddressData(updatedData) {
     for (let field of fieldsToUpdate) {
         switch (field) {
             case 'apartment':
-                if (!isNumber(updatedData.apartment) && apartment != nul) { // can be null (private house/ not an apartment building)
+                if (!isNumber(updatedData.apartment) && apartment != null) { // can be null (private house/ not an apartment building)
                     return { valid: false, msg: 'קלט לא תקין' };
                 }
                 break;
@@ -556,7 +556,7 @@ function validateAddressData(updatedData) {
                 }
                 break;
             case 'notes':
-                if (!isString(updatedData.notes) || updatedData.notes.length > 100) {
+                if (updatedData.notes !== null && !isString(updatedData.notes) || updatedData.notes !== null && updatedData.notes.length > 100) {
                     return { valid: false, msg: 'תיאור לא תקין או ארוך מידי' };
                 }
                 break;

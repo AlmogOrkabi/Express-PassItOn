@@ -303,6 +303,7 @@ justify-content: space-evenly;
   width: 8em;
   height: 12em;
   border: 1px solid #000;
+  object-fit: cover;
 }
 
 .zoomed-photo {
@@ -405,3 +406,15 @@ align-self: center;
     border-radius: 15px;
     padding-inline: 1em;
   }
+
+  .btn-top{
+    align-self: flex-start;
+  }
+
+  .flex{
+    display: flex;
+  }
+
+  .bg-green{
+  background-color: var(--strong-green);
+}
