@@ -1,4 +1,4 @@
-const { userStatuses, postCategories, postStatuses, reportTypes, reportStatuses, requestStatuses } = require('../Data/constants').default
+const { userStatuses, postCategories, postStatuses, reportTypes, reportStatuses, requestStatuses } = require('../Data/constants');
 
 
 //validates that the parameter received is an objectid
