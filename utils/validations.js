@@ -510,19 +510,19 @@ function isValidCoordinates(lon, lat) {
 
 function validateNewAddressDetails(region, city, street, house, apartment, notes, simplifiedAddress, lon, lat) {
     if (!isString(region)) {
-        return { valid: false, msg: 'קלט לא תקין' };
+        return { valid: false, msg: 'קלט לא תקין מחוז' };
     }
     if (!isString(city)) {
-        return { valid: false, msg: 'קלט לא תקין' };
+        return { valid: false, msg: 'קלט לא תקין עיר' };
     }
     if (!isString(street)) {
-        return { valid: false, msg: 'קלט לא תקין' };
+        return { valid: false, msg: 'קלט לא תקין רחוב' };
     }
     if (!isNumber(house)) {
-        return { valid: false, msg: 'קלט לא תקין' };
+        return { valid: false, msg: 'קלט לא תקין בית' };
     }
     if (!isNumber(apartment) && apartment != null) { // can be null (a private house)
-        return { valid: false, msg: 'קלט לא תקין' };
+        return { valid: false, msg: 'קלט לא תקין דירה' };
     }
     if (!isValidCoordinates(lon, lat)) {
         return { valid: false, msg: 'קלט לא תקין' };
