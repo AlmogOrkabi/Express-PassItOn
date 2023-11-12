@@ -527,7 +527,7 @@ function validateNewAddressDetails(region, city, street, house, apartment, notes
     if (!isValidCoordinates(lon, lat)) {
         return { valid: false, msg: 'קלט לא תקין' };
     }
-    if (!isString(notes) || notes.length > 100) {
+    if (notes !== null && !isString(notes) || notes !== null && notes.length > 100) {
         return { valid: false, msg: 'תיאור לא תקין או ארוך מידי' };
     }
     if (!isString(simplifiedAddress) || simplifiedAddress.length > 51) {
