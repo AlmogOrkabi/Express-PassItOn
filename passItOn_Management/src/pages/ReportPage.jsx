@@ -8,6 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ArticleIcon from '@mui/icons-material/Article';
 import Loading from '../components/Loading';
 import { updateReport } from '../api';
+import useErrorHandler from '../hooks/useErrorHandler';
 
 const initialState = {
     status: {
@@ -67,7 +68,7 @@ function formReducer(state, action) {
 export default function ReportPage() {
 
     const { reports, loggedUser } = useContext(AppContext);
-
+    // const { index } = useParams();
     const { _id } = useParams();
 
     const [formState, dispatch] = useReducer(formReducer, initialState);
@@ -76,13 +77,14 @@ export default function ReportPage() {
 
     const [loading, setLoading] = useState(false);
 
-    const { index } = useParams();
+
     const [report, setReport] = useState(reports.find(r => r._id === _id));
     const [zoomedImg, setZoomedImg] = useState(null);
     // const [editStatus, setEditStatus] = useState(false);
 
     const navigation = useNavigate();
 
+    const handleError = useErrorHandler();
 
     useEffect(() => {
         // console.log("logged user: " + JSON.stringify(loggedUser))
@@ -137,6 +139,7 @@ export default function ReportPage() {
 
         } catch (error) {
             console.log("update report error: " + error.msg);
+            handleError(error);
         } finally {
             setLoading(false);
         }

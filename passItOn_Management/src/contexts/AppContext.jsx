@@ -58,6 +58,7 @@ export default function AppContextProvider({ children }) {
     }
 
 
+
     const value = { loggedUser, setLoggedUser, users, setUsers, reports, setReports, fetchUsers, posts, setPosts, fetchReports, fetchPosts, loadAppData };
 
     return (

@@ -34,7 +34,7 @@ const uploadImage = async (img) => {
     try {
         // Upload the image
         const result = await cloudinary.uploader.upload_large(img, options);
-        console.log(result);
+        // console.log(result);
         //return result.secure_url;
         return {
             url: result.secure_url,

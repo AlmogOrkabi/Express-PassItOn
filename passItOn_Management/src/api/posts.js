@@ -79,3 +79,34 @@ export const getPosts = async (query = {}) => {
     return res;
 
 }
+
+
+export const editPost = async (postID, updatedData) => {
+    const response = await fetch(`${baseUrl}/api/posts/edit/${postID}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            // 'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            updatedData: { ...updatedData },
+            toRemove: null,
+            toAdd: null,
+        }),
+        credentials: 'include',
+    });
+
+
+    const res = await response.json();
+
+    if (!response.ok) {
+        console.log("res error posts => " + res);
+        if (response.status == 404)
+            return 404;
+        else
+            throw { ...res, status: response.status };
+    }
+
+    console.log("Raw data from API - POSTS:", res); // Print out the raw data
+    return res;
+}

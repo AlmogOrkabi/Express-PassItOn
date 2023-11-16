@@ -6,7 +6,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
 import { updateUserRole, updateUserStatus } from '../api';
 import Loading from '../components/Loading';
-
+import useErrorHandler from '../hooks/useErrorHandler';
 
 export default function UserPage() {
 
@@ -19,6 +19,8 @@ export default function UserPage() {
     const userStatuses = ['פעיל', 'לא פעיל', 'חסום']
 
     const [loading, setloading] = useState(false);
+
+    const handleError = useErrorHandler();
 
     function handleSelectStatus(e) {
         const selectedValue = event.target.value;
@@ -47,6 +49,7 @@ export default function UserPage() {
             setEdit(null);
         } catch (error) {
             console.log("update user error: " + error)
+            handleError(error);
         } finally {
             setloading(false);
         }

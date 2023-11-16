@@ -9,6 +9,8 @@ import Loading from '../components/Loading';
 // import { CircularProgress } from '@mui/material';
 import { getUsersStatistics, getPostsStatistics, amountOfUsers, amountOfPosts } from '../api';
 
+import useErrorHandler from '../hooks/useErrorHandler';
+
 export default function Statistics() {
     const { loadUsers, users } = useContext(AppContext);
     const [loading, setloading] = useState(false);
@@ -18,7 +20,7 @@ export default function Statistics() {
     const [postData, setPostData] = useState(null)
     const [countData, setCountData] = useState([])
 
-
+    const handleError = useErrorHandler();
 
 
 
@@ -38,7 +40,8 @@ export default function Statistics() {
 
 
         } catch (error) {
-            console.log("statistics error: " + error)
+            console.log("statistics error: " + error);
+            handleError(error);
         }
         finally {
             setloading(false);

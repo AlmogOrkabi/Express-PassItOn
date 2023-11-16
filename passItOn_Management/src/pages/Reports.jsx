@@ -6,6 +6,8 @@ import ReportCard from '../components/ReportCard';
 import Loading from '../components/Loading';
 import { AppContext } from '../contexts/AppContext';
 
+import useErrorHandler from '../hooks/useErrorHandler';
+
 export default function Reports() {
     const navigation = useNavigate();
     const [loading, setloading] = useState(false);
@@ -15,6 +17,7 @@ export default function Reports() {
     const [currentReports, setCurrentReports] = useState([]);
     const [reportStatus, setReportStatus] = useState('all');
 
+    const handleError = useErrorHandler()
 
     useEffect(() => {
         loadReports()
@@ -29,6 +32,7 @@ export default function Reports() {
             setloading(false);
         } catch (error) {
             console.log("error - reports: " + error);
+            handleError(error);
         }
     }
 

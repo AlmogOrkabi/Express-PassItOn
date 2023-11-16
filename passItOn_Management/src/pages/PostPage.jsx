@@ -11,7 +11,9 @@ import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
 import { postCategories, postStatuses } from '../Data/constants';
 
+import { editPost } from '../api';
 
+import useErrorHandler from '../hooks/useErrorHandler';
 
 const initialState = {
     status: {
@@ -83,21 +85,78 @@ export default function PostPage() {
 
     const [formState, dispatch] = useReducer(formReducer, initialState);
 
+    const handleError = useErrorHandler();
 
 
     async function handleChanges() {
         try {
             setloading(true);
-            //!add validations to the inputs
+
+            console.log("itemName " + formState.itemName.value + " " + formState.itemName.edited)
+            console.log("description " + formState.description.value + " " + formState.description.edited)
+            console.log("status " + formState.status.value + " " + formState.status.edited)
+            console.log("category " + formState.category.value + " " + formState.category.edited)
+
+            const err = validateData();
+
+            if (err) {
+                alert(err.errMsg);
+                return;
+
+            }
+            //-V
+            //!add validations to the inputs 
+
+            //-v
             //!check all the values
+
+            //-V
             //!format the edited data
 
-        } catch (error) {
+            let newData = {}
 
+            if (formState.itemName.edited)
+                newData.itemName = formState.itemName.value;
+            if (formState.description.edited)
+                newData.description = formState.description.value;
+            if (formState.category.edited)
+                newData.category = formState.category.value;
+            if (formState.status.edited)
+                newData.category = formState.status.value;
+
+
+            const res = editPost(post._id, newData);
+            console.log("updated post res =>" + res);
+            navigation('/posts')
+
+        } catch (error) {
+            console.log(error)
+            handleError(error);
         } finally {
             setloading(false);
         }
     }
+
+    //* new data validations: 
+
+    function validateData() {
+
+        if (formState.itemName.edited && (formState.itemName.value.length < 2 || formState.itemName.value.length > 50)) {
+            return { field: 'itemName', errMsg: 'אורך שם הפריט אינו תקין' };
+        }
+        if (formState.description.edited && (formState.description.value.length < 2 || formState.description.value.length > 300)) {
+            return { field: 'description', errMsg: 'אורך תיאור הפריט אינו תקין' }
+        }
+        if (formState.status.edited && !postStatuses.includes(formState.status.value)) {
+            return { field: 'status', errMsg: 'סטטוס לא תקין' }
+        }
+        if (formState.category.edited && !postCategories.includes(formState.category.value)) {
+            return { field: 'category', errMsg: 'קטגורית הפריט אינה תקינה' }
+        }
+        return false;
+
+    }
+
 
     return (
         <>
@@ -111,7 +170,7 @@ export default function PostPage() {
                         formState.itemName.edited ?
                             <div>
                                 <input className='input' type='text' placeholder='שם הפריט' onChange={(e) => dispatch({ type: 'update', field: 'itemName', value: e.target.value })} ></input>
-                                <IconButton aria-label="cancel" onClick={() => { dispatch({ type: 'cancel', field: 'itemName' }); dispatch({ type: 'cancel', field: 'admin' }) }}>
+                                <IconButton aria-label="cancel" onClick={() => dispatch({ type: 'cancel', field: 'itemName' })}>
                                     <ClearIcon />
                                 </IconButton>
                             </div>

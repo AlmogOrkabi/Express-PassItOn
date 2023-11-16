@@ -10,9 +10,12 @@ import { useNavigate } from 'react-router-dom';
 
 import { postCategories } from '../Data/constants'
 
+import useErrorHandler from '../hooks/useErrorHandler';
+
 export default function Posts() {
 
     const navigate = useNavigate();
+    const handleError = useErrorHandler();
 
     const { posts, setPosts, fetchPosts } = useContext(AppContext);
     const [loading, setloading] = useState(null);
@@ -38,6 +41,7 @@ export default function Posts() {
 
         } catch (error) {
             console.log("error - posts: " + error)
+            handleError(error);
         } finally {
             setloading(false);
         }

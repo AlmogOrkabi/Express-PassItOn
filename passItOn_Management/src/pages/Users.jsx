@@ -8,6 +8,8 @@ import { IconButton } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from 'react-router-dom';
 
+import useErrorHandler from '../hooks/useErrorHandler';
+
 export default function Users() {
 
     const navigate = useNavigate();
@@ -18,6 +20,8 @@ export default function Users() {
     const [searchBy, setSearchBy] = useState('name');
     const [searchQuery, setSearchQuery] = useState('');
     const [activationStatus, setActivationStatus] = useState('all');
+
+    const handleError = useErrorHandler();
 
     useEffect(() => {
         loadUsers();
@@ -40,7 +44,8 @@ export default function Users() {
             setLoading(true);
             await fetchUsers();
         } catch (error) {
-            console.log("load users error: " + error)
+            console.log("load users error: " + error);
+            handleError(error);
         } finally {
             setLoading(false);
         }
