@@ -14,7 +14,6 @@ import OverView from './pages/OverView'
 import Reports from './pages/Reports'
 import Users from './pages/Users'
 import Posts from './pages/Posts'
-import Requests from './pages/Requests'
 import Statistics from './pages/Statistics'
 import ReportPage from './pages/ReportPage'
 import UserPage from './pages/UserPage'
@@ -44,7 +43,6 @@ function App() {
             <Route path='/users/:username' element={<UserPage />} />
             <Route path='/posts' element={<Posts />} />
             <Route path='/posts/:_id' element={<PostPage />} />
-            <Route path='/requests' element={<Requests />} />
             <Route path='/statistics' element={<Statistics />} />
 
             <Route path='/*' element={<NotFound />} />
