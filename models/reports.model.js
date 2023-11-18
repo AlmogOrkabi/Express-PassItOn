@@ -16,7 +16,7 @@ class ReportModel {
     verdict;
     photos;
     creationDate;
-    updateDate; // for the stages of handling the report // initialized to the creation date
+    updateDate; //* for the stages of handling the report //* initialized to the creation date
     verdictDescription;
     admin;
 
@@ -34,16 +34,6 @@ class ReportModel {
         this.verdictDescription = null;
         this.admin = null; // no admin in charge yet
     }
-
-    // static async create(owner_id, reportType, userReported, postReported, photos, description) {
-    //     if (!isValidObjectId(owner_id) || !isValidObjectId(userReported) || userReported == null || !isValidObjectId(postReported)) {
-    //         throw new Error('Invalid ObjectId');
-    //     }
-    //     let newReport = new ReportModel(owner_id, reportType, userReported, postReported, photos, description);
-    //     return await new DB().insert(collection, { ...newReport });
-    // }
-
-
 
     static async create(owner_id, reportType, userReported, postReported, photos, description) {
         if (!isValidObjectId(owner_id) || !isValidObjectId(userReported) || postReported !== null && !isValidObjectId(postReported)) { //the postReported can be null because the report could be specifically about a user without a post being involved
@@ -109,22 +99,6 @@ class ReportModel {
 
         return report;
     }
-
-
-
-
-    // static async readByStatus(status) {
-    //     //validate status (switch case?) -V => validation on the route
-    //     return await new DB().findAll(collection, { status: status });
-    // }
-
-    //find all V
-    //find by owner V
-    //find by user reported V 
-    //find by post reported V 
-    //find by location *********
-    //find by status V 
-    //find by verdict *??????*
 
     static async updateMany(query, updatedData) {
 

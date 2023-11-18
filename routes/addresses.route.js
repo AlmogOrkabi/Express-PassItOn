@@ -86,7 +86,7 @@ AddressRoutes.get('/search', authenticateToken, async (req, res) => {
 
 
 //V --- V
-// only for house / apartment / notes update. everything else can cause mistakes (create a new address instead)
+// only for house / apartment / notes update. everything else can cause mistakes because of the API format (create a new address instead)
 AddressRoutes.put('/editAddress/:_id', authenticateToken, validateObjectId('_id'), async (req, res) => {
     try {
         let { _id } = req.params;

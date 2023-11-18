@@ -18,7 +18,7 @@ class UserModel {
     photo;
     registrationDate;
     activationStatus;
-    role; //user / admin
+    role; // user || admin
 
 
     constructor(username, firstName, lastName, phoneNumber, email, password, addressId, photo) {
@@ -39,21 +39,18 @@ class UserModel {
     }
 
 
-    // additional methods:
-
-    //add a new user to the DB:
 
     static async create(username, firstName, lastName, phoneNumber, email, password, addressId, photo) {
 
         let newUser = new UserModel(username, firstName, lastName, phoneNumber, email, password, addressId, photo);
         newUser.password = await bcrypt.hash(newUser.password, 10);
-        return await new DB().insert(collection, { ...newUser }); //returns the response from the database (successful or failed)
+        return await new DB().insert(collection, { ...newUser }); // returns the response from the database (successful or failed)
     }
 
     static async login(email, password) {
         let query = { email: email }
         const user = await new DB().findOne(collection, query);
-        if (!user || !(await bcrypt.compare(password, user.password)))
+        if (!user || !(await bcrypt.compare(password, user.password))) //* user doesnt exist or the password is incorrect
             return null;
 
         if (user.address_id) {
@@ -68,7 +65,7 @@ class UserModel {
                 throw new Error(`Invalid ObjectId for ${key}`);
             }
         }
-        return await new DB().findAll(collection, query, { password: 0 }); // returns the entire user data excluding the password.
+        return await new DB().findAll(collection, query, { password: 0 }); //* returns the entire user data excluding the password.
     }
 
     static async readFull(query = {}) {
@@ -77,7 +74,7 @@ class UserModel {
                 throw new Error(`Invalid ObjectId for ${key}`);
             }
         }
-        const users = await new DB().findAll(collection, query, { password: 0 }); // returns the entire user data excluding the password.
+        const users = await new DB().findAll(collection, query, { password: 0 }); //* returns the entire user data excluding the password.
 
         const fullUsers = await Promise.all(users.map(async user => {
             if (user.address_id) {
@@ -95,7 +92,7 @@ class UserModel {
                 throw new Error(`Invalid ObjectId for ${key}`);
             }
         }
-        return await new DB().findOne(collection, query, { password: 0 }); // returns the entire user data excluding the password.
+        return await new DB().findOne(collection, query, { password: 0 }); //* returns the entire user data excluding the password.
     }
 
 
@@ -107,7 +104,7 @@ class UserModel {
                 throw new Error(`Invalid ObjectId for ${key}`);
             }
         }
-        const user = await new DB().findOne(collection, query, { password: 0 }); // returns the entire user data excluding the password.
+        const user = await new DB().findOne(collection, query, { password: 0 }); //* returns the entire user data excluding the password.
 
         if (user.address_id) {
             user.address = await AddressModel.readOne({ _id: user.address_id });
@@ -115,10 +112,6 @@ class UserModel {
 
         return user;
     }
-    //get all users
-    // static async read() {
-    //     return await new DB().findAll(collection);
-    // }
 
 
     static async update(_id, updatedData) {
@@ -131,8 +124,8 @@ class UserModel {
                     updatedData[key] = new ObjectId(updatedData[key]);
             }
         }
-        if (updatedData.password) {
-            updatedData.password = await bcrypt.hash(updatedData.password, 10)
+        if (updatedData.password) { //* if the user chose to change the password:
+            updatedData.password = await bcrypt.hash(updatedData.password, 10) //*  encrypting the new password
         }
         return await new DB().updateById(collection, _id, updatedData);
     }
@@ -149,17 +142,12 @@ class UserModel {
     }
 
 
-    //other methods to to be added:
-
 
     static async getStatistics(type, options = {}) {
         try {
             let query = {};
             let pipeline = [];
 
-            // if (options.donated) {
-            //     query.donated = true;  // Add this condition only if 'donated' is true
-            // }
 
             switch (type) {
                 case 'usersByCity':
@@ -215,7 +203,6 @@ class UserModel {
                     ];
                     break;
 
-                // Add more cases for other types of statistics
                 default:
                     throw new Error('Invalid statistic type');
             }
@@ -235,8 +222,6 @@ class UserModel {
             throw error;
         }
     }
-
-
 }
 
 

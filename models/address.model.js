@@ -22,7 +22,7 @@ class AddressModel {
         this.notes = notes;
         this.simplifiedAddress = simplifiedAddress;
         this.location = {
-            type: "Point", // a data type of mongodb 
+            type: "Point", //* a data type of mongodb - allows to calculate distance easily
             coordinates: [Number(longitude), Number(latitude)]
         }
     }
@@ -32,16 +32,10 @@ class AddressModel {
         return await new DB().insert(collection, { ...newAddress });
     }
 
-    // static async readOne(id) {
-    //     if (!isValidObjectId(id) || id == null) {
-    //         throw new Error('Invalid ObjectId');
-    //     }
-    //     return await new DB().findOne(collection, { _id: id });
-    // }
 
     static async readOne(query = {}) {
         for (let key in query) {
-            if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
+            if (key.endsWith('_id') && (!isValidObjectId(query[key]))) { //*validates any value that needs to be in the format of an ObjectId
                 throw new Error(`Invalid ObjectId for ${key}`);
             }
         }

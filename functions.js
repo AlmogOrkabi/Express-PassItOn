@@ -28,7 +28,7 @@ const uploadImage = async (img) => {
         //not valid, make the validation on the client side
         allowed_formats: ['jpg', 'jpeg', 'png'], // limited formats
         //max_size: 5000000 //5mb
-        //max_file_size - works with python sdk - check later if works here
+        // max_file_size - works with python sdk - check later if works here - nope 😐
     };
 
     try {
@@ -53,7 +53,9 @@ const uploadImage = async (img) => {
 //     console.log(result, error);
 // });
 
-//WORKS
+
+
+
 const removeImage = async (img) => {
 
     try {
@@ -80,7 +82,7 @@ const removeImages = async (images) => {
 }
 
 
-//works
+
 const editImagesArray = async (photos, toRemove, toAdd) => {
     for (let imageUrl of toRemove) {
         // Find the photo object in the post's photos array
@@ -94,17 +96,17 @@ const editImagesArray = async (photos, toRemove, toAdd) => {
         }
     }
     let newPhotos = await uploadImages(toAdd);
-    return photos = [...photos, ...newPhotos] // when assigning like this, it is no longer by ref, it creates a new array.
+    return photos = [...photos, ...newPhotos] //* when assigning like this, it is no longer by ref, it creates a new array.
 }
 
-
+//~when a post is no longer available but has opened requests waiting for a response
 const closeOpenRequests = async (_id) => {
-
     return await RequestsModel.updateMany(
         { post_id: new ObjectId(_id), status: "נשלח" },
         { $set: { status: "נסגר" } });
 }
 
+//~ when a user is inactive or banned
 const closeAllUserActivities = async (_id) => {
     try {
         await RequestsModel.updateMany({ sender_id: _id }, { $set: { status: 'נסגר' } });

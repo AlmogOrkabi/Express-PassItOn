@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 5500;
 
 
 
-
+//*for the local host testing with cookies 🍪
 const corsOptions = {
     origin: function (origin, callback) {
         if (/^http:\/\/localhost(:\d+)?$/.test(origin) || !origin) {
@@ -19,7 +19,7 @@ const corsOptions = {
 }
 
 
-//Images:
+//~Images:
 
 // Require the cloudinary library
 const cloudinary = require('cloudinary').v2;
@@ -35,8 +35,9 @@ cloudinary.config({
 
 
 // Step 2: creation of the server:
+
 let server = express();
-server.use(express.json({ limit: '100mb' })); //size limit for the request body
+server.use(express.json({ limit: '100mb' })); //size limit for the request body - for an issue with the base64 images
 server.use(cors(corsOptions));
 
 

@@ -12,8 +12,6 @@ const requestStatuses = ['נסגר', 'נשלח', 'אושר', 'נדחה', 'בוט
 
 module.exports = { userStatuses, postCategories, postStatuses, reportTypes, reportStatuses, requestStatuses };
 
-//export default { userStatuses, postCategories, postStatuses, reportTypes, reportStatuses, requestStatuses };
-
 
 // error types: (just for documentation purposes)
 // error: 'INVALID_DETAILS'

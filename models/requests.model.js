@@ -26,7 +26,7 @@ class RequestModel {
         this.recipient_id = new ObjectId(recipient_id);
         this.requestMessage = requestMessage;
         this.status = 'נשלח'
-        this.responseMessage = null; // not yet handled by the recipient
+        this.responseMessage = null; //* not yet handled by the recipient
         this.post_id = new ObjectId(post_id);
         this.creationDate = new Date();
         this.updateDate = new Date();
@@ -49,7 +49,7 @@ class RequestModel {
 
     }
 
-    //gets the document along with all the other documents attached.
+    //* gets the document along with all the other documents attached.
     static async readFull(query = {}) {
         for (let key in query) {
             if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
@@ -58,7 +58,7 @@ class RequestModel {
         }
         const requests = await new DB().findAll(collection, query);
 
-        // Fetch additional data for each request
+        //* Fetch additional data for each request
         const fullRequests = await Promise.all(requests.map(async request => {
             if (request.sender_id) {
                 request.sender = await UserModel.readOne({ _id: request.sender_id });
@@ -89,15 +89,13 @@ class RequestModel {
 
     }
 
-    //gets the document along with all the other documents attached.
+    //*gets the document along with all the other documents attached.
     static async readOneFull(query = {}) {
         for (let key in query) {
             if (key.endsWith('_id') && (!isValidObjectId(query[key]))) {
                 throw new Error(`Invalid ObjectId for ${key}`);
             }
         }
-
-        //return await new DB().findOne(collection, query);
         const request = await new DB().findOne(collection, query);
         if (request.sender_id)
             request.sender = await UserModel.readOne({ _id: request.sender_id });
@@ -143,8 +141,6 @@ class RequestModel {
             throw error;
         }
     }
-
-
 }
 
 module.exports = RequestModel;
