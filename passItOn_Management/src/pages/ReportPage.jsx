@@ -158,6 +158,7 @@ export default function ReportPage() {
                             <label htmlFor="statuses">סטטוס: </label>
 
                             <select name="statuses" id="status" onChange={(e) => handleSelect(e)}>
+                                <option value="" selected disabled hidden></option>
                                 {
                                     reportStatuses.map((s, index) => { return <option value={s} key={index}>{s}</option> })
 

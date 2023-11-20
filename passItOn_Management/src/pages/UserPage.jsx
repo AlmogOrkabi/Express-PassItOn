@@ -72,7 +72,7 @@ export default function UserPage() {
                                 <label htmlFor="status">סטטוס פעילות: </label>
 
                                 <select name="status" id="status" onChange={(e) => handleSelectStatus(e)}>
-
+                                    <option value="" selected disabled hidden></option>
 
                                     {
                                         userStatuses.map((s, index) => { return <option value={s} key={index}>{s}</option> })
@@ -96,7 +96,7 @@ export default function UserPage() {
                                 <label htmlFor="role">סוג משתמש: </label>
 
                                 <select name="role" id="role" onChange={(e) => handleSelectRole(e)}>
-
+                                    <option value="" selected disabled hidden></option>
                                     <option value={'user'}>user</option>
                                     <option value={'admin'}>admin</option>
 

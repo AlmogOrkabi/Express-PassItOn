@@ -104,14 +104,6 @@ export default function PostPage() {
                 return;
 
             }
-            //-V
-            //!add validations to the inputs 
-
-            //-v
-            //!check all the values
-
-            //-V
-            //!format the edited data
 
             let newData = {}
 
@@ -208,6 +200,7 @@ export default function PostPage() {
                                 <label htmlFor="categories">קטגוריות: </label>
 
                                 <select name="categories" id="categories" onChange={(e) => dispatch({ type: 'update', field: 'category', value: e.target.value })}>
+                                    <option value="" selected disabled hidden></option>
                                     {
                                         postCategories.map((c, index) => { return <option value={c} key={index}>{c}</option> })
 
@@ -231,6 +224,7 @@ export default function PostPage() {
                                 <label htmlFor="statuses">סטטוס: </label>
 
                                 <select name="statuses" id="statuses" onChange={(e) => dispatch({ type: 'update', field: 'status', value: e.target.value })}>
+                                    <option value="" selected disabled hidden></option>
                                     {
                                         postStatuses.map((s, index) => { return <option value={s} key={index}>{s}</option> })
 
